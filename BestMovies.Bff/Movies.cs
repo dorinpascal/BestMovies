@@ -1,3 +1,4 @@
+using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -22,9 +23,7 @@ public class Movies
         [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = null)] HttpRequest req,
         ILogger log)
     {
-        _tmDbClient.Get
-        
-        
-        return new OkObjectResult("Hello world");
+        Object obj=  await _tmDbClient.GetMovieAsync(47964);
+        return new OkObjectResult(obj);
     }
 }
