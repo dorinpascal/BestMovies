@@ -1,12 +1,11 @@
-name: API_CI/CD
+name: Best Movies API CI/CD Pipeline
 on: 
   push:
       branches:
-        - master
+        - main
   workflow_dispatch:
 
 env:
-    LOCATION: westeurope
     DOTNET_VERSION: '6.0.x'
     OUTPUT_PATH: './BestMovies.Api/output'
 
