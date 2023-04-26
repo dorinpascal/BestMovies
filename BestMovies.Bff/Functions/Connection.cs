@@ -1,11 +1,11 @@
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 
-namespace BestMovies.Bff;
+namespace BestMovies.Bff.Functions;
 
 public class Connection
 {
