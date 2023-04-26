@@ -8,6 +8,7 @@ on:
 env:
     LOCATION: westeurope
     DOTNET_VERSION: '6.0.x'
+    OUTPUT_PATH: './BestMovies.Api/output'
 
 jobs:
   build:
@@ -22,13 +23,13 @@ jobs:
         dotnet-version: ${{ env.DOTNET_VERSION }}
 
     - name: Build
-      run: dotnet build './BestMovies.Api/BestMovies.Api.csproj' --configuration Release --output ./BestMovies.Api/output
+      run: dotnet publish './BestMovies.Api/BestMovies.Api.csproj' --configuration Release --output ${{ env.OUTPUT_PATH }}
       
     - name: Publish Artifact
       uses: actions/upload-artifact@v2
       with:
         name: artifact
-        path: './BestMovies.Api/output'
+        path: ${{ env.OUTPUT_PATH }}
     
   deploy:
     needs: build
@@ -38,12 +39,12 @@ jobs:
       uses: actions/download-artifact@v2
       with:
         name: artifact
-        path: './BestMovies.Api/output'
+        path: ${{ env.OUTPUT_PATH }}
 
 
     - name: Deploy Functions App
       uses: Azure/functions-action@v1
       with:
         app-name: 'fn-bestmovies-api-prod'
-        package: './BestMovies.Api/output'
+        package: ${{ env.OUTPUT_PATH }}
         publish-profile: ${{ secrets.AZURE_FUNCTIONAPP_PUBLISH_PROFILE }}
