@@ -15,17 +15,19 @@ using TMDbLib.Client;
 
 namespace BestMovies.Bff.Functions;
 
-public class Movies
+public class MovieFunctions
 {
+    private const string Tag = "Movies";
+    
     private readonly TMDbClient _tmDbClient;
 
-    public Movies(TMDbClient tmDbClient)
+    public MovieFunctions(TMDbClient tmDbClient)
     {
         _tmDbClient = tmDbClient;
     }
     
     [FunctionName(nameof(GetPopularMovies))]
-    [OpenApiOperation(operationId: nameof(GetPopularMovies), tags: new[] { nameof(Movies) })]
+    [OpenApiOperation(operationId: nameof(GetPopularMovies), tags: new[] { Tag })]
     [OpenApiParameter(name: "language", In = ParameterLocation.Query, Required = false, Type = typeof(string), Description = "The preferred **language** for the movies")]
     [OpenApiParameter(name: "region", In = ParameterLocation.Query, Required = false, Type = typeof(string), Description = "The preferred **region** for movies recommendation")]
     [OpenApiResponseWithBody(statusCode: HttpStatusCode.OK, contentType: "text/json", bodyType: typeof(IEnumerable<SearchMovieDto>), Description = "Returns popular movies in the region.")]
