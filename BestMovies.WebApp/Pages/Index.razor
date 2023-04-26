@@ -1,0 +1,26 @@
+﻿@page "/"
+
+@inject HttpClient HttpClient
+
+<PageTitle>Index</PageTitle>
+
+<h1>Hello, world!</h1>
+
+Welcome to your new app.
+
+
+<p>Result : @_result</p>
+@code {
+
+    private string? _result = "";
+
+    protected override async Task OnInitializedAsync()
+    {
+        // get Azure Web PubSub websocket URI
+        _result = await HttpClient.GetStringAsync($"/api/connection");
+        StateHasChanged();
+        
+
+    }
+
+}
