@@ -1,4 +1,4 @@
-name: Movies_API_CI/CD
+name: API_CI/CD
 on: 
   push:
       branches:
