@@ -1,19 +1,29 @@
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
+using TMDbLib.Client;
 
 namespace BestMovies.Bff;
 
-public class Connection
+public class Movies
 {
-    [FunctionName("connection")]
-    public async Task<IActionResult> Run(
+    private readonly TMDbClient _tmDbClient;
+
+    public Movies(TMDbClient tmDbClient)
+    {
+        _tmDbClient = tmDbClient;
+    }
+    
+    [FunctionName("movies")]
+    public async Task<IActionResult> GetMovies(
         [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = null)] HttpRequest req,
         ILogger log)
     {
+        _tmDbClient.Get
+        
         
         return new OkObjectResult("Hello world");
     }
