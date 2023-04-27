@@ -1,9 +1,7 @@
-
-using Microsoft.Azure.Functions.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection;
-
 using System;
 using TMDbLib.Client;
+using Microsoft.Azure.Functions.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection;
 
 [assembly: FunctionsStartup(typeof(BestMovies.Bff.Startup))]
 namespace BestMovies.Bff;
