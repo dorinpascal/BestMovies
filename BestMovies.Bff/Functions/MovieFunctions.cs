@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
@@ -11,6 +13,7 @@ using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Azure.WebJobs.Extensions.OpenApi.Core.Attributes;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
+using Newtonsoft.Json;
 using TMDbLib.Client;
 
 namespace BestMovies.Bff.Functions;
@@ -40,5 +43,39 @@ public class MovieFunctions
         var genres = await _tmDbClient.GetMovieGenresAsync();
         var moviesDtos = searchContainer.Results.Select(m => m.ToDto(genres));
         return new OkObjectResult(moviesDtos);
+    }
+
+
+    [FunctionName("SearchMovie")]
+    [OpenApiOperation(operationId: "SearchMovie", tags: new[] { "Movies" })]
+    [OpenApiRequestBody("application/json", typeof(SearchParametersDto))]
+    [OpenApiResponseWithBody(statusCode: HttpStatusCode.OK, contentType: "text/plain", bodyType: typeof(SearchParametersDto), Description = "The OK response")]
+    public async Task<IActionResult> SearchMovie(
+            [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = null)] HttpRequest req, ILogger log)
+    { 
+
+        var searchedMovie = JsonConvert.DeserializeObject<SearchParametersDto>(await new StreamReader(req.Body).ReadToEndAsync());
+        if (searchedMovie is null)
+        {
+            return new BadRequestObjectResult("Wrong body parameter.");
+        }
+        try
+        {
+            var searchedMovies = await _tmDbClient.SearchMovieAsync(searchedMovie.searchedByTitle);
+            var genres = await _tmDbClient.GetMovieGenresAsync();
+            var movies = searchedMovies.Results.Select(m => m.ToDto(genres));
+
+            log.LogInformation("Successfully retrieved list of searched movies.");
+            return new OkObjectResult(movies);
+        }
+        catch (Exception ex)
+        {
+            log.LogError(ex, "Error occurred while processing the request.");
+            return new ObjectResult(new
+            {
+                StatusCode = 500,
+                Value = ex.Message
+            });
+        }
     }
 }
