@@ -7,16 +7,15 @@ using System.Threading.Tasks;
 using TMDbLib.Objects.General;
 using TMDbLib.Objects.Search;
 
-namespace BestMovies.Bff.Extensions
+namespace BestMovies.Bff.Extensions;
+
+public static class MoviesExtensions
 {
-    public static class MoviesExtensions
-    {
-        public static SearchMovieDto ToDto(this SearchMovie searchMovie, IEnumerable<Genre> genres) =>
-        new(
-            Id: searchMovie.Id,
-            Title: searchMovie.Title,
-            PosterPath: searchMovie.PosterPath,
-            Genres: genres.Where(g => searchMovie.GenreIds.Contains(g.Id)).Select(g => g.Name)
-        );
-    }
+    public static SearchMovieDto ToDto(this SearchMovie searchMovie, IEnumerable<Genre> genres) =>
+    new(
+        Id: searchMovie.Id,
+        Title: searchMovie.Title,
+        PosterPath: searchMovie.PosterPath,
+        Genres: genres.Where(g => searchMovie.GenreIds.Contains(g.Id)).Select(g => g.Name)
+    );
 }
