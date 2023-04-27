@@ -1,13 +1,8 @@
 ﻿using BestMovies.Shared.Dtos.Movies;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using TMDbLib.Objects.General;
 using TMDbLib.Objects.Search;
-using BestMovies.Shared.Dtos.Movies;
-using TMDbLib.Objects.General;
 
 namespace BestMovies.Bff.Extensions;
 
