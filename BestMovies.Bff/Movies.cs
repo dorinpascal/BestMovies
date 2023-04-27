@@ -16,6 +16,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.IO;
 using BestMovies.Bff.ResponseModel;
+using TMDbLib.Objects.General;
+using TMDbLib.Objects.Search;
+using BestMovies.Bff.Extensions;
+using Microsoft.Azure.WebJobs.Extensions.OpenApi.Core.Extensions;
 
 namespace BestMovies.Bff
 {
@@ -52,19 +56,18 @@ namespace BestMovies.Bff
         public async Task<IActionResult> SearchMovie(
             [HttpTrigger(AuthorizationLevel.Anonymous,  "post", Route = null)] HttpRequest req)
         {
-            SearchedMovie searchedMovie = JsonConvert.DeserializeObject<SearchedMovie>(await new StreamReader(req.Body).ReadToEndAsync());
+            
+            var searchedMovie = JsonConvert.DeserializeObject<SearchedMovie>(await new StreamReader(req.Body).ReadToEndAsync());
+            if(searchedMovie.IsNullOrDefault())
+            {
+                return new OkObjectResult(null);
+            }
             try
             {
-                List<MoviesDto> movies = (await _tmDbClient.SearchMovieAsync(searchedMovie.searchedByTitle))
-                    .Results
-                    .Select(movie => new MoviesDto
-                    {
-                        Id = movie.Id,
-                        Title = movie.Title,
-                        Image = movie.PosterPath,
-                        Genres = movie.GenreIds?.ToList() ?? new List<int>()
-                    })
-                    .ToList();
+                var searchedMovies = await _tmDbClient.SearchMovieAsync(searchedMovie.searchedByTitle);
+                var genres = await _tmDbClient.GetMovieGenresAsync();
+                var movies = searchedMovies.Results.Select(m => m.ToDto(genres));
+
                 _logger.LogInformation("Successfully retrieved list of searched movies.");
                 return new OkObjectResult(movies);
             }
