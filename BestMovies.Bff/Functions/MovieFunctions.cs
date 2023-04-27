@@ -46,7 +46,7 @@ public class MovieFunctions
     }
 
 
-    [FunctionName(nameof(SearchMovie)]
+    [FunctionName(nameof(SearchMovie))]
     [OpenApiOperation(operationId: nameof(SearchMovie), tags: new[] { Tag })]
     [OpenApiRequestBody("application/json", typeof(SearchParametersDto))]
     [OpenApiResponseWithBody(statusCode: HttpStatusCode.OK, contentType: "application/json", bodyType: typeof(SearchParametersDto), Description = "The OK response")]
@@ -61,7 +61,7 @@ public class MovieFunctions
         }
         try
         {
-            var searchedMovies = await _tmDbClient.SearchMovieAsync(searchedMovie.searchedByTitle);
+            var searchedMovies = await _tmDbClient.SearchMovieAsync(searchedMovie.SearchedByTitle);
             var genres = await _tmDbClient.GetMovieGenresAsync();
             var movies = searchedMovies.Results.Select(m => m.ToDto(genres));
 
