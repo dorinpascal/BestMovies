@@ -9,17 +9,12 @@ using Microsoft.Azure.WebJobs.Extensions.OpenApi.Core.Attributes;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using TMDbLib.Client;
-using BestMovies.Shared;
 using Newtonsoft.Json;
-using System.Net.Http;
-using System.Collections.Generic;
 using System.Linq;
 using System.IO;
-using BestMovies.Bff.ResponseModel;
-using TMDbLib.Objects.General;
-using TMDbLib.Objects.Search;
 using BestMovies.Bff.Extensions;
 using Microsoft.Azure.WebJobs.Extensions.OpenApi.Core.Extensions;
+using BestMovies.Shared.Dtos.Movies;
 
 namespace BestMovies.Bff
 {
@@ -51,13 +46,13 @@ namespace BestMovies.Bff
 
         [FunctionName("SearchMovie")]
         [OpenApiOperation(operationId: "SearchMovie", tags: new[] { "Movies" })]
-        [OpenApiRequestBody("application/json",typeof(SearchedMovie))]
-        [OpenApiResponseWithBody(statusCode: HttpStatusCode.OK, contentType: "text/plain", bodyType: typeof(SearchedMovie), Description = "The OK response")]
+        [OpenApiRequestBody("application/json",typeof(SearchParametersDto))]
+        [OpenApiResponseWithBody(statusCode: HttpStatusCode.OK, contentType: "text/plain", bodyType: typeof(SearchParametersDto), Description = "The OK response")]
         public async Task<IActionResult> SearchMovie(
             [HttpTrigger(AuthorizationLevel.Anonymous,  "post", Route = null)] HttpRequest req)
         {
             
-            var searchedMovie = JsonConvert.DeserializeObject<SearchedMovie>(await new StreamReader(req.Body).ReadToEndAsync());
+            var searchedMovie = JsonConvert.DeserializeObject<SearchParametersDto>(await new StreamReader(req.Body).ReadToEndAsync());
             if(searchedMovie.IsNullOrDefault())
             {
                 return new OkObjectResult(null);
@@ -74,7 +69,11 @@ namespace BestMovies.Bff
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error occurred while processing the request.");
-                return new BadRequestObjectResult(ex.Message);
+                return new  ObjectResult(new
+                {
+                    StatusCode = 500,
+                    Value = ex.Message
+                });
             }  
         }
     }

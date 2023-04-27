@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BestMovies.Bff.ResponseModel
+namespace BestMovies.Shared.Dtos.Movies
 {
-    public class SearchedMovie
+    public class SearchParametersDto
     {
         public string? searchedByTitle { get; set; }
     }
