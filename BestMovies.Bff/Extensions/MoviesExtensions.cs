@@ -13,7 +13,6 @@ public static class MoviesExtensions
             Id: searchMovie.Id,
             Title: searchMovie.Title,
             PosterPath: searchMovie.PosterPath,
-            Genres: genres.Where(g => searchMovie.GenreIds.Contains(g.Id)).Select(g => g.Name)
+            Genres: searchMovie.GenreIds.Select(id => genres.First(g => g.Id == id).Name)
         );
-    
 }

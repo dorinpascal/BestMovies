@@ -1,0 +1,42 @@
+@using BestMovies.Shared.Dtos.Movies
+
+<MudPaper Class="d-flex flex-column gap-2 pa-2" Elevation="0">
+    @if (Title is not null)
+    {
+        <MudText Typo="Typo.h3" Align="Align.Start"> @Title </MudText>
+    }
+    
+    <div class="d-flex flex-row justify-start gap-4" style="overflow-x: auto">
+        @if (Movies is null || !Movies.Any())
+        {
+            for (var i = 0; i < SkeletonCardsCount; i++)
+            {
+                <MudCard Outlined="true">
+                    <MudSkeleton SkeletonType="SkeletonType.Rectangle" Animation="Animation.Wave" Height="@CardHeight" Width="@CardWidth" />
+                </MudCard>
+            }
+        }
+        else
+        {
+            foreach (var movie in Movies)
+            {
+                <MovieCard Movie="movie" Width="@CardWidth" Height="@CardHeight"/>
+            }
+        }
+    </div>
+</MudPaper>
+
+
+@code {
+        private const string CardHeight = "15rem";
+        private const string CardWidth = "20rem";
+
+    [Parameter]
+    public string? Title { get; set; } 
+    
+    [Parameter] 
+    public IEnumerable<SearchMovieDto>? Movies { get; set; }
+
+    [Parameter] 
+    public int SkeletonCardsCount { get; set; } = 4;
+}

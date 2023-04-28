@@ -1,26 +1,25 @@
 ﻿@page "/"
+@page "/movies"
 
-@inject HttpClient HttpClient
+@using BestMovies.WebApp.Repositories
+@using BestMovies.WebApp.Components
+@using BestMovies.Shared.Dtos.Movies
 
-<PageTitle>Index</PageTitle>
+<PageTitle>Movies</PageTitle>
 
-<h1>Hello, world!</h1>
+<MudContainer Class="d-flex flex-column gap-4 justify-center pa-4" MaxWidth="MaxWidth.ExtraExtraLarge">
+    <MovieCardList Title="Popular now" Movies="_popularMovies" SkeletonCardsCount="5" />
+</MudContainer>
 
-Welcome to your new app.
-
-
-<p>Result : @_result</p>
 @code {
+    [Inject]
+    protected IMoviesRepository MoviesRepository { get; set; } = default!;
 
-    private string? _result = "";
-
+    private IEnumerable<SearchMovieDto>? _popularMovies;
+    
     protected override async Task OnInitializedAsync()
     {
-        // get Azure Web PubSub websocket URI
-        _result = await HttpClient.GetStringAsync($"/api/connection");
+        _popularMovies = await MoviesRepository.GetPopularMovies();
         StateHasChanged();
-        
-
     }
-
 }

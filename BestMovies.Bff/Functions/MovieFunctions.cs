@@ -49,15 +49,14 @@ public class MovieFunctions
     [FunctionName(nameof(SearchMovie))]
     [OpenApiOperation(operationId: nameof(SearchMovie), tags: new[] { Tag })]
     [OpenApiRequestBody("application/json", typeof(SearchParametersDto))]
-    [OpenApiResponseWithBody(statusCode: HttpStatusCode.OK, contentType: "application/json", bodyType: typeof(SearchParametersDto), Description = "The OK response")]
+    [OpenApiResponseWithBody(statusCode: HttpStatusCode.OK, contentType: "application/json", bodyType: typeof(IEnumerable<SearchMovieDto>), Description = "Return movies that match the given params")]
     public async Task<IActionResult> SearchMovie(
-            [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = null)] HttpRequest req, ILogger log)
-    { 
-
+            [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "movies/discovery")] HttpRequest req, ILogger log)
+    {
         var searchedMovie = JsonConvert.DeserializeObject<SearchParametersDto>(await new StreamReader(req.Body).ReadToEndAsync());
         if (searchedMovie is null)
         {
-            return new BadRequestObjectResult("Wrong body parameter.");
+            return new BadRequestObjectResult("Please provide search params");
         }
         try
         {
@@ -65,17 +64,17 @@ public class MovieFunctions
             var genres = await _tmDbClient.GetMovieGenresAsync();
             var movies = searchedMovies.Results.Select(m => m.ToDto(genres));
 
-            log.LogInformation("Successfully retrieved list of searched movies.");
+            log.LogInformation("Successfully retrieved list of searched movies");
             return new OkObjectResult(movies);
         }
         catch (Exception ex)
         {
-            log.LogError(ex, "Error occurred while processing the request.");
-            return new ObjectResult(new
+            log.LogError(ex, "Error occurred while processing the request");
+            return new ContentResult
             {
                 StatusCode = 500,
-                Value = ex.Message
-            });
+                Content = ex.Message
+            };
         }
     }
 }
