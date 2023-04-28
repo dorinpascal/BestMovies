@@ -1,4 +1,3 @@
-using System.Net.Http.Json;
 using BestMovies.Shared.Dtos.Movies;
 using BestMovies.WebApp.Helpers;
 using BestMovies.WebApp.Services;

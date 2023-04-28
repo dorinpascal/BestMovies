@@ -106,9 +106,9 @@ a, .btn-link {
     left: 7px;
     right: 7px;
     transition: transform 0.3s ease;
-    transform: translateX(0);
+    transform: translateY(0);
 }
-.card-overlay-footer:hover
-{
+.card-overlay-footer:hover {
     transform: translateY(-10px);
 }
+
