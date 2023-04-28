@@ -12,7 +12,7 @@
             for (var i = 0; i < SkeletonCardsCount; i++)
             {
                 <MudCard Outlined="true">
-                    <MudSkeleton SkeletonType="SkeletonType.Rectangle" Animation="Animation.Wave" Height="@CardHeight" Width="@CardWidth" />
+                    <MudSkeleton SkeletonType="SkeletonType.Rectangle" Animation="Animation.Wave" Height="@($"{CardHeight}px")" Width="@($"{CardWidth}px")" />
                 </MudCard>
             }
         }
@@ -28,8 +28,8 @@
 
 
 @code {
-        private const string CardHeight = "15rem";
-        private const string CardWidth = "20rem";
+        private const int CardHeight = 192;
+        private const int CardWidth = 320;
 
     [Parameter]
     public string? Title { get; set; } 
