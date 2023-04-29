@@ -33,17 +33,52 @@ public class MovieFunctions
     [OpenApiOperation(operationId: nameof(GetPopularMovies), tags: new[] { Tag })]
     [OpenApiParameter(name: "language", In = ParameterLocation.Query, Required = false, Type = typeof(string), Description = "The preferred **language** for the movies")]
     [OpenApiParameter(name: "region", In = ParameterLocation.Query, Required = false, Type = typeof(string), Description = "The preferred **region** for movies recommendation")]
+    [OpenApiParameter(name: "genre", In = ParameterLocation.Query, Required = false, Type = typeof(string), Description = "The **genre** to list the movies for")]
     [OpenApiResponseWithBody(statusCode: HttpStatusCode.OK, contentType: "application/json", bodyType: typeof(IEnumerable<SearchMovieDto>), Description = "Returns popular movies in the region.")]
     public async Task<IActionResult> GetPopularMovies(
         [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "movies")] HttpRequest req,
         ILogger log)
     {
-        var searchContainer = await _tmDbClient.GetMoviePopularListAsync(language: req.Query["language"], region: req.Query["region"]);
+
+        var region = req.Query["region"];
+        var language = req.Query["language"];
+        var genre = req.Query["genre"];
+        
+        if (genre.ToString() is not null)
+        {
+            return await GetPopularMoviesByGenre(genre, region, language);
+        }
+        
+        var searchContainer = await _tmDbClient.GetMoviePopularListAsync(language: language, region: region);
         var genres = await _tmDbClient.GetMovieGenresAsync();
         var moviesDtos = searchContainer.Results.Select(m => m.ToDto(genres));
         return new OkObjectResult(moviesDtos);
     }
-    
+
+    private async Task<IActionResult> GetPopularMoviesByGenre(
+        string genre,
+        string region,
+        string language)
+    {
+
+        var genres = await _tmDbClient.GetMovieGenresAsync();
+        var searchedGenre = genres.Find(g => g.Name.Equals(genre, StringComparison.InvariantCultureIgnoreCase));
+
+        if (searchedGenre is null)
+        {
+            return new NotFoundObjectResult("There is no genre with this name");
+        }
+
+        var searchedMovies = await _tmDbClient.DiscoverMoviesAsync()
+            .IncludeWithAllOfGenre(new[]{searchedGenre})
+            .WhereReleaseDateIsInRegion(region)
+            .WhereLanguageIs(language)
+            .Query();
+        var moviesDtos = searchedMovies.Results.Select(m => m.ToDto(genres));
+
+        return new OkObjectResult(moviesDtos);
+    }
+
     [FunctionName(nameof(SearchMovie))]
     [OpenApiOperation(operationId: nameof(SearchMovie), tags: new[] { Tag })]
     [OpenApiRequestBody("application/json", typeof(SearchParametersDto))]
@@ -75,7 +110,7 @@ public class MovieFunctions
             };
         }
     }
-    
+
     [FunctionName(nameof(GetMovieImage))]
     [OpenApiOperation(operationId: nameof(GetMovieImage), tags: new[] { Tag })]
     [OpenApiParameter(name: "id", In = ParameterLocation.Path, Required = true, Type = typeof(string), Description = "The movie id.")]
