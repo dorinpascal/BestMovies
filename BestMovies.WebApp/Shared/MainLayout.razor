@@ -26,10 +26,10 @@
     </MudAppBar>
     <MudMainContent>
         <MudContainer MaxWidth="MaxWidth.ExtraExtraLarge" Class="my-2">
-            @if (!string.IsNullOrEmpty(searchText) && searchedMovie?.Any() == true)
+            @if (!string.IsNullOrEmpty(searchText) && _searchedMovie?.Any())
             {
                 <MudContainer Class="d-flex flex-column gap-4 justify-center pa-4" MaxWidth="MaxWidth.ExtraExtraLarge">
-                    <MovieCardList Title="Searched Movies" Movies="searchedMovie" SkeletonCardsCount="5" />
+                    <MovieCardList Title="Searched Movies" Movies="_searchedMovie" SkeletonCardsCount="5" />
                 </MudContainer>
             }
             @Body
@@ -39,11 +39,11 @@
 
 @code {
     [Inject]
-    protected IMoviesRepository MoviesRepository { get; set; } = default!;
-    private IEnumerable<SearchMovieDto>? searchedMovie;
+    private IMoviesRepository MoviesRepository { get; set; } = default!;
+    private IEnumerable<SearchMovieDto>? _searchedMovie;
 
-    bool showSearch = false;
-    string searchText = "";
+    private bool showSearch = false;
+    private string searchText = "";
 
     private readonly MudTheme _theme = new()
         {
@@ -63,7 +63,7 @@
 
     private async Task OnSearch(string movieTitle)
     {
-        searchedMovie = await MoviesRepository.SearchMovie(movieTitle);
+        _searchedMovie = await MoviesRepository.SearchMovie(movieTitle);
         StateHasChanged();
     }
 }
