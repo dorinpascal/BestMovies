@@ -40,9 +40,7 @@ public class GenreFunctions
 
         //capitalize first letter of string to match API input
         genre = $"{genre.FirstOrDefault().ToString().ToUpper()}{genre[1..]}";
-        
         var genres = await _tmDbClient.GetMovieGenresAsync();
-        
         var searchedGenre = genres.Find(g => g.Name == genre);
 
         if (searchedGenre is null)
@@ -55,4 +53,18 @@ public class GenreFunctions
 
         return new OkObjectResult(moviesDtos);
     }
+
+    [FunctionName(nameof(GetGenreNames))]
+    [OpenApiOperation(operationId: nameof(GetGenreNames), tags: new[] { Tag })]
+    [OpenApiResponseWithBody(statusCode: HttpStatusCode.OK, contentType: "application/json", bodyType: typeof(IEnumerable<string>), Description = "Returns the names of all the available genres.")]
+    public async Task<IActionResult> GetGenreNames(
+        [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "genres")]
+        HttpRequest req,
+        ILogger log)
+    {
+        var genres = await _tmDbClient.GetMovieGenresAsync();
+        var genreNames = genres.Select(g => g.Name);
+        return new OkObjectResult(genreNames);
+    }
+    
 }
