@@ -1,30 +1,69 @@
 ﻿@inherits LayoutComponentBase
+@using BestMovies.Shared.Dtos.Movies;
+@using BestMovies.WebApp.Components
+@using BestMovies.WebApp.Pages
+@using BestMovies.WebApp.Repositories;
 
-<MudThemeProvider Theme="_theme"/>.
-<MudDialogProvider/>
-<MudSnackbarProvider/>
+<MudThemeProvider Theme="_theme" />.
+<MudDialogProvider />
+<MudSnackbarProvider />
 
 <MudLayout>
     <MudAppBar Elevation="1" Dense="true">
-        <MudText Typo="Typo.h5" Class="ml-3">BestMovies Inc.</MudText>
-        
-        <MudSpacer/>
-        <MudIcon Icon="@Icons.Material.Rounded.Person"/>
+        <MudText Typo="Typo.h5">BestMovies Inc.</MudText>
+
+        <MudSpacer />
+        <MudIconButton Icon="@Icons.Material.Filled.Search" Color="Color.Info"
+                       Class="mr-2" @onclick="ToggleSearch" />
+        <div class="search-field">
+            @if (showSearch)
+            {
+                <input type="text" @bind-value="@searchText" placeholder="Search">
+            }
+            <button @onclick="ToggleSearch" ><i class="fa fa-search"></i></button>
+        </div>
+        <MudIcon Icon="@Icons.Material.Rounded.Person" />
     </MudAppBar>
     <MudMainContent>
         <MudContainer MaxWidth="MaxWidth.ExtraExtraLarge" Class="my-2">
+            @if (!string.IsNullOrEmpty(searchText) && searchedMovie?.Any() == true)
+            {
+                <MudContainer Class="d-flex flex-column gap-4 justify-center pa-4" MaxWidth="MaxWidth.ExtraExtraLarge">
+                    <MovieCardList Title="Searched Movies" Movies="searchedMovie" SkeletonCardsCount="5" />
+                </MudContainer>
+            }
             @Body
         </MudContainer>
     </MudMainContent>
 </MudLayout>
 
 @code {
+    [Inject]
+    protected IMoviesRepository MoviesRepository { get; set; } = default!;
+    private IEnumerable<SearchMovieDto>? searchedMovie;
+
+    bool showSearch = false;
+    string searchText = "";
+
     private readonly MudTheme _theme = new()
-    {
-        Palette = new PaletteLight
         {
-            Primary = "#122b47",
-            AppbarBackground = "#122b4f"
-        }
-    };
+            Palette = new PaletteLight
+            {
+                Primary = "#122b47",
+                AppbarBackground = "#122b4f"
+            }
+        };
+
+    private async Task ToggleSearch()
+    {
+        showSearch = !showSearch;
+        if (!showSearch) await OnSearch(searchText);
+    }
+
+
+    private async Task OnSearch(string movieTitle)
+    {
+        searchedMovie = await MoviesRepository.SearchMovie(movieTitle);
+        StateHasChanged();
+    }
 }

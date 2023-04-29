@@ -2,6 +2,10 @@ using BestMovies.Shared.Dtos.Movies;
 using BestMovies.WebApp.Helpers;
 using BestMovies.WebApp.Services;
 using Microsoft.AspNetCore.WebUtilities;
+using System;
+using System.Net.Http.Json;
+using System.Text.Json;
+using System.Text;
 
 namespace BestMovies.WebApp.Repositories;
 
@@ -33,6 +37,21 @@ public class MoviesRepository : IMoviesRepository
         }
         
         var dtos = await HttpClientHelper.ReadFromJsonSafe<IEnumerable<SearchMovieDto>>(response);
+        return dtos ?? Enumerable.Empty<SearchMovieDto>();
+    }
+
+    public async Task<IEnumerable<SearchMovieDto>> SearchMovie(string movieTitle)
+    {
+        var parameters = new SearchParametersDto(movieTitle);
+        string str = JsonSerializer.Serialize(parameters);
+        HttpContent content = new StringContent(str, Encoding.UTF8, "application/json");
+        HttpResponseMessage responseMessage = await _client.PostAsync("/api/movies/discovery", content);
+        if (!responseMessage.IsSuccessStatusCode)
+        {
+            return Enumerable.Empty<SearchMovieDto>();
+        }
+
+        var dtos = await HttpClientHelper.ReadFromJsonSafe<IEnumerable<SearchMovieDto>>(responseMessage);
         return dtos ?? Enumerable.Empty<SearchMovieDto>();
     }
 }
