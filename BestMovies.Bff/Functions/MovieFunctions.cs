@@ -44,7 +44,6 @@ public class MovieFunctions
         return new OkObjectResult(moviesDtos);
     }
     
-
     [FunctionName(nameof(SearchMovie))]
     [OpenApiOperation(operationId: nameof(SearchMovie), tags: new[] { Tag })]
     [OpenApiRequestBody("application/json", typeof(SearchParametersDto))]
