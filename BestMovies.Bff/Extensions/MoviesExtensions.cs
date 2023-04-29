@@ -12,7 +12,6 @@ public static class MoviesExtensions
         new(
             Id: searchMovie.Id,
             Title: searchMovie.Title,
-            PosterPath: searchMovie.PosterPath,
             Genres: searchMovie.GenreIds.Select(id => genres.First(g => g.Id == id).Name)
         );
 }

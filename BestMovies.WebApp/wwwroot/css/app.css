@@ -99,3 +99,16 @@ a, .btn-link {
     .loading-progress-text:after {
         content: var(--blazor-load-percentage-text, "Loading");
     }
+    
+.card-overlay-footer {
+    position: absolute;
+    bottom: 7px;
+    left: 7px;
+    right: 7px;
+    transition: transform 0.3s ease;
+    transform: translateY(0);
+}
+.card-overlay-footer:hover {
+    transform: translateY(-10px);
+}
+

@@ -39,12 +39,10 @@ public class MovieFunctions
         ILogger log)
     {
         var searchContainer = await _tmDbClient.GetMoviePopularListAsync(language: req.Query["language"], region: req.Query["region"]);
-
         var genres = await _tmDbClient.GetMovieGenresAsync();
         var moviesDtos = searchContainer.Results.Select(m => m.ToDto(genres));
         return new OkObjectResult(moviesDtos);
     }
-
 
     [FunctionName(nameof(SearchMovie))]
     [OpenApiOperation(operationId: nameof(SearchMovie), tags: new[] { Tag })]
@@ -76,5 +74,37 @@ public class MovieFunctions
                 Content = ex.Message
             };
         }
+    }
+    
+    [FunctionName(nameof(GetMovieImage))]
+    [OpenApiOperation(operationId: nameof(GetMovieImage), tags: new[] { Tag })]
+    [OpenApiParameter(name: "id", In = ParameterLocation.Path, Required = true, Type = typeof(string), Description = "The movie id.")]
+    [OpenApiParameter(name: "size", In = ParameterLocation.Query, Required = false, Type = typeof(string), Description = "The size for the image.")]
+    [OpenApiResponseWithBody(statusCode: HttpStatusCode.OK, contentType: "image/jpg", bodyType: typeof(byte[]), Description = "Returns movie image.")]
+    public async Task<IActionResult> GetMovieImage(
+        [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "movies/{id:int}/image")] HttpRequest req,
+        int id,
+        ILogger log)
+    {
+        string size = req.Query["size"];
+        size ??= "original";
+        
+        var config = await _tmDbClient.GetConfigAsync();
+        if (!config.Images.BackdropSizes.Contains(size))
+        {
+            return new BadRequestObjectResult($"Please provide a valid size. Available sizes: {string.Join(",", config.Images.BackdropSizes)}");
+        }
+
+        var movieImagePaths = await _tmDbClient.GetMovieImagesAsync(id);
+
+        var bestImage = movieImagePaths?.Backdrops.MaxBy(x => x.VoteAverage);
+        if (bestImage is null)
+        {
+            return new NotFoundObjectResult($"Can not find image for the movie with id {id}");
+        }
+        
+        var imageBytes = await _tmDbClient.GetImageBytesAsync(size, bestImage.FilePath);
+        
+        return new FileContentResult(imageBytes, "image/jpg");
     }
 }
