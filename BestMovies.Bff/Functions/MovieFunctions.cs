@@ -43,7 +43,7 @@ public class MovieFunctions
         var moviesDtos = searchContainer.Results.Select(m => m.ToDto(genres));
         return new OkObjectResult(moviesDtos);
     }
-
+    
     [FunctionName(nameof(SearchMovie))]
     [OpenApiOperation(operationId: nameof(SearchMovie), tags: new[] { Tag })]
     [OpenApiRequestBody("application/json", typeof(SearchParametersDto))]
