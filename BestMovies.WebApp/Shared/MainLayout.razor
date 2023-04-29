@@ -26,7 +26,7 @@
     </MudAppBar>
     <MudMainContent>
         <MudContainer MaxWidth="MaxWidth.ExtraExtraLarge" Class="my-2">
-            @if (!string.IsNullOrEmpty(searchText) && _searchedMovie?.Any())
+            @if (!string.IsNullOrEmpty(searchText) && _searchedMovie?.Any() == true)
             {
                 <MudContainer Class="d-flex flex-column gap-4 justify-center pa-4" MaxWidth="MaxWidth.ExtraExtraLarge">
                     <MovieCardList Title="Searched Movies" Movies="_searchedMovie" SkeletonCardsCount="5" />
