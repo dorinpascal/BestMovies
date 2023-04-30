@@ -1,8 +1,8 @@
 name: Best Movies Azure Static Web Apps CI/CD Pipeline
 
 env:
-  APP_LOCATION: "./BestMovies.Bff/output/BestMovies.WebApp" # location of your client code
-  API_LOCATION: "./BestMovies.Bff/output/BestMovies.Bff"    # location of your api source code - optional
+  APP_LOCATION: "./output/BestMovies.WebApp" # location of your client code
+  API_LOCATION: "./output/BestMovies.Bff"    # location of your api source code - optional
   OUTPUT_LOCATION: "wwwroot"        # location of client code build output
   DOTNET_VERSION: '6.0.x'
   OUTPUT_PATH: './BestMovies.Bff/output'
