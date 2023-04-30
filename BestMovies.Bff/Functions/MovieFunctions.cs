@@ -14,6 +14,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json;
 using TMDbLib.Client;
+using TMDbLib.Objects.General;
 
 namespace BestMovies.Bff.Functions;
 
@@ -27,7 +28,7 @@ public class MovieFunctions
     {
         _tmdbApiWrapper = tmdbApiWrapper;
     }
-    
+
     [FunctionName(nameof(GetPopularMovies))]
     [OpenApiOperation(operationId: nameof(GetPopularMovies), tags: new[] { Tag })]
     [OpenApiParameter(name: "language", In = ParameterLocation.Query, Required = false, Type = typeof(string), Description = "The preferred **language** for the movies")]
@@ -35,16 +36,27 @@ public class MovieFunctions
     [OpenApiParameter(name: "genre", In = ParameterLocation.Query, Required = false, Type = typeof(string), Description = "The **genre** to list the movies for")]
     [OpenApiResponseWithBody(statusCode: HttpStatusCode.OK, contentType: "application/json", bodyType: typeof(IEnumerable<SearchMovieDto>), Description = "Returns popular movies in the region.")]
     public async Task<IActionResult> GetPopularMovies(
-        [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "movies")]
+         [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "movies")]
         HttpRequest req,
-        ILogger log)
+         ILogger log)
     {
-        var searchContainer = await _tmDbClient.GetMoviePopularListAsync(language: req.Query["language"], region: req.Query["region"]);
-        var genres = await _tmDbClient.GetMovieGenresAsync();
-        var moviesDtos = searchContainer.Results.Select(m => m.ToDto(genres));
+        var region = req.Query["region"];
+        var language = req.Query["language"];
+        var genre = req.Query["genre"];
+        IEnumerable<SearchMovieDto>? moviesDtos;
+        if (genre.ToString() is not null)
+        {
+            moviesDtos = await _tmdbApiWrapper.GetPopularMovies(genre, region:region, language: language);
+        }
+        else
+        {
+            moviesDtos = await _tmdbApiWrapper.GetPopularMovies(region: region, language: language);
+        }
+
         return new OkObjectResult(moviesDtos);
     }
-    
+
+
     [FunctionName(nameof(SearchMovie))]
     [OpenApiOperation(operationId: nameof(SearchMovie), tags: new[] { Tag })]
     [OpenApiRequestBody("application/json", typeof(SearchParametersDto))]
@@ -98,3 +110,5 @@ public class MovieFunctions
         }  
     }
 }
+
+

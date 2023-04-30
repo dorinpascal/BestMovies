@@ -1,12 +1,14 @@
 ﻿using BestMovies.Bff.Extensions;
 using BestMovies.Bff.Interface;
 using BestMovies.Shared.Dtos.Movies;
+using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using TMDbLib.Client;
 using TMDbLib.Objects.Exceptions;
+using TMDbLib.Objects.General;
 
 namespace BestMovies.Bff.Service;
 
@@ -41,11 +43,33 @@ public class TmdbApiWrapperService : ITmdbApiWrapper
         return await _tmDbClient.GetImageBytesAsync(size, bestImage.FilePath);
     }
 
-    public async Task<IEnumerable<SearchMovieDto>> GetPopularMovies(string? language = null, string? region = null)
+    public async Task<IEnumerable<SearchMovieDto>> GetPopularMovies(string? genre =null, string? language = null, string? region = null)
     {
-        var searchContainer = await _tmDbClient.GetMoviePopularListAsync(language: language, region:region);
         var genres = await _tmDbClient.GetMovieGenresAsync();
-        return searchContainer.Results.Select(m => m.ToDto(genres));
+        IEnumerable<SearchMovieDto>? moviesDtos;
+
+        if (genre is not null)
+        {
+            var searchedGenre = genres.Find(g => g.Name.Equals(genre, StringComparison.InvariantCultureIgnoreCase));
+
+            if (searchedGenre is null)
+            {
+                throw new NotFoundException(new TMDbStatusMessage()
+                {
+                    StatusCode = 404,
+                    StatusMessage = "There is no genre with this name"
+                });
+            }
+
+            moviesDtos = await GetPopularMoviesByGenre(genres, searchedGenre, region, language);
+        }
+        else
+        {
+            var searchContainer = await _tmDbClient.GetMoviePopularListAsync(language: language, region: region);
+            genres = await _tmDbClient.GetMovieGenresAsync();
+            moviesDtos = searchContainer.Results.Select(m => m.ToDto(genres));
+        }
+        return moviesDtos;
     }
 
     public async Task<IEnumerable<SearchMovieDto>> SearchMovie(string movieTitle)
@@ -54,4 +78,21 @@ public class TmdbApiWrapperService : ITmdbApiWrapper
         var genres = await _tmDbClient.GetMovieGenresAsync();
         return  searchedMovies.Results.Select(m => m.ToDto(genres));
     }
+
+    private async Task<IEnumerable<SearchMovieDto>> GetPopularMoviesByGenre(
+        IEnumerable<Genre> allGenres,
+        Genre genre,
+        string? region,
+        string? language)
+    {
+        var searchedMovies = await _tmDbClient.DiscoverMoviesAsync()
+            .IncludeWithAllOfGenre(new[] { genre })
+            .WhereReleaseDateIsInRegion(region)
+            .WhereLanguageIs(language)
+            .Query();
+        var moviesDtos = searchedMovies.Results.Select(m => m.ToDto(allGenres));
+
+        return moviesDtos;
+    }
+
 }
