@@ -1,8 +1,8 @@
 ﻿using BestMovies.Bff.Functions;
-using BestMovies.Api.Test.Helpers;
 using BestMovies.Bff.Interface;
+using BestMovies.Bff.Test.Helpers;
 
-namespace BestMovies.Api.Test.MoviesFunctionTest.SearchMovieEndpointTest;
+namespace BestMovies.Bff.Test.MoviesFunctionTest.SearchMovieEndpointTest;
 
 public class BodyParametersTest
 {
