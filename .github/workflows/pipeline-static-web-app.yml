@@ -37,7 +37,7 @@ jobs:
     needs: build
     steps:
       - name: Print root directory contents
-        run: ls -la
+        run: pwd
       - name: Deploy
         uses: Azure/static-web-apps-deploy@v1
         with:
