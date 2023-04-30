@@ -4,6 +4,8 @@ env:
   APP_LOCATION: "BestMovies.WebApp" # location of your client code
   API_LOCATION: "BestMovies.Bff"    # location of your api source code - optional
   OUTPUT_LOCATION: "wwwroot"        # location of client code build output
+  DOTNET_VERSION: '6.0.x'
+  OUTPUT_PATH: './BestMovies.Bff/output'
 
 on:
   push:
@@ -12,16 +14,34 @@ on:
   workflow_dispatch:
 
 jobs:
-  build_and_deploy:
+  build:
     runs-on: ubuntu-latest
-    name: Build and Deploy
+    name: Build
+    steps:
+      - name: 'Checkout GitHub Action'
+        uses: actions/checkout@v3
+
+      - name: Setup .NET Core SDK
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: Build
+        run: dotnet build './BestMovies.Bff/BestMovies.Bff.csproj' 
+       
+      - name: Test
+        run: dotnet test './BestMovies.Bff.Test/BestMovies.Bff.Test.csproj' --no-restore --verbosity normal
+  deploy:
+    runs-on: ubuntu-latest
+    name: Deploy
+    needs: build
     steps:
       - uses: actions/checkout@v3
         with:
           submodules: true
       - name: Print root directory contents
         run: pwd
-      - name: Build And Deploy
+      - name: Deploy
         uses: Azure/static-web-apps-deploy@v1
         with:
           azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
