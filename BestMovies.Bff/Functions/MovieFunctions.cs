@@ -1,10 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
-using BestMovies.Bff.Extensions;
+using BestMovies.Bff.Interface;
 using BestMovies.Shared.Dtos.Movies;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -14,7 +13,6 @@ using Microsoft.Azure.WebJobs.Extensions.OpenApi.Core.Attributes;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json;
-using TMDbLib.Client;
 
 namespace BestMovies.Bff.Functions;
 
@@ -22,11 +20,11 @@ public class MovieFunctions
 {
     private const string Tag = "Movies";
     
-    private readonly TMDbClient _tmDbClient;
+    private readonly ITmdbApiWrapper _tmdbApiWrapper;
 
-    public MovieFunctions(TMDbClient tmDbClient)
+    public MovieFunctions(ITmdbApiWrapper tmdbApiWrapper)
     {
-        _tmDbClient = tmDbClient;
+        _tmdbApiWrapper = tmdbApiWrapper;
     }
     
     [FunctionName(nameof(GetPopularMovies))]
@@ -38,12 +36,11 @@ public class MovieFunctions
         [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "movies")] HttpRequest req,
         ILogger log)
     {
-        var searchContainer = await _tmDbClient.GetMoviePopularListAsync(language: req.Query["language"], region: req.Query["region"]);
-        var genres = await _tmDbClient.GetMovieGenresAsync();
-        var moviesDtos = searchContainer.Results.Select(m => m.ToDto(genres));
+        var moviesDtos = await _tmdbApiWrapper.GetPopularMovies(language: req.Query["language"], region: req.Query["region"]);
         return new OkObjectResult(moviesDtos);
     }
     
+
     [FunctionName(nameof(SearchMovie))]
     [OpenApiOperation(operationId: nameof(SearchMovie), tags: new[] { Tag })]
     [OpenApiRequestBody("application/json", typeof(SearchParametersDto))]
@@ -54,14 +51,12 @@ public class MovieFunctions
         var searchedMovie = JsonConvert.DeserializeObject<SearchParametersDto>(await new StreamReader(req.Body).ReadToEndAsync());
         if (searchedMovie is null)
         {
+            log.LogInformation("Search paramteres were not provided");
             return new BadRequestObjectResult("Please provide search params");
         }
         try
         {
-            var searchedMovies = await _tmDbClient.SearchMovieAsync(searchedMovie.SearchedByTitle);
-            var genres = await _tmDbClient.GetMovieGenresAsync();
-            var movies = searchedMovies.Results.Select(m => m.ToDto(genres));
-
+            var movies = await _tmdbApiWrapper.SearchMovie(searchedMovie.SearchedByTitle);
             log.LogInformation("Successfully retrieved list of searched movies");
             return new OkObjectResult(movies);
         }
@@ -86,25 +81,16 @@ public class MovieFunctions
         int id,
         ILogger log)
     {
-        string size = req.Query["size"];
-        size ??= "original";
-        
-        var config = await _tmDbClient.GetConfigAsync();
-        if (!config.Images.BackdropSizes.Contains(size))
+        try
         {
-            return new BadRequestObjectResult($"Please provide a valid size. Available sizes: {string.Join(",", config.Images.BackdropSizes)}");
+            string size = req.Query["size"];
+            size ??= "original";
+            var imageBytes = await _tmdbApiWrapper.GetImageBytes(size, id);
+            return new FileContentResult(imageBytes, "image/jpg");
         }
-
-        var movieImagePaths = await _tmDbClient.GetMovieImagesAsync(id);
-
-        var bestImage = movieImagePaths?.Backdrops.MaxBy(x => x.VoteAverage);
-        if (bestImage is null)
+        catch(Exception ex)
         {
-            return new NotFoundObjectResult($"Can not find image for the movie with id {id}");
-        }
-        
-        var imageBytes = await _tmDbClient.GetImageBytesAsync(size, bestImage.FilePath);
-        
-        return new FileContentResult(imageBytes, "image/jpg");
+            throw new Exception(ex.Message);
+        }  
     }
 }
