@@ -27,7 +27,7 @@ jobs:
           dotnet-version: ${{ env.DOTNET_VERSION }}
 
       - name: Install dependencies
-        run: dotnet restore './BestMovies.Api/BestMovies.Bff.Test.csproj'
+        run: dotnet restore './BestMovies.Api/BestMovies.Bff.csproj'
 
       - name: Build
         run: dotnet publish './BestMovies.Api/BestMovies.Bff.csproj' --configuration Release --output ${{ env.OUTPUT_PATH }}
@@ -45,7 +45,7 @@ jobs:
     runs-on: ubuntu-latest
     name: Deploy
     steps:
-      - name: Build And Deploy
+      - name: Deploy
         uses: Azure/static-web-apps-deploy@v1
         with:
           azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
