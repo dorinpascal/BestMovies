@@ -23,6 +23,13 @@ jobs:
 
     - name: Build
       run: dotnet publish './BestMovies.Api/BestMovies.Api.csproj' --configuration Release --output ${{ env.OUTPUT_PATH }}
+      
+    - name: Publish Artifact
+      uses: actions/upload-artifact@v2
+      with:
+        name: artifact
+        path: ${{ env.OUTPUT_PATH }}
+    
   deploy:
     needs: build
     runs-on: ubuntu-latest
