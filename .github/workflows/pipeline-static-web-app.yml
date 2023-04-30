@@ -25,10 +25,6 @@ jobs:
         uses: actions/setup-dotnet@v1
         with:
           dotnet-version: ${{ env.DOTNET_VERSION }}
-
-      - name: Install dependencies
-        run: dotnet restore './BestMovies.Api/BestMovies.Bff.csproj'
-
       - name: Build
         run: dotnet publish './BestMovies.Api/BestMovies.Bff.csproj' --configuration Release --output ${{ env.OUTPUT_PATH }}
         
@@ -51,7 +47,7 @@ jobs:
         with:
           name: artifact
           path: ${{ env.OUTPUT_PATH }}
-          
+
       - name: Deploy
         uses: Azure/static-web-apps-deploy@v1
         with:
