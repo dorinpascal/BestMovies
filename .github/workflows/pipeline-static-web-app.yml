@@ -37,7 +37,7 @@ jobs:
         with:
           name: artifact
           path: ${{ env.OUTPUT_PATH }}
-
+      
   deploy:
     runs-on: ubuntu-latest
     name: Deploy
