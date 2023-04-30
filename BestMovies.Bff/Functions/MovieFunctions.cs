@@ -13,6 +13,7 @@ using Microsoft.Azure.WebJobs.Extensions.OpenApi.Core.Attributes;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json;
+using TMDbLib.Client;
 
 namespace BestMovies.Bff.Functions;
 
@@ -31,16 +32,19 @@ public class MovieFunctions
     [OpenApiOperation(operationId: nameof(GetPopularMovies), tags: new[] { Tag })]
     [OpenApiParameter(name: "language", In = ParameterLocation.Query, Required = false, Type = typeof(string), Description = "The preferred **language** for the movies")]
     [OpenApiParameter(name: "region", In = ParameterLocation.Query, Required = false, Type = typeof(string), Description = "The preferred **region** for movies recommendation")]
+    [OpenApiParameter(name: "genre", In = ParameterLocation.Query, Required = false, Type = typeof(string), Description = "The **genre** to list the movies for")]
     [OpenApiResponseWithBody(statusCode: HttpStatusCode.OK, contentType: "application/json", bodyType: typeof(IEnumerable<SearchMovieDto>), Description = "Returns popular movies in the region.")]
     public async Task<IActionResult> GetPopularMovies(
-        [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "movies")] HttpRequest req,
+        [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "movies")]
+        HttpRequest req,
         ILogger log)
     {
-        var moviesDtos = await _tmdbApiWrapper.GetPopularMovies(language: req.Query["language"], region: req.Query["region"]);
+        var searchContainer = await _tmDbClient.GetMoviePopularListAsync(language: req.Query["language"], region: req.Query["region"]);
+        var genres = await _tmDbClient.GetMovieGenresAsync();
+        var moviesDtos = searchContainer.Results.Select(m => m.ToDto(genres));
         return new OkObjectResult(moviesDtos);
     }
     
-
     [FunctionName(nameof(SearchMovie))]
     [OpenApiOperation(operationId: nameof(SearchMovie), tags: new[] { Tag })]
     [OpenApiRequestBody("application/json", typeof(SearchParametersDto))]
@@ -70,7 +74,7 @@ public class MovieFunctions
             };
         }
     }
-    
+
     [FunctionName(nameof(GetMovieImage))]
     [OpenApiOperation(operationId: nameof(GetMovieImage), tags: new[] { Tag })]
     [OpenApiParameter(name: "id", In = ParameterLocation.Path, Required = true, Type = typeof(string), Description = "The movie id.")]
