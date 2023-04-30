@@ -16,23 +16,6 @@ jobs:
     runs-on: ubuntu-latest
     name: Build and Deploy
     steps:
-      - name: Install xunit.runner.console
-        run: dotnet tool install -g xunit.runner.console
-
-      - name: Run unit tests
-        run: dotnet test './BestMovies.Api.Test/BestMovies.Api.Test.csproj' --logger:xunit --collect:"XPlat Code Coverage"
-
-      - name: Upload test results
-        uses: actions/upload-artifact@v2
-        with:
-          name: test-results
-          path: testresults.xml 
-
-      - name: Publish Artifact
-        uses: actions/upload-artifact@v2
-        with:
-          name: artifact
-          path: ${{ env.OUTPUT_PATH }}
       - uses: actions/checkout@v3
         with:
           submodules: true
