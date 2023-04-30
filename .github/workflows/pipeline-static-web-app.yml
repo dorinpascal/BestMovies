@@ -31,24 +31,11 @@ jobs:
        
       - name: Test
         run: dotnet test './BestMovies.Bff.Test/BestMovies.Bff.Test.csproj' --no-restore --verbosity normal
-
-      - name: Publish Artifact
-        uses: actions/upload-artifact@v2
-        with:
-          name: artifact
-          path: ${{ env.OUTPUT_PATH }}
-      
   deploy:
     runs-on: ubuntu-latest
     name: Deploy
     needs: build
     steps:
-      - name: Download Artifact
-        uses: actions/download-artifact@v2
-        with:
-          name: artifact
-          path: ${{ env.OUTPUT_PATH }}
-
       - name: Deploy
         uses: Azure/static-web-apps-deploy@v1
         with:
