@@ -15,6 +15,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json;
 using TMDbLib.Client;
+using TMDbLib.Objects.General;
 
 namespace BestMovies.Bff.Functions;
 
@@ -36,47 +37,51 @@ public class MovieFunctions
     [OpenApiParameter(name: "genre", In = ParameterLocation.Query, Required = false, Type = typeof(string), Description = "The **genre** to list the movies for")]
     [OpenApiResponseWithBody(statusCode: HttpStatusCode.OK, contentType: "application/json", bodyType: typeof(IEnumerable<SearchMovieDto>), Description = "Returns popular movies in the region.")]
     public async Task<IActionResult> GetPopularMovies(
-        [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "movies")] HttpRequest req,
+        [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "movies")]
+        HttpRequest req,
         ILogger log)
     {
-
         var region = req.Query["region"];
         var language = req.Query["language"];
         var genre = req.Query["genre"];
-        
+        var genres = await _tmDbClient.GetMovieGenresAsync();
+
+        IEnumerable<SearchMovieDto>? moviesDtos;
+
         if (genre.ToString() is not null)
         {
-            return await GetPopularMoviesByGenre(genre, region, language);
+            var searchedGenre = genres.Find(g => g.Name.Equals(genre, StringComparison.InvariantCultureIgnoreCase));
+
+            if (searchedGenre is null)
+            {
+                return new NotFoundObjectResult("There is no genre with this name");
+            }
+
+            moviesDtos = await GetPopularMoviesByGenre(genres, searchedGenre, region, language);
+        }
+        else
+        {
+            var searchContainer = await _tmDbClient.GetMoviePopularListAsync(language: language, region: region);
+            moviesDtos = searchContainer.Results.Select(m => m.ToDto(genres));
         }
         
-        var searchContainer = await _tmDbClient.GetMoviePopularListAsync(language: language, region: region);
-        var genres = await _tmDbClient.GetMovieGenresAsync();
-        var moviesDtos = searchContainer.Results.Select(m => m.ToDto(genres));
         return new OkObjectResult(moviesDtos);
     }
 
-    private async Task<IActionResult> GetPopularMoviesByGenre(
-        string genre,
+    private async Task<IEnumerable<SearchMovieDto>> GetPopularMoviesByGenre(
+        IEnumerable<Genre> allGenres,
+        Genre genre,
         string region,
         string language)
     {
-
-        var genres = await _tmDbClient.GetMovieGenresAsync();
-        var searchedGenre = genres.Find(g => g.Name.Equals(genre, StringComparison.InvariantCultureIgnoreCase));
-
-        if (searchedGenre is null)
-        {
-            return new NotFoundObjectResult("There is no genre with this name");
-        }
-
         var searchedMovies = await _tmDbClient.DiscoverMoviesAsync()
-            .IncludeWithAllOfGenre(new[]{searchedGenre})
+            .IncludeWithAllOfGenre(new[] {genre})
             .WhereReleaseDateIsInRegion(region)
             .WhereLanguageIs(language)
             .Query();
-        var moviesDtos = searchedMovies.Results.Select(m => m.ToDto(genres));
+        var moviesDtos = searchedMovies.Results.Select(m => m.ToDto(allGenres));
 
-        return new OkObjectResult(moviesDtos);
+        return moviesDtos;
     }
 
     [FunctionName(nameof(SearchMovie))]
