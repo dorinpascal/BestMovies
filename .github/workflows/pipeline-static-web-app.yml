@@ -42,4 +42,4 @@ jobs:
           app_location: ${{ env.APP_LOCATION }}
           api_location: ${{ env.API_LOCATION }}
           app_artifact_location: ${{ env.OUTPUT_LOCATION }}
-          dotnet-version: ${{ env.DOTNET_VERSION }}
+          
