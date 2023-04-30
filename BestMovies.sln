@@ -1,18 +1,25 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BestMovies.Bff", "BestMovies.Bff\BestMovies.Bff.csproj", "{91E9F561-D8AC-4860-9043-F971950F31B1}"
+# Visual Studio Version 17
+VisualStudioVersion = 17.5.33414.496
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BestMovies.Bff", "BestMovies.Bff\BestMovies.Bff.csproj", "{91E9F561-D8AC-4860-9043-F971950F31B1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BestMovies.Api", "BestMovies.Api\BestMovies.Api.csproj", "{559BA178-F3D3-4E63-9E61-18664894717C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BestMovies.Api", "BestMovies.Api\BestMovies.Api.csproj", "{559BA178-F3D3-4E63-9E61-18664894717C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BestMovies.WebApp", "BestMovies.WebApp\BestMovies.WebApp.csproj", "{47FA9BCC-C5D6-43DF-8935-6B002098E0D3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BestMovies.WebApp", "BestMovies.WebApp\BestMovies.WebApp.csproj", "{47FA9BCC-C5D6-43DF-8935-6B002098E0D3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BestMovies.Shared", "BestMovies.Shared\BestMovies.Shared.csproj", "{224A10E6-036D-4768-99AA-58EEC464E1CF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BestMovies.Shared", "BestMovies.Shared\BestMovies.Shared.csproj", "{224A10E6-036D-4768-99AA-58EEC464E1CF}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Functions", "Functions", "{E68CB21C-D735-426B-B93D-256FD813B9AE}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Web", "Web", "{95593C7A-F100-4857-93D0-0728C328E2A1}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Shared", "Shared", "{B1E99CAA-95E7-419A-9AFD-F28E55C42744}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Test", "Test", "{CB00C9E5-1033-4600-9BAE-85043F3E7B52}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BestMovies.Api.Test", "BestMovies.Api.Test\BestMovies.Api.Test.csproj", "{9A1CEEE5-15A6-491A-B281-380B41A27631}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -36,11 +43,19 @@ Global
 		{224A10E6-036D-4768-99AA-58EEC464E1CF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{224A10E6-036D-4768-99AA-58EEC464E1CF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{224A10E6-036D-4768-99AA-58EEC464E1CF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9A1CEEE5-15A6-491A-B281-380B41A27631}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9A1CEEE5-15A6-491A-B281-380B41A27631}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9A1CEEE5-15A6-491A-B281-380B41A27631}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9A1CEEE5-15A6-491A-B281-380B41A27631}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{91E9F561-D8AC-4860-9043-F971950F31B1} = {E68CB21C-D735-426B-B93D-256FD813B9AE}
 		{559BA178-F3D3-4E63-9E61-18664894717C} = {E68CB21C-D735-426B-B93D-256FD813B9AE}
 		{47FA9BCC-C5D6-43DF-8935-6B002098E0D3} = {95593C7A-F100-4857-93D0-0728C328E2A1}
 		{224A10E6-036D-4768-99AA-58EEC464E1CF} = {B1E99CAA-95E7-419A-9AFD-F28E55C42744}
+		{9A1CEEE5-15A6-491A-B281-380B41A27631} = {CB00C9E5-1033-4600-9BAE-85043F3E7B52}
 	EndGlobalSection
 EndGlobal

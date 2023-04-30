@@ -1,10 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
-using BestMovies.Bff.Extensions;
+using BestMovies.Bff.Interface;
+using BestMovies.Shared.CustomExceptions;
 using BestMovies.Shared.Dtos.Movies;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -14,8 +14,6 @@ using Microsoft.Azure.WebJobs.Extensions.OpenApi.Core.Attributes;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json;
-using TMDbLib.Client;
-using TMDbLib.Objects.General;
 
 namespace BestMovies.Bff.Functions;
 
@@ -23,13 +21,13 @@ public class MovieFunctions
 {
     private const string Tag = "Movies";
     
-    private readonly TMDbClient _tmDbClient;
+    private readonly IMovieService _tmdbApiWrapper;
 
-    public MovieFunctions(TMDbClient tmDbClient)
+    public MovieFunctions(IMovieService tmdbApiWrapper)
     {
-        _tmDbClient = tmDbClient;
+        _tmdbApiWrapper = tmdbApiWrapper;
     }
-    
+
     [FunctionName(nameof(GetPopularMovies))]
     [OpenApiOperation(operationId: nameof(GetPopularMovies), tags: new[] { Tag })]
     [OpenApiParameter(name: "language", In = ParameterLocation.Query, Required = false, Type = typeof(string), Description = "The preferred **language** for the movies")]
@@ -37,52 +35,38 @@ public class MovieFunctions
     [OpenApiParameter(name: "genre", In = ParameterLocation.Query, Required = false, Type = typeof(string), Description = "The **genre** to list the movies for")]
     [OpenApiResponseWithBody(statusCode: HttpStatusCode.OK, contentType: "application/json", bodyType: typeof(IEnumerable<SearchMovieDto>), Description = "Returns popular movies in the region.")]
     public async Task<IActionResult> GetPopularMovies(
-        [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "movies")]
+         [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "movies")]
         HttpRequest req,
-        ILogger log)
+         ILogger log)
     {
-        var region = req.Query["region"];
-        var language = req.Query["language"];
-        var genre = req.Query["genre"];
-        var genres = await _tmDbClient.GetMovieGenresAsync();
-
-        IEnumerable<SearchMovieDto>? moviesDtos;
-
-        if (genre.ToString() is not null)
+        try
         {
-            var searchedGenre = genres.Find(g => g.Name.Equals(genre, StringComparison.InvariantCultureIgnoreCase));
-
-            if (searchedGenre is null)
+            var region = req.Query["region"];
+            var language = req.Query["language"];
+            var genre = req.Query["genre"];
+            IEnumerable<SearchMovieDto>? moviesDtos;
+            moviesDtos = await _tmdbApiWrapper.GetPopularMovies(genre, region: region, language: language);
+            return new OkObjectResult(moviesDtos);
+        }
+        catch (NotFoundException ex)
+        {
+            return new ContentResult
             {
-                return new NotFoundObjectResult("There is no genre with this name");
-            }
-
-            moviesDtos = await GetPopularMoviesByGenre(genres, searchedGenre, region, language);
+                StatusCode = 404,
+                Content = ex.Message
+            };
         }
-        else
+        catch (Exception ex)
         {
-            var searchContainer = await _tmDbClient.GetMoviePopularListAsync(language: language, region: region);
-            moviesDtos = searchContainer.Results.Select(m => m.ToDto(genres));
+            return new ContentResult
+            {
+                StatusCode = 500,
+                Content = ex.Message
+            };
         }
-        
-        return new OkObjectResult(moviesDtos);
+
     }
 
-    private async Task<IEnumerable<SearchMovieDto>> GetPopularMoviesByGenre(
-        IEnumerable<Genre> allGenres,
-        Genre genre,
-        string region,
-        string language)
-    {
-        var searchedMovies = await _tmDbClient.DiscoverMoviesAsync()
-            .IncludeWithAllOfGenre(new[] {genre})
-            .WhereReleaseDateIsInRegion(region)
-            .WhereLanguageIs(language)
-            .Query();
-        var moviesDtos = searchedMovies.Results.Select(m => m.ToDto(allGenres));
-
-        return moviesDtos;
-    }
 
     [FunctionName(nameof(SearchMovie))]
     [OpenApiOperation(operationId: nameof(SearchMovie), tags: new[] { Tag })]
@@ -94,14 +78,12 @@ public class MovieFunctions
         var searchedMovie = JsonConvert.DeserializeObject<SearchParametersDto>(await new StreamReader(req.Body).ReadToEndAsync());
         if (searchedMovie is null)
         {
+            log.LogInformation("Search paramteres were not provided");
             return new BadRequestObjectResult("Please provide search params");
         }
         try
         {
-            var searchedMovies = await _tmDbClient.SearchMovieAsync(searchedMovie.SearchedByTitle);
-            var genres = await _tmDbClient.GetMovieGenresAsync();
-            var movies = searchedMovies.Results.Select(m => m.ToDto(genres));
-
+            var movies = await _tmdbApiWrapper.SearchMovie(searchedMovie.SearchedByTitle);
             log.LogInformation("Successfully retrieved list of searched movies");
             return new OkObjectResult(movies);
         }
@@ -126,25 +108,30 @@ public class MovieFunctions
         int id,
         ILogger log)
     {
-        string size = req.Query["size"];
-        size ??= "original";
-        
-        var config = await _tmDbClient.GetConfigAsync();
-        if (!config.Images.BackdropSizes.Contains(size))
+        try
         {
-            return new BadRequestObjectResult($"Please provide a valid size. Available sizes: {string.Join(",", config.Images.BackdropSizes)}");
+            string size = req.Query["size"];
+            size ??= "original";
+            var imageBytes = await _tmdbApiWrapper.GetImageBytes(size, id);
+            return new FileContentResult(imageBytes, "image/jpg");
         }
-
-        var movieImagePaths = await _tmDbClient.GetMovieImagesAsync(id);
-
-        var bestImage = movieImagePaths?.Backdrops.MaxBy(x => x.VoteAverage);
-        if (bestImage is null)
+        catch(NotFoundException ex)
         {
-            return new NotFoundObjectResult($"Can not find image for the movie with id {id}");
+                return new ContentResult
+                {
+                    StatusCode = 404,
+                    Content = ex.Message
+                };
         }
-        
-        var imageBytes = await _tmDbClient.GetImageBytesAsync(size, bestImage.FilePath);
-        
-        return new FileContentResult(imageBytes, "image/jpg");
+        catch (Exception ex)
+        {
+            return new ContentResult
+            {
+                StatusCode = 500,
+                Content = ex.Message
+            };
+        }
     }
 }
+
+
