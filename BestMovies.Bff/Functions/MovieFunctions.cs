@@ -48,7 +48,7 @@ public class MovieFunctions
 
         IEnumerable<SearchMovieDto>? moviesDtos;
 
-        if (genre.ToString() is not null)
+        if (!string.IsNullOrEmpty(genre.ToString()))
         {
             var searchedGenre = genres.Find(g => g.Name.Equals(genre, StringComparison.InvariantCultureIgnoreCase));
 
