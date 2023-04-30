@@ -20,12 +20,7 @@ jobs:
     steps:
       - name: 'Checkout GitHub Action'
         uses: actions/checkout@v3
-
-      - name: Setup .NET Core SDK
-        uses: actions/setup-dotnet@v1
-        with:
-          dotnet-version: ${{ env.DOTNET_VERSION }}
-
+        
       - name: Build
         run: dotnet build './BestMovies.Bff/BestMovies.Bff.csproj' 
        
@@ -39,8 +34,6 @@ jobs:
       - uses: actions/checkout@v3
         with:
           submodules: true
-      - name: Print root directory contents
-        run: pwd
       - name: Deploy
         uses: Azure/static-web-apps-deploy@v1
         with:
