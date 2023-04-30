@@ -1,13 +1,12 @@
 ﻿using BestMovies.Bff.Extensions;
 using BestMovies.Bff.Interface;
+using BestMovies.Shared.CustomExceptions;
 using BestMovies.Shared.Dtos.Movies;
-using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using TMDbLib.Client;
-using TMDbLib.Objects.Exceptions;
 using TMDbLib.Objects.General;
 
 namespace BestMovies.Bff.Service;
@@ -33,10 +32,7 @@ public class MovieService : IMovieService
         var bestImage = movieImagePaths?.Backdrops.MaxBy(x => x.VoteAverage);
         if (bestImage is null)
         {
-            throw new NotFoundException(new TMDbStatusMessage()
-            {
-                StatusMessage = $"Can not find image for the movie with id {id}"
-            });
+            throw new NotFoundException();
         }
 
         return await _tmDbClient.GetImageBytesAsync(size, bestImage.FilePath);
@@ -53,10 +49,7 @@ public class MovieService : IMovieService
 
             if (searchedGenre is null)
             {
-                throw new NotFoundException(new TMDbStatusMessage()
-                {
-                    StatusMessage = "There is no genre with this name"
-                });
+                throw new NotFoundException();
             }
 
             moviesDtos = await GetPopularMoviesByGenre(genres, searchedGenre, region, language);

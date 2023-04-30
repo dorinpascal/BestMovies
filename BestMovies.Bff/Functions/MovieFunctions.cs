@@ -4,6 +4,7 @@ using System.IO;
 using System.Net;
 using System.Threading.Tasks;
 using BestMovies.Bff.Interface;
+using BestMovies.Shared.CustomExceptions;
 using BestMovies.Shared.Dtos.Movies;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -47,23 +48,23 @@ public class MovieFunctions
             moviesDtos = await _tmdbApiWrapper.GetPopularMovies(genre, region: region, language: language);
             return new OkObjectResult(moviesDtos);
         }
-        catch(Exception ex)
+        catch (NotFoundException ex)
         {
-            if(ex.Message.Contains("There is no genre with this name"))
+            return new ContentResult
             {
-                return new ContentResult
-                {
-                    StatusCode = 404,
-                    Content = ex.Message
-                };
-            }
+                StatusCode = 404,
+                Content = ex.Message
+            };
+        }
+        catch (Exception ex)
+        {
             return new ContentResult
             {
                 StatusCode = 500,
                 Content = ex.Message
             };
         }
-       
+
     }
 
 
@@ -114,16 +115,16 @@ public class MovieFunctions
             var imageBytes = await _tmdbApiWrapper.GetImageBytes(size, id);
             return new FileContentResult(imageBytes, "image/jpg");
         }
-        catch (Exception ex)
+        catch(NotFoundException ex)
         {
-            if (ex.Message.Contains("There is no genre with this name"))
-            {
                 return new ContentResult
                 {
                     StatusCode = 404,
                     Content = ex.Message
                 };
-            }
+        }
+        catch (Exception ex)
+        {
             return new ContentResult
             {
                 StatusCode = 500,
