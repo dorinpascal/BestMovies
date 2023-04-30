@@ -1,5 +1,4 @@
-﻿using Microsoft.Extensions.Logging;
-namespace BestMovies.Api.Test.Helpers;
+﻿namespace BestMovies.Bff.Test.Helpers;
 
 public abstract class MockLogger<T> : ILogger<T>
 {

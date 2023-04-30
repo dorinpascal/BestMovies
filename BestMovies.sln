@@ -19,7 +19,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Shared", "Shared", "{B1E99C
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Test", "Test", "{CB00C9E5-1033-4600-9BAE-85043F3E7B52}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BestMovies.Api.Test", "BestMovies.Api.Test\BestMovies.Api.Test.csproj", "{9A1CEEE5-15A6-491A-B281-380B41A27631}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BestMovies.Bff.Test", "BestMovies.Api.Test\BestMovies.Bff.Test.csproj", "{9A1CEEE5-15A6-491A-B281-380B41A27631}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
