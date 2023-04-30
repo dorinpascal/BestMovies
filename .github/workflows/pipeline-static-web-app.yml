@@ -20,14 +20,15 @@ jobs:
     steps:
       - name: 'Checkout GitHub Action'
         uses: actions/checkout@v3
-        
+
       - name: Setup .NET Core SDK
         uses: actions/setup-dotnet@v1
         with:
           dotnet-version: ${{ env.DOTNET_VERSION }}
+
       - name: Build
-        run: dotnet publish './BestMovies.Api/BestMovies.Bff.csproj' --configuration Release --output ${{ env.OUTPUT_PATH }}
-        
+        run: dotnet publish './BestMovies.Bff/BestMovies.Bff.csproj' --configuration Release --output ${{ env.OUTPUT_PATH }}
+       
       - name: Test
         run: dotnet test './BestMovies.Api/BestMovies.Bff.Test.csproj' --no-restore --verbosity normal
 
