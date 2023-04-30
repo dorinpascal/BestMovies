@@ -13,8 +13,6 @@ using Microsoft.Azure.WebJobs.Extensions.OpenApi.Core.Attributes;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json;
-using TMDbLib.Client;
-using TMDbLib.Objects.General;
 
 namespace BestMovies.Bff.Functions;
 
@@ -22,9 +20,9 @@ public class MovieFunctions
 {
     private const string Tag = "Movies";
     
-    private readonly ITmdbApiWrapper _tmdbApiWrapper;
+    private readonly IMovieService _tmdbApiWrapper;
 
-    public MovieFunctions(ITmdbApiWrapper tmdbApiWrapper)
+    public MovieFunctions(IMovieService tmdbApiWrapper)
     {
         _tmdbApiWrapper = tmdbApiWrapper;
     }
@@ -40,20 +38,32 @@ public class MovieFunctions
         HttpRequest req,
          ILogger log)
     {
-        var region = req.Query["region"];
-        var language = req.Query["language"];
-        var genre = req.Query["genre"];
-        IEnumerable<SearchMovieDto>? moviesDtos;
-        if (genre.ToString() is not null)
+        try
         {
-            moviesDtos = await _tmdbApiWrapper.GetPopularMovies(genre, region:region, language: language);
+            var region = req.Query["region"];
+            var language = req.Query["language"];
+            var genre = req.Query["genre"];
+            IEnumerable<SearchMovieDto>? moviesDtos;
+            moviesDtos = await _tmdbApiWrapper.GetPopularMovies(genre, region: region, language: language);
+            return new OkObjectResult(moviesDtos);
         }
-        else
+        catch(Exception ex)
         {
-            moviesDtos = await _tmdbApiWrapper.GetPopularMovies(region: region, language: language);
+            if(ex.Message.Contains("There is no genre with this name"))
+            {
+                return new ContentResult
+                {
+                    StatusCode = 404,
+                    Content = ex.Message
+                };
+            }
+            return new ContentResult
+            {
+                StatusCode = 500,
+                Content = ex.Message
+            };
         }
-
-        return new OkObjectResult(moviesDtos);
+       
     }
 
 
@@ -104,10 +114,22 @@ public class MovieFunctions
             var imageBytes = await _tmdbApiWrapper.GetImageBytes(size, id);
             return new FileContentResult(imageBytes, "image/jpg");
         }
-        catch(Exception ex)
+        catch (Exception ex)
         {
-            throw new Exception(ex.Message);
-        }  
+            if (ex.Message.Contains("There is no genre with this name"))
+            {
+                return new ContentResult
+                {
+                    StatusCode = 404,
+                    Content = ex.Message
+                };
+            }
+            return new ContentResult
+            {
+                StatusCode = 500,
+                Content = ex.Message
+            };
+        }
     }
 }
 

@@ -6,33 +6,31 @@ namespace BestMovies.Api.Test.MoviesFunctionTest.SearchMovieEndpointTest;
 
 public class BodyParametersTest
 {
-
-    private readonly DefaultHttpRequest request;
-    private readonly ITmdbApiWrapper _tmDbClient;
-    private readonly MockLogger<MovieFunctions> logger;
+    private readonly IMovieService _tmDbClient;
+    private readonly MockLogger<MovieFunctions> _logger;
     public BodyParametersTest()
     {
-
-        request = new DefaultHttpRequest(new DefaultHttpContext())
-        {
-            Body = new MemoryStream(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject("")))
-        };
-        _tmDbClient = Substitute.For<ITmdbApiWrapper>();
-        logger = Substitute.For<MockLogger<MovieFunctions>>();
+        _tmDbClient = Substitute.For<IMovieService>();
+        _logger = Substitute.For<MockLogger<MovieFunctions>>();
     }
 
     [Fact]
     public async Task SearchMovieEndpoint_BodyParameters_IsNotProvided()
     {
         //Arrange
-        MovieFunctions function = new(_tmDbClient);
+        var _request = new DefaultHttpRequest(new DefaultHttpContext())
+        {
+            Body = new MemoryStream(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject("")))
+        };
+
+        var function = new MovieFunctions(_tmDbClient);
 
         // ACT
-        IActionResult? response = await function.SearchMovie(request, logger);
-        BadRequestObjectResult result = (BadRequestObjectResult)response;
+        var response = await function.SearchMovie(_request, _logger);
+        var result = (BadRequestObjectResult)response;
 
         //Assert
         Assert.Equal(400, result.StatusCode);
-        logger.Received().Log(LogLevel.Information, Arg.Is<string>(s => s.Contains("Search paramteres were not provided")));
+        _logger.Received().Log(LogLevel.Information, Arg.Is<string>(s => s.Contains("Search paramteres were not provided")));
     }
 }

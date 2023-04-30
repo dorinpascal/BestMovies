@@ -12,10 +12,10 @@ using TMDbLib.Objects.General;
 
 namespace BestMovies.Bff.Service;
 
-public class TmdbApiWrapperService : ITmdbApiWrapper
+public class MovieService : IMovieService
 {
     private readonly TMDbClient _tmDbClient;
-    public TmdbApiWrapperService(TMDbClient tmDbClient)
+    public MovieService(TMDbClient tmDbClient)
     {
         _tmDbClient = tmDbClient;
     }
@@ -35,7 +35,6 @@ public class TmdbApiWrapperService : ITmdbApiWrapper
         {
             throw new NotFoundException(new TMDbStatusMessage()
             {
-                StatusCode = 404,
                 StatusMessage = $"Can not find image for the movie with id {id}"
             });
         }
@@ -56,7 +55,6 @@ public class TmdbApiWrapperService : ITmdbApiWrapper
             {
                 throw new NotFoundException(new TMDbStatusMessage()
                 {
-                    StatusCode = 404,
                     StatusMessage = "There is no genre with this name"
                 });
             }

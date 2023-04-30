@@ -13,7 +13,7 @@ public class Startup : FunctionsStartup
     public override void Configure(IFunctionsHostBuilder builder)
     {
         builder.Services.AddScoped<TMDbClient>(c => new TMDbClient(Environment.GetEnvironmentVariable("TMDB_API_KEY")));
-        builder.Services.AddScoped<ITmdbApiWrapper, TmdbApiWrapperService>();
+        builder.Services.AddScoped<IMovieService, MovieService>();
         builder.Services.AddHttpClient();
     }
 }
