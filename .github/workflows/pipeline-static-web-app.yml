@@ -27,7 +27,7 @@ jobs:
           dotnet-version: ${{ env.DOTNET_VERSION }}
 
       - name: Build
-        run: dotnet publish './BestMovies.Bff/BestMovies.Bff.csproj' 
+        run: dotnet build './BestMovies.Bff/BestMovies.Bff.csproj' 
        
       - name: Test
         run: dotnet test './BestMovies.Bff.Test/BestMovies.Bff.Test.csproj' --no-restore --verbosity normal
