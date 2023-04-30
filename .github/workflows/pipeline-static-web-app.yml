@@ -4,7 +4,7 @@ env:
   APP_LOCATION: "BestMovies.WebApp" # location of your client code
   API_LOCATION: "BestMovies.Bff"    # location of your api source code - optional
   OUTPUT_LOCATION: "wwwroot"        # location of client code build output
-  DOTNET_VERSION: '6.0.x'
+  DOTNET_VERSION: '7.0.x'
   OUTPUT_PATH: './BestMovies.Bff/output'
 
 on:
@@ -20,7 +20,12 @@ jobs:
     steps:
       - name: 'Checkout GitHub Action'
         uses: actions/checkout@v3
-        
+
+      - name: Setup .NET Core SDK
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
       - name: Build
         run: dotnet build './BestMovies.Bff/BestMovies.Bff.csproj' 
        
@@ -31,6 +36,10 @@ jobs:
     name: Deploy
     needs: build
     steps:
+      - name: Setup .NET Core SDK
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
       - uses: actions/checkout@v3
         with:
           submodules: true
