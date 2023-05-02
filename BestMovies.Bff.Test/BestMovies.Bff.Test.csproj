@@ -30,8 +30,4 @@
     <ProjectReference Include="..\BestMovies.Shared\BestMovies.Shared.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="MoviesServiceTest\" />
-  </ItemGroup>
-
 </Project>

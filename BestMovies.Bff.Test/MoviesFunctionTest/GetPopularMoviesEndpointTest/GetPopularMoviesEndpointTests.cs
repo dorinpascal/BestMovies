@@ -10,23 +10,23 @@ namespace BestMovies.Bff.Test.MoviesFunctionTest.GetPopularMoviesEndpointTest;
 public class GetPopularMoviesEndpointTests
 {
     private readonly DefaultHttpRequest _request;
-    private readonly IMovieService _tmDbClient;
+    private readonly IMovieService _movieService;
     private readonly MockLogger<MovieFunctions> _logger;
     private readonly MovieFunctions _sut;
     
     public GetPopularMoviesEndpointTests()
     {
         _request = new DefaultHttpRequest(new DefaultHttpContext());
-        _tmDbClient = Substitute.For<IMovieService>();
+        _movieService = Substitute.For<IMovieService>();
         _logger = Substitute.For<MockLogger<MovieFunctions>>();
-        _sut = new MovieFunctions(_tmDbClient);
+        _sut = new MovieFunctions(_movieService);
     }
     
     [Fact]
     public async Task GetPopularMoviesEndpoint_TmdbApi_NotAvailable()
     {
         //Arrange
-        _tmDbClient.GetPopularMovies().Throws(new Exception());
+        _movieService.GetPopularMovies().Throws(new Exception());
         
         // ACT
         var response = await _sut.GetPopularMovies(_request, _logger);
@@ -40,7 +40,7 @@ public class GetPopularMoviesEndpointTests
     public async Task GetPopularMoviesEndpoint_NotFound()
     {
         //Arrange
-        _tmDbClient.GetPopularMovies().Throws(new NotFoundException());
+        _movieService.GetPopularMovies().Throws(new NotFoundException());
         
         // ACT
         var response = await _sut.GetPopularMovies(_request, _logger);
@@ -62,7 +62,7 @@ public class GetPopularMoviesEndpointTests
             }),
         };
 
-        _tmDbClient.GetPopularMovies().Returns(movies);
+        _movieService.GetPopularMovies().Returns(movies);
         
         // ACT
         var response = await _sut.GetPopularMovies(_request, _logger);

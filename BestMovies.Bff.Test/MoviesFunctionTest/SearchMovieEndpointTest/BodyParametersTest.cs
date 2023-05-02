@@ -6,14 +6,14 @@ namespace BestMovies.Bff.Test.MoviesFunctionTest.SearchMovieEndpointTest;
 
 public class BodyParametersTest
 {
-    private readonly IMovieService _tmDbClient;
+    private readonly IMovieService _movieService;
     private readonly MockLogger<MovieFunctions> _logger;
     private readonly MovieFunctions _sut;
     public BodyParametersTest()
     {
-        _tmDbClient = Substitute.For<IMovieService>();
+        _movieService = Substitute.For<IMovieService>();
         _logger = Substitute.For<MockLogger<MovieFunctions>>();
-        _sut = new MovieFunctions(_tmDbClient);
+        _sut = new MovieFunctions(_movieService);
     }
 
     [Fact]
