@@ -12,6 +12,7 @@ public class SearchMovieEndpointTests
     private readonly DefaultHttpRequest _request;
     private readonly IMovieService _tmDbClient;
     private readonly MockLogger<MovieFunctions> _logger;
+    private readonly MovieFunctions _sut;
     public SearchMovieEndpointTests()
     {
         SearchParametersDto searchParams = new SearchParametersDto("movieTitle");
@@ -21,6 +22,7 @@ public class SearchMovieEndpointTests
         };
         _tmDbClient = Substitute.For<IMovieService>();
         _logger = Substitute.For<MockLogger<MovieFunctions>>();
+        _sut = new MovieFunctions(_tmDbClient);
     }
 
     [Fact]
@@ -29,10 +31,9 @@ public class SearchMovieEndpointTests
         //Arrange
         _tmDbClient.SearchMovie(Arg.Any<string>()).Throws(new Exception());
 
-        var function = new MovieFunctions(_tmDbClient);
 
         // ACT
-        var response = await function.SearchMovie(_request, _logger);
+        var response = await _sut.SearchMovie(_request, _logger);
         var result = (ContentResult)response;
 
         //Assert
@@ -54,11 +55,9 @@ public class SearchMovieEndpointTests
         };
 
         _tmDbClient.SearchMovie(Arg.Any<string>()).Returns(movies);
-
-        var function = new MovieFunctions(_tmDbClient);
-
+        
         // ACT
-        var response = await function.SearchMovie(_request, _logger);
+        var response = await _sut.SearchMovie(_request, _logger);
         var result = (OkObjectResult)response;
 
         //Assert

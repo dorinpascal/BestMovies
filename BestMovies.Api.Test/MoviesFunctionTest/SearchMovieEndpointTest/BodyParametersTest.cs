@@ -8,10 +8,12 @@ public class BodyParametersTest
 {
     private readonly IMovieService _tmDbClient;
     private readonly MockLogger<MovieFunctions> _logger;
+    private readonly MovieFunctions _sut;
     public BodyParametersTest()
     {
         _tmDbClient = Substitute.For<IMovieService>();
         _logger = Substitute.For<MockLogger<MovieFunctions>>();
+        _sut = new MovieFunctions(_tmDbClient);
     }
 
     [Fact]
@@ -23,10 +25,9 @@ public class BodyParametersTest
             Body = new MemoryStream(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject("")))
         };
 
-        var function = new MovieFunctions(_tmDbClient);
 
         // ACT
-        var response = await function.SearchMovie(_request, _logger);
+        var response = await _sut.SearchMovie(_request, _logger);
         var result = (BadRequestObjectResult)response;
 
         //Assert

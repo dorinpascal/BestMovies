@@ -12,12 +12,14 @@ public class GetPopularMoviesEndpointTests
     private readonly DefaultHttpRequest _request;
     private readonly IMovieService _tmDbClient;
     private readonly MockLogger<MovieFunctions> _logger;
+    private readonly MovieFunctions _sut;
     
     public GetPopularMoviesEndpointTests()
     {
         _request = new DefaultHttpRequest(new DefaultHttpContext());
         _tmDbClient = Substitute.For<IMovieService>();
         _logger = Substitute.For<MockLogger<MovieFunctions>>();
+        _sut = new MovieFunctions(_tmDbClient);
     }
     
     [Fact]
@@ -25,16 +27,13 @@ public class GetPopularMoviesEndpointTests
     {
         //Arrange
         _tmDbClient.GetPopularMovies().Throws(new Exception());
-
-        var function = new MovieFunctions(_tmDbClient);
-
+        
         // ACT
-        var response = await function.GetPopularMovies(_request, _logger);
+        var response = await _sut.GetPopularMovies(_request, _logger);
         var result = (ContentResult)response;
 
         //Assert
         Assert.Equal(500, result.StatusCode);
-
     }
     
     [Fact]
@@ -42,16 +41,13 @@ public class GetPopularMoviesEndpointTests
     {
         //Arrange
         _tmDbClient.GetPopularMovies().Throws(new NotFoundException());
-
-        var function = new MovieFunctions(_tmDbClient);
-
+        
         // ACT
-        var response = await function.GetPopularMovies(_request, _logger);
+        var response = await _sut.GetPopularMovies(_request, _logger);
         var result = (ContentResult)response;
 
         //Assert
         Assert.Equal(404, result.StatusCode);
-
     }
     
     [Fact]
@@ -67,11 +63,9 @@ public class GetPopularMoviesEndpointTests
         };
 
         _tmDbClient.GetPopularMovies().Returns(movies);
-
-        var function = new MovieFunctions(_tmDbClient);
-
+        
         // ACT
-        var response = await function.GetPopularMovies(_request, _logger);
+        var response = await _sut.GetPopularMovies(_request, _logger);
         var result = (OkObjectResult)response;
 
         //Assert
