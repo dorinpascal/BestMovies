@@ -31,6 +31,6 @@ public class BodyParametersTest
 
         //Assert
         Assert.Equal(400, result.StatusCode);
-        _logger.Received().Log(LogLevel.Information, Arg.Is<string>(s => s.Contains("Search paramteres were not provided")));
+        _logger.Received().Log(LogLevel.Information, Arg.Is<string>(s => s.Contains("Search parameters were not provided")));
     }
 }

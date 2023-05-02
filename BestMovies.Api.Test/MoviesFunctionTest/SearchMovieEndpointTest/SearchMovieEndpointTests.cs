@@ -42,7 +42,7 @@ public class SearchMovieEndpointTests
 
 
     [Fact]
-    public async Task SearchMovieEndpoint_ReeturnsListOfMovies_OkObjectResult()
+    public async Task SearchMovieEndpoint_ReturnsListOfMovies_OkObjectResult()
     {
         //Arrange
         var movies = new List<SearchMovieDto>()

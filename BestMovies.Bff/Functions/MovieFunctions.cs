@@ -44,8 +44,7 @@ public class MovieFunctions
             var region = req.Query["region"];
             var language = req.Query["language"];
             var genre = req.Query["genre"];
-            IEnumerable<SearchMovieDto>? moviesDtos;
-            moviesDtos = await _tmdbApiWrapper.GetPopularMovies(genre, region: region, language: language);
+            var moviesDtos = await _tmdbApiWrapper.GetPopularMovies(genre, region: region, language: language);
             return new OkObjectResult(moviesDtos);
         }
         catch (NotFoundException ex)
@@ -78,7 +77,7 @@ public class MovieFunctions
         var searchedMovie = JsonConvert.DeserializeObject<SearchParametersDto>(await new StreamReader(req.Body).ReadToEndAsync());
         if (searchedMovie is null)
         {
-            log.LogInformation("Search paramteres were not provided");
+            log.LogInformation("Search parameters were not provided");
             return new BadRequestObjectResult("Please provide search params");
         }
         try
