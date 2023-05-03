@@ -126,11 +126,11 @@ public class MovieFunctions
     {
         try
         {
-            if (id <= 0) throw new InvalidParameterException("Invalid value for the id. The value must be greater than 0");
+            if (id <= 0) throw new ArgumentException("Invalid value for the id. The value must be greater than 0");
             var movieDetails = await _tmdbApiWrapper.GetMovieDetails(id);
             return new OkObjectResult(movieDetails);
         }
-        catch(InvalidParameterException ex )
+        catch(ArgumentException ex )
         {
             log.LogInformation("Invalid value for the id. The value must be greater than 0");
             return ExceptionHelpers.CreateContentResult(400, ex.Message);
