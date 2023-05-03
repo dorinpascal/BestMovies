@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using BestMovies.Bff.Interface;
 using BestMovies.Shared.CustomExceptions;
 using BestMovies.Shared.Dtos.Movies;
+using BestMovies.Shared.Helpers;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
@@ -50,19 +51,11 @@ public class MovieFunctions
         }
         catch (NotFoundException ex)
         {
-            return new ContentResult
-            {
-                StatusCode = 404,
-                Content = ex.Message
-            };
+            return ExceptionHelpers.CreateContentResult(404, ex.Message);
         }
         catch (Exception ex)
         {
-            return new ContentResult
-            {
-                StatusCode = 500,
-                Content = ex.Message
-            };
+            return ExceptionHelpers.CreateContentResult(500, ex.Message);
         }
 
     }
@@ -90,11 +83,7 @@ public class MovieFunctions
         catch (Exception ex)
         {
             log.LogError(ex, "Error occurred while processing the request");
-            return new ContentResult
-            {
-                StatusCode = 500,
-                Content = ex.Message
-            };
+            return ExceptionHelpers.CreateContentResult(500, ex.Message);
         }
     }
 
@@ -117,21 +106,45 @@ public class MovieFunctions
         }
         catch(NotFoundException ex)
         {
-                return new ContentResult
-                {
-                    StatusCode = 404,
-                    Content = ex.Message
-                };
+            return ExceptionHelpers.CreateContentResult(404, ex.Message);
         }
         catch (Exception ex)
         {
-            return new ContentResult
-            {
-                StatusCode = 500,
-                Content = ex.Message
-            };
+            return ExceptionHelpers.CreateContentResult(500, ex.Message);
+        }
+    }
+
+
+    [FunctionName(nameof(GetMovieDetails))]
+    [OpenApiOperation(operationId: nameof(GetMovieDetails), tags: new[] { Tag })]
+    [OpenApiParameter(name: "id", In = ParameterLocation.Path, Required = true, Type = typeof(string), Description = "The movie id.")]
+    [OpenApiResponseWithBody(statusCode: HttpStatusCode.OK, contentType: "application/json", bodyType: typeof(MovieDetailsDto), Description = "Returns movie details/informations")]
+    public async Task<IActionResult> GetMovieDetails(
+        [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "movies/{id:int}")] HttpRequest req,
+        int id,
+        ILogger log)
+    {
+        try
+        {
+            if (id <= 0) throw new InvalidParameterException("Invalid value for the id. The value must be greater than 0");
+            var movieDetails = await _tmdbApiWrapper.GetMovieDetails(id);
+            return new OkObjectResult(movieDetails);
+        }
+        catch(InvalidParameterException ex )
+        {
+            log.LogInformation("Invalid value for the id. The value must be greater than 0");
+            return ExceptionHelpers.CreateContentResult(400, ex.Message);
+        }
+
+        catch (NotFoundException ex)
+        {
+            log.LogInformation(ex.Message);
+            return ExceptionHelpers.CreateContentResult(404, ex.Message);
+        }
+        catch (Exception ex)
+        {
+            log.LogInformation(ex.Message);
+            return ExceptionHelpers.CreateContentResult(500, ex.Message);
         }
     }
 }
-
-
