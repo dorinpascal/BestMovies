@@ -21,11 +21,11 @@ public class MovieFunctions
 {
     private const string Tag = "Movies";
     
-    private readonly IMovieService _tmdbApiWrapper;
+    private readonly IMovieService _movieService;
 
-    public MovieFunctions(IMovieService tmdbApiWrapper)
+    public MovieFunctions(IMovieService movieService)
     {
-        _tmdbApiWrapper = tmdbApiWrapper;
+        _movieService = movieService;
     }
 
     [FunctionName(nameof(GetPopularMovies))]
@@ -44,7 +44,7 @@ public class MovieFunctions
             var region = req.Query["region"];
             var language = req.Query["language"];
             var genre = req.Query["genre"];
-            var moviesDtos = await _tmdbApiWrapper.GetPopularMovies(genre, region: region, language: language);
+            var moviesDtos = await _movieService.GetPopularMovies(genre, region: region, language: language);
             return new OkObjectResult(moviesDtos);
         }
         catch (NotFoundException ex)
@@ -82,7 +82,7 @@ public class MovieFunctions
         }
         try
         {
-            var movies = await _tmdbApiWrapper.SearchMovie(searchedMovie.SearchedByTitle);
+            var movies = await _movieService.SearchMovie(searchedMovie.SearchedByTitle);
             log.LogInformation("Successfully retrieved list of searched movies");
             return new OkObjectResult(movies);
         }
@@ -111,7 +111,7 @@ public class MovieFunctions
         {
             string size = req.Query["size"];
             size ??= "original";
-            var imageBytes = await _tmdbApiWrapper.GetImageBytes(size, id);
+            var imageBytes = await _movieService.GetImageBytes(size, id);
             return new FileContentResult(imageBytes, "image/jpg");
         }
         catch(NotFoundException ex)

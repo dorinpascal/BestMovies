@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using BestMovies.Bff.Extensions;
+using BestMovies.Bff.Interface;
 using BestMovies.Shared.Dtos.Movies;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -21,11 +22,11 @@ public class GenreFunctions
 {
     private const string Tag = "Genre";
     
-    private readonly TMDbClient _tmDbClient;
+    private readonly IGenreService _genreService;
 
-    public GenreFunctions(TMDbClient tmDbClient)
+    public GenreFunctions(IGenreService genreService)
     {
-        _tmDbClient = tmDbClient;
+        _genreService = genreService;
     }
     
     [FunctionName(nameof(GetGenreNames))]
@@ -36,9 +37,19 @@ public class GenreFunctions
         HttpRequest req,
         ILogger log)
     {
-        var genres = await _tmDbClient.GetMovieGenresAsync();
-        var genreNames = genres.Select(g => g.Name);
-        return new OkObjectResult(genreNames);
+        try
+        {
+            var genres = await _genreService.GetGenreNames();
+            return new OkObjectResult(genres);
+        }
+        catch (Exception ex)
+        {
+            return new ContentResult
+            {
+                StatusCode = 500,
+                Content = ex.Message
+            };
+        }
     }
     
 }
