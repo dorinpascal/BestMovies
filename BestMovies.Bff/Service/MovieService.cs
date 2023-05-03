@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using TMDbLib.Client;
 using TMDbLib.Objects.General;
 
+
 namespace BestMovies.Bff.Service;
 
 public class MovieService : IMovieService
@@ -36,6 +37,16 @@ public class MovieService : IMovieService
         }
 
         return await _tmDbClient.GetImageBytesAsync(size, bestImage.FilePath);
+    }
+
+    public async Task<MovieDetailsDto> GetMovieDetails(int id)
+    {     
+        var searchContainer = await _tmDbClient.GetMovieAsync(id);
+        if(searchContainer is null) throw new NotFoundException("No movies found with the specified id");
+        var credits = await _tmDbClient.GetMovieCreditsAsync(id);
+            
+        var movieDetailsDto = searchContainer.MovieDetailsToDto(credits.Cast.Take(5));
+        return movieDetailsDto;
     }
 
     public async Task<IEnumerable<SearchMovieDto>> GetPopularMovies(string? genre =null, string? language = null, string? region = null)
