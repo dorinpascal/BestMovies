@@ -26,7 +26,7 @@ public static class MoviesExtensions
            Title: movie.Title,
            Description: movie.Overview,
            OriginalLanguage: movie.OriginalLanguage,
-           ReleaseDate: movie.ReleaseDate,
+           ReleaseDate: movie.ReleaseDate?.ToString("dd/MM/yyyy"),
            VoteAverage: movie.VoteAverage,
            Genres: movie.Genres.Select(g => g.Name).ToList(),
            Actors: actors.Select(a => new ActorDto(a.Id, a.Name, a.Character))
