@@ -37,7 +37,7 @@ public class GetPopularMoviesEndpointTests
     }
     
     [Fact]
-    public async Task GetPopularMoviesEndpoint_NotFound()
+    public async Task GetPopularMoviesEndpoint_MovieNotFound_NotFoundException()
     {
         //Arrange
         _movieService.GetPopularMovies().Throws(new NotFoundException());
@@ -51,7 +51,7 @@ public class GetPopularMoviesEndpointTests
     }
     
     [Fact]
-    public async Task GetPopularMoviesEndpoint_NoArgs_OkObjectResult()
+    public async Task GetPopularMoviesEndpoint_ReturnsListOfMovies_OkObjectResult()
     {
         //Arrange
         var movies = new List<SearchMovieDto>()
