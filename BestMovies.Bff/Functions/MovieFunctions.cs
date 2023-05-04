@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using BestMovies.Bff.Interface;
 using BestMovies.Shared.CustomExceptions;
 using BestMovies.Shared.Dtos.Movies;
-using BestMovies.Shared.Helpers;
+using BestMovies.Bff.Helpers;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
