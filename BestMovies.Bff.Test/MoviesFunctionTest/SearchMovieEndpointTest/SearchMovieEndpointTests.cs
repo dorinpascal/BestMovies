@@ -10,8 +10,9 @@ public class SearchMovieEndpointTests
 {
 
     private readonly DefaultHttpRequest _request;
-    private readonly IMovieService _tmDbClient;
+    private readonly IMovieService _movieService;
     private readonly MockLogger<MovieFunctions> _logger;
+    private readonly MovieFunctions _sut;
     public SearchMovieEndpointTests()
     {
         SearchParametersDto searchParams = new SearchParametersDto("movieTitle");
@@ -19,20 +20,19 @@ public class SearchMovieEndpointTests
         {
             Body = new MemoryStream(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(searchParams)))
         };
-        _tmDbClient = Substitute.For<IMovieService>();
+        _movieService = Substitute.For<IMovieService>();
         _logger = Substitute.For<MockLogger<MovieFunctions>>();
+        _sut = new MovieFunctions(_movieService);
     }
 
     [Fact]
     public async Task SearchMovieEndpoint_TmdbApi_NotAvailable()
     {
         //Arrange
-        _tmDbClient.SearchMovie(Arg.Any<string>()).Throws(new Exception());
-
-        var function = new MovieFunctions(_tmDbClient);
-
+        _movieService.SearchMovie(Arg.Any<string>()).Throws(new Exception());
+        
         // ACT
-        var response = await function.SearchMovie(_request, _logger);
+        var response = await _sut.SearchMovie(_request, _logger);
         var result = (ContentResult)response;
 
         //Assert
@@ -42,7 +42,7 @@ public class SearchMovieEndpointTests
 
 
     [Fact]
-    public async Task SearchMovieEndpoint_ReeturnsListOfMovies_OkObjectResult()
+    public async Task SearchMovieEndpoint_ReturnsListOfMovies_OkObjectResult()
     {
         //Arrange
         var movies = new List<SearchMovieDto>()
@@ -53,12 +53,10 @@ public class SearchMovieEndpointTests
                }),
         };
 
-        _tmDbClient.SearchMovie(Arg.Any<string>()).Returns(movies);
-
-        var function = new MovieFunctions(_tmDbClient);
-
+        _movieService.SearchMovie(Arg.Any<string>()).Returns(movies);
+        
         // ACT
-        var response = await function.SearchMovie(_request, _logger);
+        var response = await _sut.SearchMovie(_request, _logger);
         var result = (OkObjectResult)response;
 
         //Assert

@@ -33,10 +33,9 @@
         _popularMovies = await MoviesRepository.GetPopularMovies();
 
         var genres = await GenresRepository.GetAllGenres();
-        var genresToSearch = new[] {"Action", "Comedy", "Horror", "Drama"};
         
         var tasks = genres
-            .Where(g => genresToSearch.Contains(g))
+            .Take(4)
             .Select(async g => (g, await MoviesRepository.GetPopularMovies(g)));
 
         _moviesPerGenre = await Task.WhenAll(tasks);
