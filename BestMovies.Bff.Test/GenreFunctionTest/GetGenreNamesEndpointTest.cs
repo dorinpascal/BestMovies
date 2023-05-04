@@ -35,7 +35,7 @@ public class GetGenreNamesEndpointTest
     }
     
     [Fact]
-    public async Task GetGenreNames_Returns_List()
+    public async Task GetGenreNames_ReturnsList_OkObjectResult()
     {
         //Arrange
 
