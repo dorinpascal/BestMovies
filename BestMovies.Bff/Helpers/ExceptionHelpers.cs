@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 
-namespace BestMovies.Shared.Helpers;
+namespace BestMovies.Bff.Helpers;
 
 public static class ExceptionHelpers
 {
