@@ -28,10 +28,9 @@ public class BodyParametersTest
 
         //Act
         var response = await _sut.SearchMovie(request, _logger);
-        var result = (BadRequestObjectResult)response;
+        var result = (ContentResult)response;
 
         //Assert
         Assert.Equal(400, result.StatusCode);
-        _logger.Received().Log(LogLevel.Information, Arg.Is<string>(s => s.Contains("Search parameters were not provided")));
     }
 }

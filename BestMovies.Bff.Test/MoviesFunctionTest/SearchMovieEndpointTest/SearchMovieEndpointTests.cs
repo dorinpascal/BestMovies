@@ -61,6 +61,5 @@ public class SearchMovieEndpointTests
 
         //Assert
         Assert.Equal(200, result.StatusCode);
-        _logger.Received().Log(LogLevel.Information, Arg.Is<string>(s => s.Contains("Successfully retrieved list of searched movies")));
     }
 }

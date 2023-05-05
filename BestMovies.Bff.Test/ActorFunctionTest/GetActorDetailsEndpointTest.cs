@@ -28,7 +28,7 @@ public class GetActorDetailsEndpointTest
         //Arrange
         _actorService.GetActorDetails(Arg.Any<int>()).Throws<Exception>();
         
-        // ACT
+        //Act
         var response = await _sut.GetActorDetails(_request,1, _logger);
         var result = (ContentResult)response;
         
@@ -41,9 +41,9 @@ public class GetActorDetailsEndpointTest
     public async Task GetActorDetails_NoDetailsAvailable_ReturnsStatusCode404()
     {
         //Arrange
-        _actorService.GetActorDetails(Arg.Any<int>()).Throws<NotFoundException>();
+        _actorService.GetActorDetails(Arg.Any<int>()).Throws(new NotFoundException("Not found"));
 
-        // ACT
+        //Act
         var response = await _sut.GetActorDetails(_request, 1, _logger);
         var result = (ContentResult)response;
 
@@ -56,10 +56,10 @@ public class GetActorDetailsEndpointTest
     public async Task GetActorDetails_ActorDetails_ReturnsOkObjectResult()
     {
         //Arrange
-        var actorDetailsDto = new ActorDetailsDto(0, "Name", "Biography", DateTime.Now, new []{""});
+        var actorDetailsDto = new ActorDetailsDto(0, "Name", "Biography", DateOnly.MinValue, new []{""});
         _actorService.GetActorDetails(Arg.Any<int>()).Returns(actorDetailsDto);
 
-        // ACT
+        //Act
         var response = await _sut.GetActorDetails(_request, 1, _logger);
         var result = (OkObjectResult)response;
 
@@ -73,7 +73,7 @@ public class GetActorDetailsEndpointTest
     {
         //Arrange
         
-        // ACT
+        //Act
         var response = await _sut.GetActorDetails(_request,0,_logger);
         var result = (ContentResult)response;
 
