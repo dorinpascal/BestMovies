@@ -11,7 +11,7 @@
         {
             <MudImage Class="rounded-sm" ObjectFit="@ObjectFit.Cover" Height="@Height" Width="@Width" Src="@($"api/movies/{Movie.Id}/image?size={ImageSize}")" Alt="@Movie.Title" />
 
-            <MudPaper Class="card-overlay-footer cursor-pointer">
+            <MudPaper Class="card-overlay-footer cursor-pointer" @onclick="OpenMovieDetails">
                 <div class="d-flex flex-column justify-space-between">
                     <div class="d-flex flex-row align-start justify-space-between pa-2">
                         <MudText Typo="Typo.subtitle1" Align="Align.Start"><strong>@Movie.Title</strong></MudText>
@@ -34,6 +34,9 @@
 @code {
         private const string ImageSize = "w780";
 
+    [Inject]
+    protected IDialogService DialogService { get; set; } = default!;
+    
     [Parameter]
     public int Height { get; set; } = 220;
     
@@ -42,4 +45,14 @@
     
     [Parameter]
     public SearchMovieDto? Movie { get; set; }
+    
+    private void OpenMovieDetails()
+    {
+        var parameters = new DialogParameters
+        {
+            {"MovieId", Movie!.Id}
+        };
+        var options = new DialogOptions { CloseOnEscapeKey = true, CloseButton = true, FullWidth = true, MaxWidth = MaxWidth.Medium};
+        DialogService.Show<MovieDetailsModal>(string.Empty, parameters, options);
+    }
 }

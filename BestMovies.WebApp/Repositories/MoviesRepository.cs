@@ -33,17 +33,30 @@ public class MoviesRepository : IMoviesRepository
 
         return await SearchMovieDtoResponseHandler(response);
     }
-
+    
     public async Task<IEnumerable<SearchMovieDto>> SearchMovie(string movieTitle)
     {
         var parameters = new SearchParametersDto(movieTitle);
-        string str = JsonSerializer.Serialize(parameters);
-        HttpContent content = new StringContent(str, Encoding.UTF8, "application/json");
-        HttpResponseMessage responseMessage = await _client.PostAsync($"{BaseUri}/discovery", content);
+        var str = JsonSerializer.Serialize(parameters);
+        var content = new StringContent(str, Encoding.UTF8, "application/json");
+        var responseMessage = await _client.PostAsync($"{BaseUri}/discovery", content);
         
         return await SearchMovieDtoResponseHandler(responseMessage);
     }
     
+    public async Task<MovieDetailsDto?> GetMovieDetails(int id)
+    {
+        using var response = await _client.GetAsync($"{BaseUri}/{id}");
+
+        if (response.IsSuccessStatusCode)
+        {
+            return await HttpClientHelper.ReadFromJsonSafe<MovieDetailsDto>(response);
+        }
+
+        return null;
+    }
+    
+
     private static async Task<IEnumerable<SearchMovieDto>> SearchMovieDtoResponseHandler(HttpResponseMessage response)
     {
         if (!response.IsSuccessStatusCode)
