@@ -20,17 +20,15 @@ public class ParameterTest
     public async Task GetMovieDetails_PassedParameter_IsNotValid()
     {
         //Arrange
-       
-
         var function = new MovieFunctions(_movieService);
-        var _request = new DefaultHttpRequest(new DefaultHttpContext());
-        // ACT
-        var response = await function.GetMovieDetails(_request,0,_logger);
+        var request = new DefaultHttpRequest(new DefaultHttpContext());
+        
+        //Act
+        var response = await function.GetMovieDetails(request,0,_logger);
         var result = (ContentResult)response;
 
         //Assert
         Assert.Equal(400, result.StatusCode);
-        _logger.Received().Log(LogLevel.Information, Arg.Is<string>(s => s.Contains("Invalid value for the id. The value must be greater than 0")));
     }
 
 }

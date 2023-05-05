@@ -32,31 +32,29 @@ public class ActorFunctions
     
     [FunctionName(nameof(GetActorDetails))]
     [OpenApiOperation(operationId: nameof(GetActorDetails), tags: new[] { Tag })]
-    [OpenApiParameter(name: "id", In = ParameterLocation.Path, Required = true, Type = typeof(string), Description = "The actor id.")]
+    [OpenApiParameter(name: "id", In = ParameterLocation.Path, Required = true, Type = typeof(int), Description = "The actor id.")]
     [OpenApiResponseWithBody(statusCode: HttpStatusCode.OK, contentType: "application/json", bodyType: typeof(ActorDetailsDto), Description = "Return details about the actor")]
     public async Task<IActionResult> GetActorDetails(
         [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "actors/{id:int}")] HttpRequest req, int id, ILogger log)
     {
+        if (id <= 0)
+        {
+            return ActionResultHelpers.BadRequestResult("Invalid value for the id. The value must be greater than 0");
+        }
+        
         try
         {
-            if (id <= 0) throw new ArgumentException("Invalid value for the id. The value must be greater than 0");
             var actorDetails = await _actorService.GetActorDetails(id);
             return new OkObjectResult(actorDetails);
         }
-        catch(ArgumentException ex )
-        {
-            log.LogInformation("Invalid value for the id. The value must be greater than 0");
-            return ExceptionHelpers.CreateContentResult(400, ex.Message);
-        }
         catch (NotFoundException ex)
         {
-            log.LogInformation(ex.Message);
-            return ExceptionHelpers.CreateContentResult(404, ex.Message);
+            return ActionResultHelpers.NotFoundResult(ex.Message);
         }
         catch (Exception ex)
         {
-            log.LogInformation(ex.Message);
-            return ExceptionHelpers.CreateContentResult(500, ex.Message);
+            log.LogError(ex, "Error occured while retrieving actor details");
+            return ActionResultHelpers.ServerErrorResult();
         }
     }
 }

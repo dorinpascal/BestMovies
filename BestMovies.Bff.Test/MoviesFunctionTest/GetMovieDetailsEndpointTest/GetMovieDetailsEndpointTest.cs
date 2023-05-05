@@ -30,7 +30,8 @@ public class GetMovieDetailsEndpointTest
     {
         //Arrange
         _movieService.GetMovieDetails(Arg.Any<int>()).Throws<Exception>();
-        // ACT
+        
+        //Act
         var response = await _sut.GetMovieDetails(_request,1, _logger);
         var result = (ContentResult)response;
 
@@ -42,9 +43,9 @@ public class GetMovieDetailsEndpointTest
     public async Task GetMovieDetails_NoDetailsAvailable_ReturnsStatusCode404()
     {
         //Arrange
-        _movieService.GetMovieDetails(Arg.Any<int>()).Throws<NotFoundException>();
+        _movieService.GetMovieDetails(Arg.Any<int>()).Throws(new NotFoundException("Not found"));
 
-        // ACT
+        //Act
         var response = await _sut.GetMovieDetails(_request, 1, _logger);
         var result = (ContentResult)response;
 
@@ -57,11 +58,10 @@ public class GetMovieDetailsEndpointTest
     public async Task GetMovieDetails_MovieDetails_ReturnsOkObjectResult()
     {
         //Arrange
-
-        MovieDetailsDto movieDetailsDto = new MovieDetailsDto(0, "title", "description", "originalLanguage", DateTime.Now.ToString(), 0, new List<string>(), new List<ActorDto>());
+        var movieDetailsDto = new MovieDetailsDto(0, "title", "description", "originalLanguage", DateOnly.MinValue, 0, new List<string>(), new List<ActorDto>());
         _movieService.GetMovieDetails(Arg.Any<int>()).Returns(movieDetailsDto);
 
-        // ACT
+        //Act
         var response = await _sut.GetMovieDetails(_request, 1, _logger);
         var result = (OkObjectResult)response;
 

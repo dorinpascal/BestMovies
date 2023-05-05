@@ -1,7 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
 using System.Linq;
 using BestMovies.Shared.Dtos.Actor;
-using TMDbLib.Objects.General;
 using TMDbLib.Objects.People;
 
 namespace BestMovies.Bff.Extensions;
@@ -13,7 +12,7 @@ public static class ActorExtensions
             Id: actor.Id,
             Name: actor.Name,
             Biography: actor.Biography,
-            Birthday: actor.Birthday,
+            Birthday: actor.Birthday is null ? null : DateOnly.FromDateTime(actor.Birthday.Value),
             StarredInMovies: credits?.Cast.Select(m => m.Title)
         );
 }
