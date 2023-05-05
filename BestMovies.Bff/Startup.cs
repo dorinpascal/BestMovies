@@ -16,6 +16,7 @@ public class Startup : FunctionsStartup
         builder.Services.AddScoped<TMDbClient>(c => new TMDbClient(Environment.GetEnvironmentVariable("TMDB_API_KEY")));
         builder.Services.AddScoped<IMovieService, MovieService>();
         builder.Services.AddScoped<IGenreService, GenreService>();
+        builder.Services.AddScoped<IActorService, ActorService>();
         builder.Services.AddHttpClient();
     }
 }
