@@ -28,7 +28,7 @@ public class GetPopularMoviesEndpointTests
         //Arrange
         _movieService.GetPopularMovies().Throws(new Exception());
         
-        // ACT
+        //Act
         var response = await _sut.GetPopularMovies(_request, _logger);
         var result = (ContentResult)response;
 
@@ -40,9 +40,9 @@ public class GetPopularMoviesEndpointTests
     public async Task GetPopularMoviesEndpoint_MovieNotFound_NotFoundException()
     {
         //Arrange
-        _movieService.GetPopularMovies().Throws(new NotFoundException());
+        _movieService.GetPopularMovies().Throws(new NotFoundException("Not found"));
         
-        // ACT
+        //Act
         var response = await _sut.GetPopularMovies(_request, _logger);
         var result = (ContentResult)response;
 
@@ -64,7 +64,7 @@ public class GetPopularMoviesEndpointTests
 
         _movieService.GetPopularMovies().Returns(movies);
         
-        // ACT
+        //Act
         var response = await _sut.GetPopularMovies(_request, _logger);
         var result = (OkObjectResult)response;
 

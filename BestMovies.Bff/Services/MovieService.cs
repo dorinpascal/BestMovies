@@ -8,9 +8,10 @@ using System.Linq;
 using System.Threading.Tasks;
 using TMDbLib.Client;
 using TMDbLib.Objects.General;
+using TMDbLib.Objects.Search;
 
 
-namespace BestMovies.Bff.Service;
+namespace BestMovies.Bff.Services;
 
 public class MovieService : IMovieService
 {
@@ -33,7 +34,7 @@ public class MovieService : IMovieService
         var bestImage = movieImagePaths?.Backdrops.MaxBy(x => x.VoteAverage);
         if (bestImage is null)
         {
-            throw new NotFoundException();
+            throw new NotFoundException($"Cannot find any image for the movie with id '{id}'");
         }
 
         return await _tmDbClient.GetImageBytesAsync(size, bestImage.FilePath);
@@ -42,7 +43,11 @@ public class MovieService : IMovieService
     public async Task<MovieDetailsDto> GetMovieDetails(int id)
     {     
         var searchContainer = await _tmDbClient.GetMovieAsync(id);
-        if(searchContainer is null) throw new NotFoundException("No movies found with the specified id");
+        if (searchContainer is null)
+        {
+            throw new NotFoundException($"No movies found with the id '{id}'");
+        }
+        
         var credits = await _tmDbClient.GetMovieCreditsAsync(id);
             
         var movieDetailsDto = searchContainer.MovieDetailsToDto(credits.Cast.Take(5));
@@ -52,26 +57,12 @@ public class MovieService : IMovieService
     public async Task<IEnumerable<SearchMovieDto>> GetPopularMovies(string? genre =null, string? language = null, string? region = null)
     {
         var genres = await _tmDbClient.GetMovieGenresAsync();
-        IEnumerable<SearchMovieDto>? moviesDtos;
 
-        if (genre is not null)
-        {
-            var searchedGenre = genres.Find(g => g.Name.Equals(genre, StringComparison.InvariantCultureIgnoreCase));
-
-            if (searchedGenre is null)
-            {
-                throw new NotFoundException();
-            }
-
-            moviesDtos = await GetPopularMoviesByGenre(genres, searchedGenre, region, language);
-        }
-        else
-        {
-            var searchContainer = await _tmDbClient.GetMoviePopularListAsync(language: language, region: region);
-            genres = await _tmDbClient.GetMovieGenresAsync();
-            moviesDtos = searchContainer.Results.Select(m => m.ToDto(genres));
-        }
-        return moviesDtos;
+        var searchContainer = genre is null
+            ? await _tmDbClient.GetMoviePopularListAsync(language: language, region: region)
+            : await GetPopularMoviesByGenre(genres, genre, region, language);
+        
+        return searchContainer.Results.Select(m => m.ToDto(genres));
     }
 
     public async Task<IEnumerable<SearchMovieDto>> SearchMovie(string movieTitle)
@@ -80,21 +71,19 @@ public class MovieService : IMovieService
         var genres = await _tmDbClient.GetMovieGenresAsync();
         return  searchedMovies.Results.Select(m => m.ToDto(genres));
     }
-
-    private async Task<IEnumerable<SearchMovieDto>> GetPopularMoviesByGenre(
-        IEnumerable<Genre> allGenres,
-        Genre genre,
-        string? region,
-        string? language)
+    
+    private async Task<SearchContainer<SearchMovie>> GetPopularMoviesByGenre(IEnumerable<Genre> genres, string genre, string? region, string? language)
     {
-        var searchedMovies = await _tmDbClient.DiscoverMoviesAsync()
-            .IncludeWithAllOfGenre(new[] { genre })
+        var searchedGenre = genres.FirstOrDefault(g => g.Name.Equals(genre, StringComparison.InvariantCultureIgnoreCase));
+        if (searchedGenre is null)
+        {
+            throw new NotFoundException($"Cannot find any movie with the genre '{genre}'");
+        }
+        return await _tmDbClient.DiscoverMoviesAsync()
+            .IncludeWithAllOfGenre(new[] { searchedGenre })
             .WhereReleaseDateIsInRegion(region)
             .WhereLanguageIs(language)
             .Query();
-        var moviesDtos = searchedMovies.Results.Select(m => m.ToDto(allGenres));
-
-        return moviesDtos;
     }
 
 }

@@ -26,7 +26,7 @@ public class GetGenreNamesEndpointTest
         //Arrange
         _genreService.GetGenreNames().Throws(new Exception());
         
-        // ACT
+        //Act
         var response = await _sut.GetGenreNames(_request, _logger);
         var result = (ContentResult)response;
 
@@ -38,7 +38,6 @@ public class GetGenreNamesEndpointTest
     public async Task GetGenreNames_ReturnsList_OkObjectResult()
     {
         //Arrange
-
         var genres = new List<string>()
         {
             "Action", "Comedy", "Horror"
@@ -46,7 +45,7 @@ public class GetGenreNamesEndpointTest
 
         _genreService.GetGenreNames().Returns(genres);
         
-        // ACT
+        //Act
         var response = await _sut.GetGenreNames(_request, _logger);
         var result = (OkObjectResult)response;
 

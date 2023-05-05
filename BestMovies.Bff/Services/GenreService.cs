@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using BestMovies.Bff.Interface;
 using TMDbLib.Client;
 
-namespace BestMovies.Bff.Service;
+namespace BestMovies.Bff.Services;
 
 public class GenreService : IGenreService
 {

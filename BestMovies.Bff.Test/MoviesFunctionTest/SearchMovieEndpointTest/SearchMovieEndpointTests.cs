@@ -15,7 +15,7 @@ public class SearchMovieEndpointTests
     private readonly MovieFunctions _sut;
     public SearchMovieEndpointTests()
     {
-        SearchParametersDto searchParams = new SearchParametersDto("movieTitle");
+        var searchParams = new SearchParametersDto("movieTitle");
         _request = new DefaultHttpRequest(new DefaultHttpContext())
         {
             Body = new MemoryStream(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(searchParams)))
@@ -31,7 +31,7 @@ public class SearchMovieEndpointTests
         //Arrange
         _movieService.SearchMovie(Arg.Any<string>()).Throws(new Exception());
         
-        // ACT
+        //Act
         var response = await _sut.SearchMovie(_request, _logger);
         var result = (ContentResult)response;
 
@@ -47,7 +47,7 @@ public class SearchMovieEndpointTests
         //Arrange
         var movies = new List<SearchMovieDto>()
         {
-               new SearchMovieDto(1,"title", new List<string>()
+               new(1,"title", new List<string>()
                {
                    "genre"
                }),
@@ -55,7 +55,7 @@ public class SearchMovieEndpointTests
 
         _movieService.SearchMovie(Arg.Any<string>()).Returns(movies);
         
-        // ACT
+        //Act
         var response = await _sut.SearchMovie(_request, _logger);
         var result = (OkObjectResult)response;
 
