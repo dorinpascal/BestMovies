@@ -18,9 +18,7 @@ public static class MoviesExtensions
             Title: searchMovie.Title,
             Genres: searchMovie.GenreIds.Select(id => genres.First(g => g.Id == id).Name)
         );
-
-
-
+    
     public static MovieDetailsDto MovieDetailsToDto(this Movie movie, IEnumerable<Cast> actors) =>
         new(
            Id: movie.Id,

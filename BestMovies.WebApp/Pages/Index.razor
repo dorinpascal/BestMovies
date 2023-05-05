@@ -11,12 +11,16 @@
     <MovieCardList Title="Popular now" Movies="_popularMovies" SkeletonCardsCount="5"/>
 </MudContainer>
 
-@foreach (var moviePerGenre in _moviesPerGenre)
+@if (_moviesPerGenre is not null)
 {
-    <MudContainer Class="d-flex flex-column gap-4 justify-center pa-4" MaxWidth="MaxWidth.ExtraExtraLarge">
-        <MovieCardList Title= "@moviePerGenre.genre" Movies="@moviePerGenre.movies" SkeletonCardsCount="5"/>
-    </MudContainer>
+    foreach (var moviePerGenre in _moviesPerGenre)
+    {
+        <MudContainer Class="d-flex flex-column gap-4 justify-center pa-4" MaxWidth="MaxWidth.ExtraExtraLarge">
+            <MovieCardList Title= "@moviePerGenre.genre" Movies="@moviePerGenre.movies" SkeletonCardsCount="5"/>
+        </MudContainer>
+    }
 }
+
 
 @code {
 

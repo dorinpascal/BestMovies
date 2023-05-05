@@ -30,7 +30,8 @@ public class GetMovieDetailsEndpointTest
     {
         //Arrange
         _movieService.GetMovieDetails(Arg.Any<int>()).Throws<Exception>();
-        // ACT
+        
+        //Act
         var response = await _sut.GetMovieDetails(_request,1, _logger);
         var result = (ContentResult)response;
 
