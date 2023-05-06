@@ -3,9 +3,9 @@
 @using BestMovies.WebApp.Repositories
 @using System.Globalization
 
-<MudDialog>
+<MudDialog DisableSidePadding="true">
     <DialogContent>
-        <MudContainer MaxWidth="MaxWidth.ExtraLarge" Class="d-flex flex-column justify-start gap-2 pa-2" Style="overflow-y: auto;">
+        <MudContainer MaxWidth="MaxWidth.ExtraLarge" Class="d-flex flex-column justify-start gap-2 px-8 py-4" Style="overflow-y: auto;">
 
             <MudImage Class="rounded-sm pt-1" ObjectFit="@ObjectFit.Cover" Height="400" Src="@($"api/movies/{MovieId}/image?size=original")" Alt="Movie Image"/>
 
@@ -97,7 +97,7 @@
                     {
                         foreach (var actor in _movieDetails.Actors)
                         {
-                            <div class="d-flex flex-column justify-start align-center">
+                            <div class="d-flex flex-column justify-start align-center cursor-pointer" @onclick="() => OpenActorDetails(actor.Id)">
                                 <MudImage Class="mud-skeleton-circle" ObjectFit="@ObjectFit.Cover" ObjectPosition="ObjectPosition.Center" Height="120" Width="120" Src="@($"api/actors/{actor.Id}/image?size=w300")" Alt="@actor.Name"/>
 
                                 <MudText Typo="Typo.button">@actor.Name</MudText>
@@ -116,6 +116,9 @@
 
     [Inject]
     protected IMoviesRepository MoviesRepository { get; set; } = default!;
+    
+    [Inject]
+    protected IDialogService DialogService { get; set; } = default!;
 
     [CascadingParameter]
     public MudDialogInstance MudDialog { get; set; } = null!;
@@ -131,4 +134,13 @@
         _movieDetails = await MoviesRepository.GetMovieDetails(MovieId);
     }
 
+    private void OpenActorDetails(int actorId)
+    {
+        var parameters = new DialogParameters
+        {
+            { "ActorId", actorId }
+        };
+        var options = new DialogOptions { CloseOnEscapeKey = true, CloseButton = true, FullWidth = true, MaxWidth = MaxWidth.Small};
+        DialogService.Show<ActorDetailsModal>(string.Empty, parameters, options);
+    }
 }

@@ -35,7 +35,7 @@ public class ActorFunctions
     [OpenApiParameter(name: "id", In = ParameterLocation.Path, Required = true, Type = typeof(int), Description = "The actor id.")]
     [OpenApiResponseWithBody(statusCode: HttpStatusCode.OK, contentType: "application/json", bodyType: typeof(ActorDetailsDto), Description = "Return details about the actor")]
     public async Task<IActionResult> GetActorDetails(
-        [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "actors/{id:int}")] HttpRequest req, int id, ILogger log)
+        [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "actors/{id:int}")] HttpRequest req, int id, ILogger log)
     {
         if (id <= 0)
         {

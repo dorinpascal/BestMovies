@@ -1,0 +1,63 @@
+@using BestMovies.WebApp.Repositories
+@using BestMovies.Shared.Dtos.Actor
+
+<MudDialog DisableSidePadding="true">
+    <DialogContent>
+        <MudContainer MaxWidth="MaxWidth.Small" Class="d-flex flex-column justify-start gap-2 px-8 py-4" Style=" max-height: 500px; overflow-y: auto;">
+
+            <div class="d-flex flex-row flex-wrap gap-2 justify-space-between">
+                @if (_actorDetails is null)
+                {
+                    <div class="d-flex flex-column gap-2">
+                        <MudSkeleton Animation="Animation.Wave" SkeletonType="SkeletonType.Circle" Width="120px" Height="120px"/>
+                        <MudSkeleton Animation="Animation.Wave" Width="80%" Height="60px"/>
+                    </div>
+                }
+                else
+                {
+                    <div class="d-flex flex-column gap-2">
+                        <MudImage Class="mud-skeleton-circle" ObjectFit="@ObjectFit.Cover" ObjectPosition="ObjectPosition.Center" Height="120" Width="120" Src="@($"api/actors/{ActorId}/image?size=w300")" Alt="@_actorDetails.Name"/>
+
+                        <MudText Typo="Typo.h3" Align="Align.Start"> @_actorDetails.Name </MudText>
+                    </div>
+                   
+                }
+            </div>
+
+            <MudDivider FlexItem="true"/>
+            
+             <div class="d-flex flex-column justify-start gap-1">
+                <MudText Typo="Typo.h6" Align="Align.Start" Color="Color.Dark">Biography</MudText>
+
+                @if (_actorDetails is null)
+                {
+                    <MudSkeleton Class="rounded-sm" Animation="Animation.Wave" SkeletonType="SkeletonType.Rectangle" Height="300px"/>
+                }
+                else
+                {
+                    <MudText Typo="Typo.body1" Align="Align.Start" Color="Color.Dark"> @_actorDetails.Biography </MudText>
+                }
+            </div>
+
+        </MudContainer>
+    </DialogContent>
+</MudDialog>
+
+@code {
+
+    [Inject]
+    protected IActorsRepository ActorsRepository { get; set; } = default!;
+
+    [CascadingParameter]
+    public MudDialogInstance MudDialog { get; set; } = null!;
+
+    [Parameter]
+    public int ActorId { get; set; }
+
+    private ActorDetailsDto? _actorDetails;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _actorDetails = await ActorsRepository.GetActorDetails(ActorId);
+    }
+}
