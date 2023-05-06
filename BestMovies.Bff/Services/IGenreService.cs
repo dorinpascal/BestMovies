@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace BestMovies.Bff.Interface;
+namespace BestMovies.Bff.Services;
 
 public interface IGenreService
 {

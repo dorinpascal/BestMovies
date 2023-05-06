@@ -5,7 +5,7 @@ using System.Net;
 using System.Threading.Tasks;
 using BestMovies.Bff.Extensions;
 using BestMovies.Bff.Helpers;
-using BestMovies.Bff.Interface;
+using BestMovies.Bff.Services;
 using BestMovies.Shared.Dtos.Movies;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;

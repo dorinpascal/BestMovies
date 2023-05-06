@@ -4,7 +4,7 @@ using System.IO;
 using System.Net;
 using System.Threading.Tasks;
 using BestMovies.Bff.Helpers;
-using BestMovies.Bff.Interface;
+using BestMovies.Bff.Services;
 using BestMovies.Shared.CustomExceptions;
 using BestMovies.Shared.Dtos.Actor;
 using BestMovies.Shared.Dtos.Movies;
@@ -54,6 +54,35 @@ public class ActorFunctions
         catch (Exception ex)
         {
             log.LogError(ex, "Error occured while retrieving actor details");
+            return ActionResultHelpers.ServerErrorResult();
+        }
+    }
+    
+    [FunctionName(nameof(GetActorImage))]
+    [OpenApiOperation(operationId: nameof(GetActorImage), tags: new[] { Tag })]
+    [OpenApiParameter(name: "id", In = ParameterLocation.Path, Required = true, Type = typeof(int), Description = "The actor id.")]
+    [OpenApiParameter(name: "size", In = ParameterLocation.Query, Required = false, Type = typeof(string), Description = "The size for the image.")]
+    [OpenApiResponseWithBody(statusCode: HttpStatusCode.OK, contentType: "image/jpg", bodyType: typeof(byte[]), Description = "Returns actor image.")]
+    public async Task<IActionResult> GetActorImage(
+        [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "actors/{id:int}/image")] HttpRequest req, int id, ILogger log)
+    {
+        try
+        {
+            string size = req.Query["size"];
+            var imageBytes = await _actorService.GetImageBytes(size ?? "original", id);
+            return new FileContentResult(imageBytes, "image/jpg");
+        }
+        catch(ArgumentException ex)
+        {
+            return ActionResultHelpers.BadRequestResult(ex.Message);
+        }
+        catch(NotFoundException ex)
+        {
+            return ActionResultHelpers.NotFoundResult(ex.Message);
+        }
+        catch (Exception ex)
+        {
+            log.LogError(ex, "Error occured while retrieving actor image");
             return ActionResultHelpers.ServerErrorResult();
         }
     }

@@ -1,5 +1,5 @@
 ﻿using BestMovies.Bff.Functions;
-using BestMovies.Bff.Interface;
+using BestMovies.Bff.Services;
 using BestMovies.Bff.Test.Helpers;
 
 namespace BestMovies.Bff.Test.MoviesFunctionTest.GetMovieDetailsEndpointTest;
