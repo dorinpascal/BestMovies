@@ -17,6 +17,7 @@ builder.Services.AddScoped<IUserProfileService, StaticUserProfileService>();
 // Repositories
 builder.Services.AddTransient<IMoviesRepository, MoviesRepository>();
 builder.Services.AddTransient<IGenresRepository, GenresRepository>();
+builder.Services.AddTransient<IActorsRepository, ActorsRepository>();
 
 // Mud Blazor
 builder.Services.AddMudServices();
