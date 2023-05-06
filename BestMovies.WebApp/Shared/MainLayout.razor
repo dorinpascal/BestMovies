@@ -16,9 +16,9 @@
         <MudIconButton Icon="@Icons.Material.Filled.Search" Color="Color.Info"
                        Class="mr-2" @onclick="ToggleSearch" />
         <div class="search-field">
-            @if (showSearch)
+            @if (_showSearch)
             {
-                <input type="text" @bind-value="@searchText" placeholder="Search">
+                <input type="text" @bind-value="@_searchText" placeholder="Search">
             }
             <button @onclick="ToggleSearch" ><i class="fa fa-search"></i></button>
         </div>
@@ -26,7 +26,7 @@
     </MudAppBar>
     <MudMainContent>
         <MudContainer MaxWidth="MaxWidth.ExtraExtraLarge" Class="my-2">
-            @if (!string.IsNullOrEmpty(searchText) && _searchedMovie?.Any() is true)
+            @if (!string.IsNullOrEmpty(_searchText) && _searchedMovie?.Any() is true)
             {
                 <MudContainer Class="d-flex flex-column gap-4 justify-center pa-4" MaxWidth="MaxWidth.ExtraExtraLarge">
                     <MovieCardList Title="Searched Movies" Movies="_searchedMovie" SkeletonCardsCount="5" />
@@ -42,8 +42,8 @@
     private IMoviesRepository MoviesRepository { get; set; } = default!;
     private IEnumerable<SearchMovieDto>? _searchedMovie;
 
-    private bool showSearch = false;
-    private string searchText = "";
+    private bool _showSearch;
+    private string _searchText = "";
 
     private readonly MudTheme _theme = new()
         {
@@ -56,8 +56,8 @@
 
     private async Task ToggleSearch()
     {
-        showSearch = !showSearch;
-        if (!showSearch) await OnSearch(searchText);
+        _showSearch = !_showSearch;
+        if (!_showSearch) await OnSearch(_searchText);
     }
 
 
