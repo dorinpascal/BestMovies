@@ -112,3 +112,11 @@ a, .btn-link {
     transform: translateY(-10px);
 }
 
+.highlight-on-hover {
+    transition: all 0.3s;
+}
+
+.highlight-on-hover:hover {
+    background-color: var(--mud-palette-action-disabled-background);
+}
+

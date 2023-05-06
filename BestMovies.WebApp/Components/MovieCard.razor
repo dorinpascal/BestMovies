@@ -2,14 +2,14 @@
 @using BestMovies.WebApp.Repositories
 
 <MudCard Outlined="true">
-    <div style="position: relative" class="d-flex justify-center rounded-lg">
+    <div style="position: relative" class="d-flex justify-center rounded">
         @if (Movie is null)
         {
             <MudSkeleton SkeletonType="SkeletonType.Rectangle" Animation="Animation.Wave" Height="@($"{Height}px")" Width="@($"{Width}px")" />
         }
         else
         {
-            <MudImage Class="rounded-sm" ObjectFit="@ObjectFit.Cover" Height="@Height" Width="@Width" Src="@($"api/movies/{Movie.Id}/image?size={ImageSize}")" Alt="@Movie.Title" />
+            <MudImage Class="rounded" ObjectFit="@ObjectFit.Cover" Height="@Height" Width="@Width" Src="@($"api/movies/{Movie.Id}/image?size={ImageSize}")" Alt="@Movie.Title" />
 
             <MudPaper Class="card-overlay-footer cursor-pointer" @onclick="OpenMovieDetails">
                 <div class="d-flex flex-column justify-space-between">
