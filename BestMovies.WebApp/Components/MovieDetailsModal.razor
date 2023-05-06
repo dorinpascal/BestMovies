@@ -7,7 +7,7 @@
     <DialogContent>
         <MudContainer MaxWidth="MaxWidth.ExtraLarge" Class="d-flex flex-column justify-start gap-2 pa-2" Style="overflow-y: auto;">
 
-            <MudImage @onloadend="() => Console.WriteLine(MovieId)" Class="rounded-sm pt-1" ObjectFit="@ObjectFit.Cover" Height="400" Src="@($"api/movies/{MovieId}/image?size=original")" Alt="Movie Image"/>
+            <MudImage Class="rounded-sm pt-1" ObjectFit="@ObjectFit.Cover" Height="400" Src="@($"api/movies/{MovieId}/image?size=original")" Alt="Movie Image"/>
 
             <div class="d-flex flex-column justify-start gap-1">
                 @if (_movieDetails is null)
@@ -90,7 +90,7 @@
                     {
                         for (var i = 0; i < 5; i++)
                         {
-                            <MudSkeleton Animation="Animation.Wave" SkeletonType="SkeletonType.Circle" Width="100px" Height="100px"/>
+                            <MudSkeleton Animation="Animation.Wave" SkeletonType="SkeletonType.Circle" Width="120px" Height="120px"/>
                         }
                     }
                     else
@@ -98,8 +98,8 @@
                         foreach (var actor in _movieDetails.Actors)
                         {
                             <div class="d-flex flex-column justify-start align-center">
-                                <MudSkeleton Animation="Animation.Pulse" SkeletonType="SkeletonType.Circle" Width="100px" Height="100px"/>
-                                
+                                <MudImage Class="mud-skeleton-circle" ObjectFit="@ObjectFit.Cover" ObjectPosition="ObjectPosition.Center" Height="120" Width="120" Src="@($"api/actors/{actor.Id}/image?size=w300")" Alt="@actor.Name"/>
+
                                 <MudText Typo="Typo.button">@actor.Name</MudText>
                                 <MudText Typo="Typo.overline">@actor.RoleName</MudText>
                             </div>
