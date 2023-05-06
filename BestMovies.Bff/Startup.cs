@@ -2,8 +2,8 @@ using System;
 using TMDbLib.Client;
 using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection;
-using BestMovies.Bff.Interface;
 using BestMovies.Bff.Services;
+using BestMovies.Bff.Services.Impl;
 
 [assembly: FunctionsStartup(typeof(BestMovies.Bff.Startup))]
 namespace BestMovies.Bff;

@@ -1,10 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using BestMovies.Bff.Interface;
 using TMDbLib.Client;
 
-namespace BestMovies.Bff.Services;
+namespace BestMovies.Bff.Services.Impl;
 
 public class GenreService : IGenreService
 {

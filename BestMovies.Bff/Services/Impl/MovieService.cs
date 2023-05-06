@@ -1,17 +1,15 @@
-﻿using BestMovies.Bff.Extensions;
-using BestMovies.Bff.Interface;
-using BestMovies.Shared.CustomExceptions;
-using BestMovies.Shared.Dtos.Movies;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using BestMovies.Bff.Extensions;
+using BestMovies.Shared.CustomExceptions;
+using BestMovies.Shared.Dtos.Movies;
 using TMDbLib.Client;
 using TMDbLib.Objects.General;
 using TMDbLib.Objects.Search;
 
-
-namespace BestMovies.Bff.Services;
+namespace BestMovies.Bff.Services.Impl;
 
 public class MovieService : IMovieService
 {
