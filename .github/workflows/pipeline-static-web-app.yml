@@ -9,6 +9,11 @@ on:
   push:
     branches:
       - main
+    paths:
+      - ".github/workflows/**"
+      - "BestMovies.Shared/**"
+      - "BestMovies.Bff/**"
+      - "BestMovies.WebApp/**"
   workflow_dispatch:
 
 jobs:
