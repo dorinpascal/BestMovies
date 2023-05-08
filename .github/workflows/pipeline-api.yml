@@ -3,6 +3,10 @@ on:
   push:
       branches:
         - main
+      paths:
+        - ".github/workflows/**"
+        - "BestMovies.Shared/**"
+        - "BestMovies.Api/**"
   workflow_dispatch:
 
 env:
