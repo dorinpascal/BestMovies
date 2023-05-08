@@ -6,8 +6,8 @@
     </PropertyGroup>
     <ItemGroup>
         <PackageReference Include="Microsoft.Azure.Functions.Extensions" Version="1.1.0" />
-        <PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0.5" />
-        <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="7.0.5" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.16" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="6.0.16" />
         <PackageReference Include="Microsoft.NET.Sdk.Functions" Version="4.1.1" />
         <PackageReference Include="migr8" Version="0.31.0" />
     </ItemGroup>
@@ -21,15 +21,8 @@
             <CopyToPublishDirectory>Never</CopyToPublishDirectory>
         </None>
     </ItemGroup>
-
-    <ItemGroup>
-        <None Update="Migrations/*.sql">
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </None>
-    </ItemGroup>
     
     <ItemGroup>
       <Folder Include="Models" />
-      <Folder Include="obj" />
     </ItemGroup>
 </Project>

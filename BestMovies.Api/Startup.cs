@@ -1,6 +1,4 @@
 using System;
-using System.IO;
-using System.Reflection;
 using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -30,7 +28,7 @@ public class Startup : FunctionsStartup
             var migrations = Migr8.Migrations.FromAssemblyOf<Startup>();
 
             var options = new Options(
-                migrationTableName: "__BestMoviesDatabaseMigrations"
+                migrationTableName: "__Migrations"
             );
             
             Database.Migrate(
