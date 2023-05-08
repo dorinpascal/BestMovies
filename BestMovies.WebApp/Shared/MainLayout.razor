@@ -4,7 +4,7 @@
 @using BestMovies.WebApp.Pages
 @using BestMovies.WebApp.Repositories;
 
-<MudThemeProvider Theme="_theme" />.
+<MudThemeProvider Theme="_theme" IsDarkMode="true" />.
 <MudDialogProvider />
 <MudSnackbarProvider />
 
@@ -12,7 +12,10 @@
     <MudAppBar Elevation="1" Dense="true">
         <MudText Typo="Typo.h5">BestMovies Inc.</MudText>
 
+        
         <MudSpacer />
+        
+        <SearchField ValueChanged="OnSearch"/>
         <MudIconButton Icon="@Icons.Material.Filled.Search" Color="Color.Info"
                        Class="mr-2" @onclick="ToggleSearch" />
         <div class="search-field">
@@ -40,19 +43,20 @@
 @code {
     [Inject]
     private IMoviesRepository MoviesRepository { get; set; } = default!;
+    
     private IEnumerable<SearchMovieDto>? _searchedMovie;
 
     private bool _showSearch;
     private string _searchText = "";
 
     private readonly MudTheme _theme = new()
+    {
+        Palette = new PaletteLight
         {
-            Palette = new PaletteLight
-            {
-                Primary = "#122b47",
-                AppbarBackground = "#122b4f"
-            }
-        };
+            Primary = "#122b47",
+            AppbarBackground = "#122b4f"
+        }
+    };
 
     private async Task ToggleSearch()
     {
@@ -63,6 +67,7 @@
 
     private async Task OnSearch(string movieTitle)
     {
+        Console.WriteLine($"search {movieTitle}");
         _searchedMovie = await MoviesRepository.SearchMovie(movieTitle);
         StateHasChanged();
     }
