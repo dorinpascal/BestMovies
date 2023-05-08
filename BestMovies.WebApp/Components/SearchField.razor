@@ -1,14 +1,12 @@
 
-<div class="d-flex flex-row justify-center gap-2">
-    <MudIconButton Icon="@Icons.Material.Filled.Search" Color="Color.Info" Class="mr-2" @onclick="Toggle"/>
+<div class="d-flex flex-row justify-center gap-1 px-2 ">
+    <MudIconButton Icon="@Icons.Material.Filled.Search" @onclick="Toggle"/>
     
     @if (_showSearchField)
     {
         <div class="py-2">
             <MudTextField Clearable="true" T="string" Value="Value" ValueChanged="Changed" Label="Search" Variant="Variant.Outlined" Margin="Margin.Dense"/>
-
         </div>
-            
     }
 </div>
 
@@ -34,6 +32,7 @@
                 _showSearchField = false;
                 break;
             case true:
+                await ValueChanged.InvokeAsync(Value);
                 break;
         }
 
@@ -42,15 +41,14 @@
 
     private async Task Changed(string value)
     {
-        Console.WriteLine("changed");
         Value = value;
+        
         if (string.IsNullOrEmpty(value))
         {
             _showSearchField = false;
+            return;
         }
-        else
-        {
-            await ValueChanged.InvokeAsync(Value);
-        }
+        
+        await ValueChanged.InvokeAsync(Value);
     }
 }

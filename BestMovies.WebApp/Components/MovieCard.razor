@@ -15,13 +15,13 @@
                 <div class="d-flex flex-column justify-space-between">
                     <div class="d-flex flex-row align-start justify-space-between pa-2">
                         <MudText Typo="Typo.subtitle1" Align="Align.Start"><strong>@Movie.Title</strong></MudText>
-                        <MudIcon Color="Color.Dark" Icon="@Icons.Material.Filled.KeyboardArrowUp"/>
+                        <MudIcon Icon="@Icons.Material.Filled.KeyboardArrowUp"/>
                     </div>
 
                     <div class="d-flex flex-row flex-wrap gap-2 justify-center px-4 pb-2" style="overflow-x: hidden;">
                         @foreach (var genre in Movie.Genres.Take(3))
                         {
-                            <MudText Color="Color.Dark" Typo="Typo.caption">@genre</MudText>
+                            <MudText Typo="Typo.caption">@genre</MudText>
                         }
                     </div>
                 </div>
