@@ -1,6 +1,6 @@
 @using BestMovies.Shared.Dtos.Movies
 
-<MudPaper Class="d-flex flex-column gap-2 pa-2" Elevation="0">
+<MudPaper Class="d-flex flex-column gap-2 pa-2" Style="background-color: transparent;" Elevation="0">
     @if (Title is not null)
     {
         <MudText Typo="Typo.h6" Align="Align.Start"> @Title </MudText>
@@ -12,7 +12,7 @@
             for (var i = 0; i < SkeletonCardsCount; i++)
             {
                 <MudCard Outlined="true">
-                    <MudSkeleton SkeletonType="SkeletonType.Rectangle" Animation="Animation.Wave" Height="@($"{CardHeight}px")" Width="@($"{CardWidth}px")" />
+                    <MudSkeleton Class="rounded" SkeletonType="SkeletonType.Rectangle" Animation="Animation.Wave" Height="@($"{CardHeight}px")" Width="@($"{CardWidth}px")" />
                 </MudCard>
             }
         }

@@ -99,6 +99,10 @@ a, .btn-link {
     .loading-progress-text:after {
         content: var(--blazor-load-percentage-text, "Loading");
     }
+
+.mud-input-label-outlined {
+    background-color: var(--mud-palette-appbar-background);
+}
     
 .card-overlay-footer {
     position: absolute;
@@ -111,4 +115,13 @@ a, .btn-link {
 .card-overlay-footer:hover {
     transform: translateY(-10px);
 }
+
+.highlight-on-hover {
+    transition: all 0.3s;
+}
+
+.highlight-on-hover:hover {
+    background-color: var(--mud-palette-action-disabled-background);
+}
+
 

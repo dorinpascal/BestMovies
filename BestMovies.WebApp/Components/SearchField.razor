@@ -1,0 +1,54 @@
+
+<div class="d-flex flex-row justify-center gap-1 px-2 ">
+    <MudIconButton Icon="@Icons.Material.Filled.Search" @onclick="Toggle"/>
+    
+    @if (_showSearchField)
+    {
+        <div class="py-2">
+            <MudTextField Clearable="true" T="string" Value="Value" ValueChanged="Changed" Label="Search" Variant="Variant.Outlined" Margin="Margin.Dense"/>
+        </div>
+    }
+</div>
+
+
+@code {
+
+    [Parameter]
+    public string Value { get; set; } = string.Empty;
+    
+    [Parameter]
+    public EventCallback<string> ValueChanged { get; set; }
+
+    private bool _showSearchField;
+    
+    private async Task Toggle()
+    {
+        switch (_showSearchField)
+        {
+            case false:
+                _showSearchField = true;
+                return;
+            case true when string.IsNullOrEmpty(Value):
+                _showSearchField = false;
+                break;
+            case true:
+                await ValueChanged.InvokeAsync(Value);
+                break;
+        }
+
+        await InvokeAsync(StateHasChanged);
+    }
+
+    private async Task Changed(string value)
+    {
+        Value = value;
+        
+        if (string.IsNullOrEmpty(value))
+        {
+            _showSearchField = false;
+            return;
+        }
+        
+        await ValueChanged.InvokeAsync(Value);
+    }
+}
