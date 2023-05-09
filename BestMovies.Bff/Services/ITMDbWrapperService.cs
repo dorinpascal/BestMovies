@@ -133,6 +133,7 @@ public interface ITMDbWrapperService
     Task<List<Job>> GetJobsAsync(CancellationToken cancellationToken = new CancellationToken());
     Task<Credit> GetCreditsAsync(string id, CancellationToken cancellationToken = new CancellationToken());
     Task<Credit> GetCreditsAsync(string id, string language, CancellationToken cancellationToken = new CancellationToken());
+    Task<SearchContainer<SearchMovie>> GetMoviePopularListByGenreAsync(Genre searchedGenre, string? region, string? language);
     DiscoverMovie DiscoverMoviesAsync();
     DiscoverTv DiscoverTvShowsAsync();
     Task<FindContainer> FindAsync(FindExternalSource source, string id, CancellationToken cancellationToken = new CancellationToken());

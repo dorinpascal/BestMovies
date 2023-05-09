@@ -5,7 +5,7 @@ using BestMovies.Shared.CustomExceptions;
 using BestMovies.Shared.Dtos.Movies;
 using NSubstitute.ExceptionExtensions;
 
-namespace BestMovies.Bff.Test.MoviesFunctionTest.GetPopularMoviesEndpointTest;
+namespace BestMovies.Bff.Test.FunctionTests.MoviesFunctionTest.GetPopularMoviesEndpointTest;
 
 public class GetPopularMoviesEndpointTests
 {

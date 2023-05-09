@@ -76,11 +76,8 @@ public class MovieService : IMovieService
         {
             throw new NotFoundException($"Cannot find any movie with the genre '{genre}'");
         }
-        return await _tmDbClient.DiscoverMoviesAsync()
-            .IncludeWithAllOfGenre(new[] { searchedGenre })
-            .WhereReleaseDateIsInRegion(region)
-            .WhereLanguageIs(language)
-            .Query();
+
+        return await _tmDbClient.GetMoviePopularListByGenreAsync(searchedGenre, language, region);
     }
 
 }

@@ -6,7 +6,7 @@ using BestMovies.Shared.Dtos.Actor;
 using BestMovies.Shared.Dtos.Movies;
 using NSubstitute.ExceptionExtensions;
 
-namespace BestMovies.Bff.Test.MoviesFunctionTest.GetMovieDetailsEndpointTest;
+namespace BestMovies.Bff.Test.FunctionTests.MoviesFunctionTest.GetMovieDetailsEndpointTest;
 
 public class GetMovieDetailsEndpointTest
 {

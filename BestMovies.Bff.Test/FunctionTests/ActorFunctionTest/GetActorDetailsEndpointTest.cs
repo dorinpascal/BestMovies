@@ -5,7 +5,7 @@ using BestMovies.Shared.CustomExceptions;
 using BestMovies.Shared.Dtos.Actor;
 using NSubstitute.ExceptionExtensions;
 
-namespace BestMovies.Bff.Test.ActorFunctionTest;
+namespace BestMovies.Bff.Test.FunctionTests.ActorFunctionTest;
 
 public class GetActorDetailsEndpointTest
 {

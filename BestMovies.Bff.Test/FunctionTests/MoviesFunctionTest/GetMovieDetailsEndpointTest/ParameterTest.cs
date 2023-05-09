@@ -2,7 +2,7 @@
 using BestMovies.Bff.Services;
 using BestMovies.Bff.Test.Helpers;
 
-namespace BestMovies.Bff.Test.MoviesFunctionTest.GetMovieDetailsEndpointTest;
+namespace BestMovies.Bff.Test.FunctionTests.MoviesFunctionTest.GetMovieDetailsEndpointTest;
 
 public class ParameterTest
 {

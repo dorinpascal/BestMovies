@@ -284,6 +284,15 @@ public class TMDbWrapperService : ITMDbWrapperService
         return _tmDbClient.GetCreditsAsync(id, language, cancellationToken);
     }
 
+    public Task<SearchContainer<SearchMovie>> GetMoviePopularListByGenreAsync(Genre searchedGenre, string? region, string? language)
+    {
+        return _tmDbClient.DiscoverMoviesAsync()
+            .IncludeWithAllOfGenre(new[] { searchedGenre })
+            .WhereReleaseDateIsInRegion(region)
+            .WhereLanguageIs(language)
+            .Query();
+    }
+
     public DiscoverMovie DiscoverMoviesAsync()
     {
         return _tmDbClient.DiscoverMoviesAsync();
