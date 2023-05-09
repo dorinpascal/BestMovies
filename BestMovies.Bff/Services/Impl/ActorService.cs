@@ -10,9 +10,9 @@ namespace BestMovies.Bff.Services.Impl;
 
 public class ActorService : IActorService
 {
-    private readonly TMDbClient _tmDbClient;
+    private readonly ITMDbWrapperService _tmDbClient;
 
-    public ActorService(TMDbClient tmDbClient)
+    public ActorService(ITMDbWrapperService tmDbClient)
     {
         _tmDbClient = tmDbClient;
     }

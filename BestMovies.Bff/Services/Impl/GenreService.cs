@@ -1,15 +1,14 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using TMDbLib.Client;
 
 namespace BestMovies.Bff.Services.Impl;
 
 public class GenreService : IGenreService
 {
-    private readonly TMDbClient _tmDbClient;
+    private readonly ITMDbWrapperService _tmDbClient;
 
-    public GenreService(TMDbClient tmDbClient)
+    public GenreService(ITMDbWrapperService tmDbClient)
     {
         _tmDbClient = tmDbClient;
     }

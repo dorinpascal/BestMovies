@@ -18,5 +18,6 @@ public class Startup : FunctionsStartup
         builder.Services.AddTransient<IMovieService, MovieService>();
         builder.Services.AddTransient<IGenreService, GenreService>();
         builder.Services.AddTransient<IActorService, ActorService>();
+        builder.Services.AddTransient<ITMDbWrapperService, TMDbWrapperService>();
     }
 }
