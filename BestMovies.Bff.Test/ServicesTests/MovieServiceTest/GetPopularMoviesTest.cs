@@ -87,7 +87,7 @@ public class GetPopularMoviesTest
         new()
         {
             Id = 1000,
-            Title = "TestMovie",
+            Title = "TestMovieAction",
             GenreIds = new List<int>
             {
                 1
@@ -98,7 +98,7 @@ public class GetPopularMoviesTest
         new()
         {
             Id = 1000,
-            Title = "TestMovie",
+            Title = "TestMovieHorror",
             GenreIds = new List<int>
             {
                 2
