@@ -1,10 +1,10 @@
-using BestMovies.Shared.Dtos.Movies;
-using NSubstitute.ExceptionExtensions;
 using BestMovies.Bff.Functions;
 using BestMovies.Bff.Services;
 using BestMovies.Bff.Test.Helpers;
+using BestMovies.Shared.Dtos.Movies;
+using NSubstitute.ExceptionExtensions;
 
-namespace BestMovies.Bff.Test.MoviesFunctionTest.SearchMovieEndpointTest;
+namespace BestMovies.Bff.Test.FunctionTests.MoviesFunctionTest.SearchMovieEndpointTest;
 
 public class SearchMovieEndpointTests
 {

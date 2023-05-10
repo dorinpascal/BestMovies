@@ -3,7 +3,7 @@ using BestMovies.Bff.Services;
 using BestMovies.Bff.Test.Helpers;
 using NSubstitute.ExceptionExtensions;
 
-namespace BestMovies.Bff.Test.GenreFunctionTest;
+namespace BestMovies.Bff.Test.FunctionTests.GenreFunctionTest;
 
 public class GetGenreNamesEndpointTest
 {

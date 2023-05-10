@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using BestMovies.Bff.Extensions;
 using BestMovies.Shared.CustomExceptions;
 using BestMovies.Shared.Dtos.Movies;
-using TMDbLib.Client;
 using TMDbLib.Objects.General;
 using TMDbLib.Objects.Search;
 
@@ -13,8 +12,8 @@ namespace BestMovies.Bff.Services.Impl;
 
 public class MovieService : IMovieService
 {
-    private readonly TMDbClient _tmDbClient;
-    public MovieService(TMDbClient tmDbClient)
+    private readonly ITMDbWrapperService _tmDbClient;
+    public MovieService(ITMDbWrapperService tmDbClient)
     {
         _tmDbClient = tmDbClient;
     }
@@ -77,11 +76,8 @@ public class MovieService : IMovieService
         {
             throw new NotFoundException($"Cannot find any movie with the genre '{genre}'");
         }
-        return await _tmDbClient.DiscoverMoviesAsync()
-            .IncludeWithAllOfGenre(new[] { searchedGenre })
-            .WhereReleaseDateIsInRegion(region)
-            .WhereLanguageIs(language)
-            .Query();
+
+        return await _tmDbClient.GetMoviePopularListByGenreAsync(searchedGenre, language, region);
     }
 
 }

@@ -2,7 +2,7 @@
 using BestMovies.Bff.Services;
 using BestMovies.Bff.Test.Helpers;
 
-namespace BestMovies.Bff.Test.MoviesFunctionTest.SearchMovieEndpointTest;
+namespace BestMovies.Bff.Test.FunctionTests.MoviesFunctionTest.SearchMovieEndpointTest;
 
 // ReSharper disable once PrivateFieldCanBeConvertedToLocalVariable
 public class BodyParametersTest
