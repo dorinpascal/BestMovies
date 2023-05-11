@@ -5,6 +5,11 @@
         <Nullable>enable</Nullable>
     </PropertyGroup>
     <ItemGroup>
+      <Compile Remove="Models\**" />
+      <EmbeddedResource Remove="Models\**" />
+      <None Remove="Models\**" />
+    </ItemGroup>
+    <ItemGroup>
         <PackageReference Include="Microsoft.Azure.Functions.Extensions" Version="1.1.0" />
         <PackageReference Include="Microsoft.Azure.WebJobs.Extensions.OpenApi" Version="1.0.0" />
         <PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.16" />
@@ -21,10 +26,6 @@
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
             <CopyToPublishDirectory>Never</CopyToPublishDirectory>
         </None>
-    </ItemGroup>
-    
-    <ItemGroup>
-      <Folder Include="Models" />
     </ItemGroup>
     
     <ItemGroup>

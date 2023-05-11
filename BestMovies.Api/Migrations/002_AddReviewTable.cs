@@ -7,7 +7,7 @@ public class _002_AddReviewTable : ISqlMigration
 {
     public string Sql => @"
          create table Reviews (
-            [id] VARCHAR(50) PRIMARY KEY NOT NULL ,
+            [id] INT IDENTITY(1,1) NOT NULL PRIMARY KEY,
             [userId] VARCHAR(50) NOT NULL,
             [rating] VARCHAR(50) NOT NULL,
 			[comment] VARCHAR (255), 
