@@ -6,6 +6,9 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BestMovies.Bff", "BestMovies.Bff\BestMovies.Bff.csproj", "{91E9F561-D8AC-4860-9043-F971950F31B1}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BestMovies.Api", "BestMovies.Api\BestMovies.Api.csproj", "{559BA178-F3D3-4E63-9E61-18664894717C}"
+	ProjectSection(ProjectDependencies) = postProject
+		{224A10E6-036D-4768-99AA-58EEC464E1CF} = {224A10E6-036D-4768-99AA-58EEC464E1CF}
+	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BestMovies.WebApp", "BestMovies.WebApp\BestMovies.WebApp.csproj", "{47FA9BCC-C5D6-43DF-8935-6B002098E0D3}"
 EndProject
@@ -57,5 +60,8 @@ Global
 		{47FA9BCC-C5D6-43DF-8935-6B002098E0D3} = {95593C7A-F100-4857-93D0-0728C328E2A1}
 		{224A10E6-036D-4768-99AA-58EEC464E1CF} = {B1E99CAA-95E7-419A-9AFD-F28E55C42744}
 		{9037F791-B32E-45E7-97E6-AA3A4A5678D2} = {CB00C9E5-1033-4600-9BAE-85043F3E7B52}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {AE338DFC-D263-4F6B-B833-ABFF741A4341}
 	EndGlobalSection
 EndGlobal
