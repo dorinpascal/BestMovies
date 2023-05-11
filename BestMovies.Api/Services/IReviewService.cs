@@ -5,6 +5,6 @@ namespace BestMovies.Api.Services
 {
     public interface IReviewService
     {
-        Task CreateReview(Review review);
+        Task CreateReview(ReviewDto review);
     }
 }
