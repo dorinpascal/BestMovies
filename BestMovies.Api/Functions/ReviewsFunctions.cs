@@ -17,11 +17,11 @@ using System.Threading.Tasks;
 
 namespace BestMovies.Api.Functions;
 
-public class AddReview
+public class ReviewFunctions
 {
-    private readonly ILogger<AddReview> _logger;
+    private readonly ILogger<ReviewFunctions> _logger;
     private readonly IReviewService _reviewService;
-    public AddReview(ILogger<AddReview> log, IReviewService reviewService)
+    public ReviewFunctions(ILogger<ReviewFunctions> log, IReviewService reviewService)
     {
         _logger = log;
         _reviewService = reviewService;
@@ -30,10 +30,10 @@ public class AddReview
     [FunctionName(nameof(AddReview))]
     [OpenApiOperation(operationId: nameof(AddReview), tags: new[] { "Review" })]
     [OpenApiRequestBody("application/json", typeof(ReviewDto))]
-    [OpenApiParameter(name: "userId", In = ParameterLocation.Path, Required = true, Type = typeof(int), Description = "The user id.")]
+    [OpenApiParameter(name: "userId", In = ParameterLocation.Path, Required = true, Type = typeof(string), Description = "The user id.")]
     [OpenApiResponseWithBody(statusCode: HttpStatusCode.OK, contentType: "application/json", bodyType: typeof(IEnumerable<ReviewDto>), Description = "Add a review.")]
-    public async Task<IActionResult> Run(
-        [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "user/{userId}/review")] HttpRequest req,int userId)
+    public async Task<IActionResult> AddReview(
+        [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "user/{userId}/reviews")] HttpRequest req,string userId)
     { 
         try
         {

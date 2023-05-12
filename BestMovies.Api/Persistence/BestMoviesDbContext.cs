@@ -1,7 +1,7 @@
-using BestMovies.Api.Persistance.Entity;
+using BestMovies.Api.Persistence.Entity;
 using Microsoft.EntityFrameworkCore;
 
-namespace BestMovies.Api.Persistance;
+namespace BestMovies.Api.Persistence;
 
 public class BestMoviesDbContext : DbContext
 {

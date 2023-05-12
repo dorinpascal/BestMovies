@@ -1,5 +1,5 @@
-﻿using BestMovies.Api.Persistance;
-using BestMovies.Api.Persistance.Entity;
+﻿using BestMovies.Api.Persistence;
+using BestMovies.Api.Persistence.Entity;
 using BestMovies.Shared.Dtos.Review;
 using System;
 using System.Threading.Tasks;
@@ -15,7 +15,7 @@ public class ReviewService : IReviewService
         this._dbContext = _dbContext;
     }
 
-    public async Task CreateReview(int UserId,ReviewDto reviewDto)
+    public async Task CreateReview(string UserId,ReviewDto reviewDto)
     {
         var review = new Review
             {
@@ -31,6 +31,5 @@ public class ReviewService : IReviewService
         catch (Exception ex) {
             throw new Exception(ex.Message);
         }
-        
     }
 }
