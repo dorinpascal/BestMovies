@@ -28,7 +28,7 @@ public class ReviewFunctions
         _reviewService = reviewService;
     }
 
-    [FunctionName("ReviewFunctions")]
+    [FunctionName(nameof(AddReview))]
     [OpenApiOperation(operationId: nameof(AddReview), tags: new[] { "Review" })]
     [OpenApiRequestBody("application/json", typeof(ReviewDto))]
     [OpenApiParameter(name: "userId", In = ParameterLocation.Path, Required = true, Type = typeof(string), Description = "The user id.")]
@@ -37,7 +37,7 @@ public class ReviewFunctions
         [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "user/{userId}/reviews")] HttpRequest req, string userId)
     {
         var review = JsonConvert.DeserializeObject<ReviewDto>(await new StreamReader(req.Body).ReadToEndAsync());
-        if (review is null || userId is null) return ActionResultHelpers.BadRequestResult("Invalid parameters.");
+        if (review is null || string.IsNullOrEmpty(userId)) return ActionResultHelpers.BadRequestResult("Invalid parameters.");
         string uri = Environment.GetEnvironmentVariable("BestMoviesAPIUri")
                                  ?? throw new ArgumentException("Please make sure you have BestMoviesAPIUri as an environmental variable");
         try

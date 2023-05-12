@@ -16,18 +16,15 @@ public class ReviewService : IReviewService
     {
         _client = new HttpClient();
     }
-
-
     public async Task AddReview(string uri, string userId, ReviewDto review)
     {
         if (string.IsNullOrEmpty(uri)) throw new InvalidConfigurationException("BestMoviesApiUrl is not available in Appsettings");
 
-        string reviewJson = JsonSerializer.Serialize(review, new JsonSerializerOptions()
+        var reviewJson = JsonSerializer.Serialize(review, new JsonSerializerOptions()
         {
             PropertyNamingPolicy = JsonNamingPolicy.CamelCase
         });
-
-        StringContent reviewStringContent = new StringContent(
+        var reviewStringContent = new StringContent(
             reviewJson,
             Encoding.UTF8,
             "application/json"
