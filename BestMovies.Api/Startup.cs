@@ -1,4 +1,7 @@
 using System;
+using BestMovies.Api.Persistence;
+using BestMovies.Api.Repo;
+using BestMovies.Api.Repo.Impl;
 using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -17,8 +20,8 @@ public class Startup : FunctionsStartup
         {
             options.UseSqlServer(dbConnectionString);
         });
-        
         MigrateDatabase(dbConnectionString);
+        builder.Services.AddTransient<IReviewService, ReviewService>();
     }
 
     private static void MigrateDatabase(string connectionString)

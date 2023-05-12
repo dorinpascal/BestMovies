@@ -1,11 +1,17 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <TargetFramework>net6.0</TargetFramework>
         <AzureFunctionsVersion>V4</AzureFunctionsVersion>
         <Nullable>enable</Nullable>
     </PropertyGroup>
     <ItemGroup>
+      <Compile Remove="Models\**" />
+      <EmbeddedResource Remove="Models\**" />
+      <None Remove="Models\**" />
+    </ItemGroup>
+    <ItemGroup>
         <PackageReference Include="Microsoft.Azure.Functions.Extensions" Version="1.1.0" />
+        <PackageReference Include="Microsoft.Azure.WebJobs.Extensions.OpenApi" Version="1.0.0" />
         <PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.16" />
         <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="6.0.16" />
         <PackageReference Include="Microsoft.NET.Sdk.Functions" Version="4.1.1" />
@@ -23,6 +29,6 @@
     </ItemGroup>
     
     <ItemGroup>
-      <Folder Include="Models" />
+      <ProjectReference Include="..\BestMovies.Shared\BestMovies.Shared.csproj" />
     </ItemGroup>
 </Project>
