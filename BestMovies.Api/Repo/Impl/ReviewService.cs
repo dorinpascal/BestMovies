@@ -4,7 +4,7 @@ using BestMovies.Shared.Dtos.Review;
 using System;
 using System.Threading.Tasks;
 
-namespace BestMovies.Api.Services.Impl;
+namespace BestMovies.Api.Repo.Impl;
 
 public class ReviewService : IReviewService
 {
@@ -23,13 +23,9 @@ public class ReviewService : IReviewService
             Rating=reviewDto.Rating,
             Comment=reviewDto.Comment,
         };
-        try
-        {
-            await _dbContext.Reviews.AddAsync(review);
-            await _dbContext.SaveChangesAsync();
-        }
-        catch (Exception ex) {
-            throw new Exception(ex.Message);
-        }
+       
+        await _dbContext.Reviews.AddAsync(review);
+        await _dbContext.SaveChangesAsync();
+        
     }
 }
