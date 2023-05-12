@@ -13,7 +13,7 @@ using TMDbLib.Objects.Trending;
 using TMDbLib.Objects.TvShows;
 using Credits = TMDbLib.Objects.Movies.Credits;
 
-namespace BestMovies.Bff.Services;
+namespace BestMovies.Bff.Services.Tmdb;
 
 // ReSharper disable once InconsistentNaming
 public interface ITMDbWrapperService
@@ -30,21 +30,21 @@ public interface ITMDbWrapperService
 
     Task<Movie> GetMovieAsync(int movieId, MovieMethods extraMethods = MovieMethods.Undefined,
         CancellationToken cancellationToken = new CancellationToken());
-    
+
     Task<Credits> GetMovieCreditsAsync(int movieId, CancellationToken cancellationToken = new CancellationToken());
 
     Task<ImagesWithId> GetMovieImagesAsync(int movieId, CancellationToken cancellationToken = new CancellationToken());
-    
+
     Task<SearchContainer<SearchMovie>> GetMoviePopularListAsync(string? language = null, int page = 0, string? region = null,
         CancellationToken cancellationToken = new CancellationToken());
-    
+
     Task<Person> GetPersonAsync(int personId, PersonMethods extraMethods = PersonMethods.Undefined,
         CancellationToken cancellationToken = new CancellationToken());
 
     Task<ProfileImages> GetPersonImagesAsync(int personId, CancellationToken cancellationToken = new CancellationToken());
 
     Task<MovieCredits> GetPersonMovieCreditsAsync(int personId, CancellationToken cancellationToken = new CancellationToken());
-    
+
     Task<SearchContainer<SearchMovie>> SearchMovieAsync(string query, int page = 0, bool includeAdult = false, int year = 0, string? region = null,
         int primaryReleaseYear = 0, CancellationToken cancellationToken = new CancellationToken());
 

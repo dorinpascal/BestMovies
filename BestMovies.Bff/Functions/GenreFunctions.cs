@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
 using BestMovies.Bff.Helpers;
-using BestMovies.Bff.Services;
+using BestMovies.Bff.Services.Tmdb;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;

@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace BestMovies.Bff.Services.Impl;
+namespace BestMovies.Bff.Services.Tmdb.Impl;
 
 public class GenreService : IGenreService
 {

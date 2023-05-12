@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using BestMovies.Shared.CustomExceptions;
 using BestMovies.Shared.Dtos.Movies;
 using BestMovies.Bff.Helpers;
-using BestMovies.Bff.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
@@ -15,6 +14,7 @@ using Microsoft.Azure.WebJobs.Extensions.OpenApi.Core.Attributes;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json;
+using BestMovies.Bff.Services.Tmdb;
 
 namespace BestMovies.Bff.Functions;
 
