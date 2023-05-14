@@ -41,8 +41,8 @@ public class ReviewFunctions
         try
         {
             await _reviewService.AddReview(userId, review);
-            _logger.LogInformation( "Review added with success.");
-            return new OkObjectResult("Review added with success.");
+            _logger.LogInformation( "Review added successfully.");
+            return new OkObjectResult("Review added successfully.");
         }
         catch (Exception ex)
         {

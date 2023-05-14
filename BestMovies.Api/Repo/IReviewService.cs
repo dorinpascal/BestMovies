@@ -5,5 +5,5 @@ namespace BestMovies.Api.Repo;
 
 public interface IReviewService
 {
-    Task CreateReview(string UserId, ReviewDto reviewDto);
+    Task CreateReview(string userId, ReviewDto reviewDto);
 }

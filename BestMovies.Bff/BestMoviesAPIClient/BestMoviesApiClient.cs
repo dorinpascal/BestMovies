@@ -19,7 +19,7 @@ public class BestMoviesApiClient:IBestMoviesApiClient
 
     public async Task AddReview(string userId, ReviewDto review)
     {
-        var reviewJson = JsonSerializer.Serialize(review, new JsonSerializerOptions()
+        var reviewJson = JsonSerializer.Serialize(review, new JsonSerializerOptions
         {
             PropertyNamingPolicy = JsonNamingPolicy.CamelCase
         });
