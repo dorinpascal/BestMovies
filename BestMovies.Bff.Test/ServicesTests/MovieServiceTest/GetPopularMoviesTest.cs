@@ -1,6 +1,6 @@
 ﻿using BestMovies.Bff.Extensions;
+using BestMovies.Bff.Services;
 using BestMovies.Bff.Services.Impl;
-using BestMovies.Bff.Services.Tmdb;
 using TMDbLib.Objects.Discover;
 using TMDbLib.Objects.General;
 using TMDbLib.Objects.Search;

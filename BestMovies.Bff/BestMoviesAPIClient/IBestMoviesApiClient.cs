@@ -1,9 +1,9 @@
 ﻿using BestMovies.Shared.Dtos.Review;
 using System.Threading.Tasks;
 
-namespace BestMovies.Bff.Services.BestMoviesApi;
+namespace BestMovies.Bff.BestMoviesAPIClient;
 
-public interface IReviewService
+public interface IBestMoviesApiClient
 {
     Task AddReview(string userId, ReviewDto review);
 }

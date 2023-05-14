@@ -38,11 +38,9 @@ public class ReviewFunctions
     {
         var review = JsonConvert.DeserializeObject<ReviewDto>(await new StreamReader(req.Body).ReadToEndAsync());
         if (review is null || string.IsNullOrEmpty(userId)) return ActionResultHelpers.BadRequestResult("Invalid parameters.");
-        string uri = Environment.GetEnvironmentVariable("BestMoviesAPIUri")
-                                 ?? throw new ArgumentException("Please make sure you have BestMoviesAPIUri as an environmental variable");
         try
         {
-            await _reviewService.AddReview(uri, userId, review);
+            await _reviewService.AddReview(userId, review);
             _logger.LogInformation( "Review added with success.");
             return new OkObjectResult("Review added with success.");
         }

@@ -5,35 +5,21 @@ using System.Net.Http;
 using System.Text.Json;
 using System.Text;
 using System.Threading.Tasks;
+using BestMovies.Bff.Services.BestMoviesApi;
+using BestMovies.Bff.BestMoviesAPIClient;
 
 namespace BestMovies.Bff.Services.BestMoviesApi.Impl;
 
 public class ReviewService : IReviewService
 {
-    private readonly HttpClient _client;
+    private readonly IBestMoviesApiClient _client;
 
-    public ReviewService()
+    public ReviewService(IBestMoviesApiClient client)
     {
-        _client = new HttpClient();
+        _client = client;
     }
-    public async Task AddReview(string uri, string userId, ReviewDto review)
+    public async Task AddReview(string userId, ReviewDto review)
     {
-        if (string.IsNullOrEmpty(uri)) throw new InvalidConfigurationException("BestMoviesApiUrl is not available in Appsettings");
-
-        var reviewJson = JsonSerializer.Serialize(review, new JsonSerializerOptions()
-        {
-            PropertyNamingPolicy = JsonNamingPolicy.CamelCase
-        });
-        var reviewStringContent = new StringContent(
-            reviewJson,
-            Encoding.UTF8,
-            "application/json"
-        );
-        var responseMessage = await _client.PostAsync($"{uri}/user/{userId}/reviews", reviewStringContent);
-        if (!responseMessage.IsSuccessStatusCode)
-        {
-            var jsonObject = await JsonDocument.ParseAsync(await responseMessage.Content.ReadAsStreamAsync());
-            throw new Exception(jsonObject.RootElement.GetProperty("message").GetString());
-        }
+        await _client.AddReview(userId, review);
     }
 }
