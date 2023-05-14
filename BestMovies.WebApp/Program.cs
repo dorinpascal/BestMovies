@@ -13,6 +13,7 @@ builder.Services.AddScoped(_ => new HttpClient {BaseAddress = new Uri(builder.Ho
 
 // Services
 builder.Services.AddScoped<IUserProfileService, StaticUserProfileService>();
+builder.Services.AddScoped<IAuthService, AuthService>();
 
 // Repositories
 builder.Services.AddTransient<IMoviesRepository, MoviesRepository>();
