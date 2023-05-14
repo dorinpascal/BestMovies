@@ -20,11 +20,11 @@ namespace BestMovies.Api.Functions;
 public class ReviewFunctions
 {
     private readonly ILogger<ReviewFunctions> _logger;
-    private readonly IReviewService _reviewService;
-    public ReviewFunctions(ILogger<ReviewFunctions> log, IReviewService reviewService)
+    private readonly IReviewRepository _reviewRepository;
+    public ReviewFunctions(ILogger<ReviewFunctions> log, IReviewRepository reviewRepository)
     {
         _logger = log;
-        _reviewService = reviewService;
+        _reviewRepository = reviewRepository;
     }
 
     [FunctionName(nameof(AddReview))]
@@ -39,7 +39,7 @@ public class ReviewFunctions
         {
             var review = JsonConvert.DeserializeObject<ReviewDto>(await new StreamReader(req.Body).ReadToEndAsync());
             if (review is null) return ActionResultHelpers.BadRequestResult("Invalid parameters.");
-            await _reviewService.CreateReview(userId, review);
+            await _reviewRepository.CreateReview(userId, review);
             return new OkObjectResult("The review was added with success.");
         }
         catch(Exception ex)

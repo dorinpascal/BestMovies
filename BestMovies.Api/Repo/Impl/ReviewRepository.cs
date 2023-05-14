@@ -5,13 +5,13 @@ using System.Threading.Tasks;
 
 namespace BestMovies.Api.Repo.Impl;
 
-public class ReviewService : IReviewService
+public class ReviewRepository : IReviewRepository
 {
     private readonly BestMoviesDbContext _dbContext;
 
-    public ReviewService(BestMoviesDbContext dbContext)
+    public ReviewRepository(BestMoviesDbContext dbContext)
     {
-        this._dbContext = dbContext;
+        _dbContext = dbContext;
     }
 
     public async Task CreateReview(string userId,ReviewDto reviewDto)

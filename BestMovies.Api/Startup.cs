@@ -21,7 +21,7 @@ public class Startup : FunctionsStartup
             options.UseSqlServer(dbConnectionString);
         });
         MigrateDatabase(dbConnectionString);
-        builder.Services.AddTransient<IReviewService, ReviewService>();
+        builder.Services.AddTransient<IReviewRepository, ReviewRepository>();
     }
 
     private static void MigrateDatabase(string connectionString)

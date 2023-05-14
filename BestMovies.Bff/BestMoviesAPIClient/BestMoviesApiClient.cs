@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace BestMovies.Bff.BestMoviesAPIClient;
 
-public class BestMoviesApiClient:IBestMoviesApiClient
+public class BestMoviesApiClient:IBestMoviesApiClient, IDisposable
 {
     private readonly HttpClient _client;
     private readonly string? _uri = "https://fn-bestmovies-api-prod.azurewebsites.net/api";
@@ -34,5 +34,10 @@ public class BestMoviesApiClient:IBestMoviesApiClient
             var jsonObject = await JsonDocument.ParseAsync(await responseMessage.Content.ReadAsStreamAsync());
             throw new Exception(jsonObject.RootElement.GetProperty("message").GetString());
         }
+    }
+
+    public void Dispose()
+    {
+        _client.Dispose();
     }
 }
