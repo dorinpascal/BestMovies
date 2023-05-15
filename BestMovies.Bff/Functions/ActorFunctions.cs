@@ -2,7 +2,7 @@
 using System.Net;
 using System.Threading.Tasks;
 using BestMovies.Bff.Helpers;
-using BestMovies.Bff.Services;
+using BestMovies.Bff.Services.Tmdb;
 using BestMovies.Shared.CustomExceptions;
 using BestMovies.Shared.Dtos.Actor;
 using Microsoft.AspNetCore.Http;

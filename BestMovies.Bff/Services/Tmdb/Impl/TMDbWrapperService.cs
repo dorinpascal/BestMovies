@@ -26,7 +26,7 @@ using TMDbLib.Objects.TvShows;
 using Country = TMDbLib.Objects.Countries.Country;
 using Credits = TMDbLib.Objects.Movies.Credits;
 
-namespace BestMovies.Bff.Services.Impl;
+namespace BestMovies.Bff.Services.Tmdb.Impl;
 
 // ReSharper disable once InconsistentNaming
 public class TMDbWrapperService : ITMDbWrapperService

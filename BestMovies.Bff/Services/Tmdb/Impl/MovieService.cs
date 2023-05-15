@@ -8,7 +8,7 @@ using BestMovies.Shared.Dtos.Movies;
 using TMDbLib.Objects.General;
 using TMDbLib.Objects.Search;
 
-namespace BestMovies.Bff.Services.Impl;
+namespace BestMovies.Bff.Services.Tmdb.Impl;
 
 public class MovieService : IMovieService
 {
@@ -38,27 +38,27 @@ public class MovieService : IMovieService
     }
 
     public async Task<MovieDetailsDto> GetMovieDetails(int id)
-    {     
+    {
         var searchContainer = await _tmDbClient.GetMovieAsync(id);
         if (searchContainer is null)
         {
             throw new NotFoundException($"No movies found with the id '{id}'");
         }
-        
+
         var credits = await _tmDbClient.GetMovieCreditsAsync(id);
-            
+
         var movieDetailsDto = searchContainer.ToDto(credits.Cast.Take(5));
         return movieDetailsDto;
     }
 
-    public async Task<IEnumerable<SearchMovieDto>> GetPopularMovies(string? genre =null, string? language = null, string? region = null)
+    public async Task<IEnumerable<SearchMovieDto>> GetPopularMovies(string? genre = null, string? language = null, string? region = null)
     {
         var genres = await _tmDbClient.GetMovieGenresAsync();
 
         var searchContainer = genre is null
             ? await _tmDbClient.GetMoviePopularListAsync(language: language, region: region)
             : await GetPopularMoviesByGenre(genres, genre, region, language);
-        
+
         return searchContainer.Results.Select(m => m.ToDto(genres));
     }
 
@@ -66,9 +66,9 @@ public class MovieService : IMovieService
     {
         var searchedMovies = await _tmDbClient.SearchMovieAsync(movieTitle);
         var genres = await _tmDbClient.GetMovieGenresAsync();
-        return  searchedMovies.Results.Select(m => m.ToDto(genres));
+        return searchedMovies.Results.Select(m => m.ToDto(genres));
     }
-    
+
     private async Task<SearchContainer<SearchMovie>> GetPopularMoviesByGenre(IEnumerable<Genre> genres, string genre, string? region, string? language)
     {
         var searchedGenre = genres.FirstOrDefault(g => g.Name.Equals(genre, StringComparison.InvariantCultureIgnoreCase));

@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 
 namespace BestMovies.Api.Repo;
 
-public interface IReviewService
+public interface IReviewRepository
 {
-    Task CreateReview(string UserId, ReviewDto reviewDto);
+    Task CreateReview(string userId, ReviewDto reviewDto);
 }

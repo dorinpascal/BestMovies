@@ -1,22 +1,18 @@
 ﻿using BestMovies.Bff.Extensions;
-using BestMovies.Bff.Services;
-using BestMovies.Bff.Services.Impl;
-using TMDbLib.Objects.Discover;
+using BestMovies.Bff.Services.Tmdb;
+using BestMovies.Bff.Services.Tmdb.Impl;
 using TMDbLib.Objects.General;
 using TMDbLib.Objects.Search;
-using Xunit.Abstractions;
 
 namespace BestMovies.Bff.Test.ServicesTests.MovieServiceTest;
 
 public class GetPopularMoviesTest
 {
-    private readonly ITestOutputHelper _testOutputHelper;
     private readonly ITMDbWrapperService _tmdbClient;
     private readonly IMovieService _sut;
 
-    public GetPopularMoviesTest(ITestOutputHelper testOutputHelper)
+    public GetPopularMoviesTest()
     {
-        _testOutputHelper = testOutputHelper;
         _tmdbClient = Substitute.For<ITMDbWrapperService>();
         _sut = new MovieService(_tmdbClient);
     }

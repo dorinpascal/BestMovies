@@ -6,7 +6,7 @@ using BestMovies.Shared.CustomExceptions;
 using BestMovies.Shared.Dtos.Actor;
 using TMDbLib.Client;
 
-namespace BestMovies.Bff.Services.Impl;
+namespace BestMovies.Bff.Services.Tmdb.Impl;
 
 public class ActorService : IActorService
 {
@@ -19,16 +19,16 @@ public class ActorService : IActorService
 
     public async Task<ActorDetailsDto> GetActorDetails(int id)
     {
-       var person = await _tmDbClient.GetPersonAsync(id);
-       if (person is null)
-       {
-           throw new NotFoundException($"Cannot find any actor with id '{id}'");
-       }
-       
-       var movieCredits = await _tmDbClient.GetPersonMovieCreditsAsync(id);
-       return person.ToDto(movieCredits);
+        var person = await _tmDbClient.GetPersonAsync(id);
+        if (person is null)
+        {
+            throw new NotFoundException($"Cannot find any actor with id '{id}'");
+        }
+
+        var movieCredits = await _tmDbClient.GetPersonMovieCreditsAsync(id);
+        return person.ToDto(movieCredits);
     }
-    
+
     public async Task<byte[]> GetImageBytes(string size, int id)
     {
         var config = await _tmDbClient.GetConfigAsync();

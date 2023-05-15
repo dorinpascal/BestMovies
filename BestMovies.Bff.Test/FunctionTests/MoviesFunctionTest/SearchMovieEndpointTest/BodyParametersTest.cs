@@ -1,5 +1,6 @@
 ﻿using BestMovies.Bff.Functions;
 using BestMovies.Bff.Services;
+using BestMovies.Bff.Services.Tmdb;
 using BestMovies.Bff.Test.Helpers;
 
 namespace BestMovies.Bff.Test.FunctionTests.MoviesFunctionTest.SearchMovieEndpointTest;
