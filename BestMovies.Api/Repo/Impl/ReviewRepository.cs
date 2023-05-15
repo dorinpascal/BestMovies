@@ -10,16 +10,16 @@ public class ReviewRepository : IReviewRepository
 {
     private readonly BestMoviesDbContext _dbContext;
 
-    public ReviewRepository(BestMoviesDbContext _dbContext)
+    public ReviewRepository(BestMoviesDbContext dbContext)
     {
-        this._dbContext = _dbContext;
+        _dbContext = dbContext;
     }
 
-    public async Task CreateReview(string UserId,ReviewDto reviewDto)
+    public async Task CreateReview(string userId,ReviewDto reviewDto)
     {
         var review = new Review
             {
-            UserId=UserId,
+            UserId=userId,
             Rating=reviewDto.Rating,
             Comment=reviewDto.Comment,
         };

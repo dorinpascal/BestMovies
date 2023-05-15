@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using BestMovies.Shared.Dtos.Movies;
 
-namespace BestMovies.Bff.Services;
+namespace BestMovies.Bff.Services.Tmdb;
 
 public interface IMovieService
 {
