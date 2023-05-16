@@ -4,15 +4,24 @@ namespace BestMovies.Api.Persistence.Entity;
 
 public class Review
 {
-    public int Id { get; private set; }
     public string UserId { get; }
+    public virtual User User { get; }
+    public int MovieId { get; }
     public int Rating { get; }
     public string? Comment { get; }
 
-    public Review(string userId, int rating, string? comment)
+    public Review(int movieId, string userId, int rating, string? comment)
     {
+        MovieId = movieId;
         UserId = userId ?? throw new ArgumentNullException(nameof(userId));
         Rating = rating;
         Comment = comment;
     }
+    
+#pragma warning disable CS8618
+    public Review()
+    {
+        // Needed by EF Core
+    }
+#pragma warning restore CS8618
 }

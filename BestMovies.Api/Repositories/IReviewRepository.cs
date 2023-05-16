@@ -1,8 +1,12 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
+using BestMovies.Api.Persistence.Entity;
 
 namespace BestMovies.Api.Repositories;
 
 public interface IReviewRepository
 {
-    Task CreateReview(string userId, int rating, string? comment);
+    Task CreateReview(int movieId, string userId, int rating, string? comment);
+
+    Task<IEnumerable<Review>> GetReviewsForMovie(int movieId);
 }

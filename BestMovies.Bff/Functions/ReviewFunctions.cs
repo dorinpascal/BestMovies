@@ -19,22 +19,22 @@ namespace BestMovies.Bff.Functions;
 
 public class ReviewFunctions
 {
-    private readonly ILogger<ReviewFunctions> _logger;
+    private const string Tag = "Review";
+    
     private readonly IReviewService _reviewService;
 
-    public ReviewFunctions(ILogger<ReviewFunctions> log, IReviewService reviewService)
+    public ReviewFunctions(IReviewService reviewService)
     {
-        _logger = log;
         _reviewService = reviewService;
     }
 
     [FunctionName(nameof(AddReview))]
-    [OpenApiOperation(operationId: nameof(AddReview), tags: new[] { "Review" })]
+    [OpenApiOperation(operationId: nameof(AddReview), tags: new[] { Tag })]
     [OpenApiRequestBody("application/json", typeof(ReviewDto))]
     [OpenApiParameter(name: "userId", In = ParameterLocation.Path, Required = true, Type = typeof(string), Description = "The user id.")]
     [OpenApiResponseWithBody(statusCode: HttpStatusCode.OK, contentType: "application/json", bodyType: typeof(IEnumerable<ReviewDto>), Description = "Add a review.")]
     public async Task<IActionResult> AddReview(
-        [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "user/{userId}/reviews")] HttpRequest req, string userId)
+        [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "user/{userId}/reviews")] HttpRequest req, string userId, ILogger log)
     {
         var review = JsonConvert.DeserializeObject<ReviewDto>(await new StreamReader(req.Body).ReadToEndAsync());
         if (review is null || string.IsNullOrEmpty(userId)) return ActionResultHelpers.BadRequestResult("Invalid parameters.");
@@ -45,7 +45,7 @@ public class ReviewFunctions
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error occured while adding a review");
+            log.LogError(ex, "Error occured while adding a review");
             return ActionResultHelpers.ServerErrorResult();
         }
     }

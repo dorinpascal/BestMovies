@@ -6,11 +6,11 @@ namespace BestMovies.Api.Migrations;
 public class _001_AddUsersTable : ISqlMigration
  {
      public string Sql => @"
-        create table Users (
-            [Id] VARCHAR(50) NOT NULL,
-            [Email] VARCHAR(125) NOT NULL,
+        CREATE TABLE Users (
+            [Id] NVARCHAR(50) NOT NULL,
+            [Email] NVARCHAR(125) NOT NULL,
             
-            primary key ([Id])
+            CONSTRAINT PK_UserId PRIMARY KEY ([Id])
         )
     "; 
  }

@@ -12,4 +12,9 @@ public class User
         Id = id ?? throw new ArgumentNullException(nameof(id));
         Email = email ?? throw new ArgumentNullException(nameof(email));
     }
+
+    public User()
+    {
+        
+    }
 }

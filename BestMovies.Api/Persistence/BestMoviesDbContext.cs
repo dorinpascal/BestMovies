@@ -6,8 +6,8 @@ namespace BestMovies.Api.Persistence;
 // ReSharper disable UnusedAutoPropertyAccessor.Local
 public class BestMoviesDbContext : DbContext
 {
-    public DbSet<Review> Reviews { get; private set; }
-    public DbSet<User> Users { get; private set; }
+    public DbSet<Review> Reviews { get; set; }
+    public DbSet<User> Users { get; set; }
 
     public BestMoviesDbContext(DbContextOptions<BestMoviesDbContext> options) : base(options)
     { }
@@ -15,5 +15,19 @@ public class BestMoviesDbContext : DbContext
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
+        
+        builder.Entity<User>(table =>
+        {
+            table.HasKey(x => x.Id);
+            table.Property(x => x.Email);
+        });
+
+        builder.Entity<Review>(table =>
+        {
+            table.HasKey(x => new {x.MovieId, x.UserId});
+            table.HasOne(x => x.User);
+            table.Property(x => x.Rating);
+            table.Property(x => x.Comment).IsRequired(false);
+        });
     }
 }
