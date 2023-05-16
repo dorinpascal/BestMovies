@@ -1,7 +1,7 @@
 using System;
 using BestMovies.Api.Persistence;
-using BestMovies.Api.Repo;
-using BestMovies.Api.Repo.Impl;
+using BestMovies.Api.Repositories;
+using BestMovies.Api.Repositories.Impl;
 using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;

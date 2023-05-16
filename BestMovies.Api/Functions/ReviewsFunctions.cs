@@ -1,5 +1,4 @@
 using BestMovies.Api.Helpers;
-using BestMovies.Api.Repo;
 using BestMovies.Shared.Dtos.Review;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -14,6 +13,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Threading.Tasks;
+using BestMovies.Api.Repositories;
 
 namespace BestMovies.Api.Functions;
 
@@ -33,21 +33,24 @@ public class ReviewFunctions
     [OpenApiParameter(name: "userId", In = ParameterLocation.Path, Required = true, Type = typeof(string), Description = "The user id.")]
     [OpenApiResponseWithBody(statusCode: HttpStatusCode.OK, contentType: "application/json", bodyType: typeof(IEnumerable<ReviewDto>), Description = "Add a review.")]
     public async Task<IActionResult> AddReview(
-        [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "user/{userId}/reviews")] HttpRequest req,string userId)
+        [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "user/{userId}/reviews")] HttpRequest req, string userId)
     { 
         try
         {
-            var review = JsonConvert.DeserializeObject<ReviewDto>(await new StreamReader(req.Body).ReadToEndAsync());
-            if (review is null) return ActionResultHelpers.BadRequestResult("Invalid parameters.");
-            await _reviewRepository.CreateReview(userId, review);
-            return new OkObjectResult("The review was added with success.");
+            var reviewDto = JsonConvert.DeserializeObject<ReviewDto>(await new StreamReader(req.Body).ReadToEndAsync());
+            if (reviewDto is null)
+            {
+                return ActionResultHelpers.BadRequestResult("Invalid parameters.");
+            }
+            
+            await _reviewRepository.CreateReview(userId, reviewDto.Rating, reviewDto.Comment);
+            return new OkResult();
         }
         catch(Exception ex)
         {
             _logger.LogError(ex, "Error occured while adding a review");
             return ActionResultHelpers.ServerErrorResult();
         }
-       
     }
 }
 

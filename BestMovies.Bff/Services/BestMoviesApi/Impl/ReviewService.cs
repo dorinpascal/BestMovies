@@ -5,8 +5,8 @@ using System.Net.Http;
 using System.Text.Json;
 using System.Text;
 using System.Threading.Tasks;
+using BestMovies.Bff.Clients;
 using BestMovies.Bff.Services.BestMoviesApi;
-using BestMovies.Bff.BestMoviesAPIClient;
 
 namespace BestMovies.Bff.Services.BestMoviesApi.Impl;
 

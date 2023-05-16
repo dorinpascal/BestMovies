@@ -1,22 +1,20 @@
-﻿using BestMovies.Shared.Dtos.Review;
-using System;
+﻿using System;
 using System.Net.Http;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
+using BestMovies.Shared.Dtos.Review;
 
-namespace BestMovies.Bff.BestMoviesAPIClient;
+namespace BestMovies.Bff.Clients;
 
-public class BestMoviesApiClient:IBestMoviesApiClient, IDisposable
+public class BestMoviesApiClient : IBestMoviesApiClient, IDisposable
 {
     private readonly HttpClient _client;
-    private readonly string? _uri = "https://fn-bestmovies-api-prod.azurewebsites.net/api";
-    public BestMoviesApiClient()
+    public BestMoviesApiClient(HttpClient client)
     {
-        _client = new HttpClient();   
+        _client = client ?? throw new ArgumentNullException(nameof(client));   
     }
-
-
+    
     public async Task AddReview(string userId, ReviewDto review)
     {
         var reviewJson = JsonSerializer.Serialize(review, new JsonSerializerOptions
@@ -28,7 +26,7 @@ public class BestMoviesApiClient:IBestMoviesApiClient, IDisposable
             Encoding.UTF8,
             "application/json"
         );
-        var responseMessage = await _client.PostAsync($"{_uri}/user/{userId}/reviews", reviewStringContent);
+        var responseMessage = await _client.PostAsync($"/user/{userId}/reviews", reviewStringContent);
         if (!responseMessage.IsSuccessStatusCode)
         {
             var jsonObject = await JsonDocument.ParseAsync(await responseMessage.Content.ReadAsStreamAsync());
@@ -36,8 +34,5 @@ public class BestMoviesApiClient:IBestMoviesApiClient, IDisposable
         }
     }
 
-    public void Dispose()
-    {
-        _client.Dispose();
-    }
+    public void Dispose() => _client.Dispose();
 }

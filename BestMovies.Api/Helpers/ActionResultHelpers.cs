@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 namespace BestMovies.Api.Helpers;
 
-public class ActionResultHelpers
+public static class ActionResultHelpers
 {
     public static IActionResult BadRequestResult(string content) => Result(400, content);
 
