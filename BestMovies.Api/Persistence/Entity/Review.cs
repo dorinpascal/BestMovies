@@ -5,7 +5,7 @@ namespace BestMovies.Api.Persistence.Entity;
 public class Review
 {
     public string UserId { get; }
-    public virtual User User { get; }
+    public virtual User User { get; } = null!;
     public int MovieId { get; }
     public int Rating { get; }
     public string? Comment { get; }

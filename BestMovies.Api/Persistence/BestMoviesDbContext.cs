@@ -8,6 +8,8 @@ public class BestMoviesDbContext : DbContext
 {
     public DbSet<Review> Reviews { get; set; }
     public DbSet<User> Users { get; set; }
+    
+    public DbSet<SavedMovies> SavedMovies { get; set; }
 
     public BestMoviesDbContext(DbContextOptions<BestMoviesDbContext> options) : base(options)
     { }
@@ -28,6 +30,12 @@ public class BestMoviesDbContext : DbContext
             table.HasOne(x => x.User);
             table.Property(x => x.Rating);
             table.Property(x => x.Comment).IsRequired(false);
+        });
+        
+        builder.Entity<SavedMovies>(table =>
+        {
+            table.HasKey(x => new {x.MovieId, x.UserId});
+            table.Property(x => x.IsWatched);
         });
     }
 }
