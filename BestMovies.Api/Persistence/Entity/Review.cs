@@ -3,11 +3,10 @@
 namespace BestMovies.Api.Persistence.Entity;
 
 // ReSharper disable once ClassWithVirtualMembersNeverInherited.Global
-
 public class Review
 {
     public string UserId { get; }
-    public virtual User User { get; } = null!;
+    public virtual User User { get; private set; } = null!;
     public int MovieId { get; }
     public int Rating { get; }
     public string? Comment { get; }
