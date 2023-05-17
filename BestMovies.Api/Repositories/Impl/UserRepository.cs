@@ -1,3 +1,4 @@
+using System;
 using System.Threading.Tasks;
 using BestMovies.Api.Persistence;
 using BestMovies.Api.Persistence.Entity;
@@ -18,7 +19,13 @@ public class UserRepository : IUserRepository
     public async Task SaveUser(string userId, string email)
     {
         var user = new User(userId, email);
-        
+
+        var existingUser = await _dbContext.Users.FirstOrDefaultAsync(u => u.Id == userId);
+        if (existingUser is not null)
+        {
+            throw new ArgumentException($"A user with id '{userId}' is already saved");
+        }
+
         await _dbContext.Users.AddAsync(user);
         await _dbContext.SaveChangesAsync();
     }

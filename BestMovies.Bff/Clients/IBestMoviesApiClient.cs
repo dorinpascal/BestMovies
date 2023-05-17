@@ -5,5 +5,5 @@ namespace BestMovies.Bff.Clients;
 
 public interface IBestMoviesApiClient
 {
-    Task AddReview(string userId, ReviewDto review);
+    Task AddReview(string userId, CreateReviewDto review);
 }

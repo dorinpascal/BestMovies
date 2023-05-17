@@ -35,7 +35,7 @@ public class UsersFunctions
     [OpenApiParameter(name: "userId", In = ParameterLocation.Path, Required = true, Type = typeof(string), Description = "The user id.")]
     public async Task<IActionResult> SaveUser(
         [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "users/{userId}")] HttpRequest req, string userId, ILogger log)
-    { 
+    {
         try
         {
             var userDto = JsonConvert.DeserializeObject<UserDto>(await new StreamReader(req.Body).ReadToEndAsync());
@@ -46,6 +46,10 @@ public class UsersFunctions
 
             await _userRepository.SaveUser(userId, userDto.Email);
             return new OkResult();
+        }
+        catch (ArgumentException ex)
+        {
+            return ActionResultHelpers.BadRequestResult(ex.Message);
         }
         catch(Exception ex)
         {
@@ -78,7 +82,7 @@ public class UsersFunctions
         }
         catch(Exception ex)
         {
-            log.LogError(ex, "Error occured while adding a review");
+            log.LogError(ex, "Error occured while retrieving a user");
             return ActionResultHelpers.ServerErrorResult();
         }
     }

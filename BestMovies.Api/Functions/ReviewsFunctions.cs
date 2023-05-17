@@ -47,6 +47,10 @@ public class ReviewFunctions
             await _reviewRepository.CreateReview(reviewDto.MovieId, userId, reviewDto.Rating, reviewDto.Comment);
             return new OkResult();
         }
+        catch (ArgumentException ex)
+        {
+            return ActionResultHelpers.BadRequestResult(ex.Message);
+        }
         catch(Exception ex)
         {
             log.LogError(ex, "Error occured while adding a review");

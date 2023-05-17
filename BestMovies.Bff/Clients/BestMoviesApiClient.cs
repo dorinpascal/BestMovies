@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Net;
 using System.Net.Http;
+using System.Security.Authentication;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -15,22 +17,31 @@ public class BestMoviesApiClient : IBestMoviesApiClient, IDisposable
         _client = client ?? throw new ArgumentNullException(nameof(client));   
     }
     
-    public async Task AddReview(string userId, ReviewDto review)
+    public async Task AddReview(string userId, CreateReviewDto review)
     {
-        var reviewJson = JsonSerializer.Serialize(review, new JsonSerializerOptions
-        {
-            PropertyNamingPolicy = JsonNamingPolicy.CamelCase
-        });
+        var reviewJson = JsonSerializer.Serialize(review);
         var reviewStringContent = new StringContent(
             reviewJson,
             Encoding.UTF8,
             "application/json"
         );
-        var responseMessage = await _client.PostAsync($"/user/{userId}/reviews", reviewStringContent);
+        var responseMessage = await _client.PostAsync($"users/{userId}/reviews", reviewStringContent);
         if (!responseMessage.IsSuccessStatusCode)
         {
-            var jsonObject = await JsonDocument.ParseAsync(await responseMessage.Content.ReadAsStreamAsync());
-            throw new Exception(jsonObject.RootElement.GetProperty("message").GetString());
+            var message = await responseMessage.Content.ReadAsStringAsync();
+
+            switch (responseMessage.StatusCode)
+            {
+                case HttpStatusCode.BadRequest:
+                    throw new ArgumentException(message);
+                case HttpStatusCode.Unauthorized:
+                case HttpStatusCode.Forbidden:
+                    throw new AuthenticationException(message);
+                case HttpStatusCode.InternalServerError:
+                default:
+                    throw new Exception(message);
+            }
+            
         }
     }
 

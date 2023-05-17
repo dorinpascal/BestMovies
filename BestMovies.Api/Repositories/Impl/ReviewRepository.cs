@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using BestMovies.Api.Persistence;
@@ -19,6 +20,12 @@ public class ReviewRepository : IReviewRepository
     public async Task CreateReview(int movieId, string userId, int rating, string? comment)
     {
         var review = new Review(movieId, userId, rating, comment);
+        
+        var existingReview = await _dbContext.Reviews.FirstOrDefaultAsync(r => r.MovieId == movieId && r.UserId == userId);
+        if (existingReview is not null)
+        {
+            throw new ArgumentException($"A review for the movie with id '{movieId}' has been already created by the user with id '{userId}'");
+        }
         
         await _dbContext.Reviews.AddAsync(review);
         await _dbContext.SaveChangesAsync();
