@@ -2,7 +2,7 @@ name: Best Movies CI Pipeline
 on: 
   push:
   pull_request:
-      types: [opened, synchronize, reopened]
+      types: [opened, synchronize, reopened, edited, review_requested]
       branches:
         - main
   workflow_dispatch:
