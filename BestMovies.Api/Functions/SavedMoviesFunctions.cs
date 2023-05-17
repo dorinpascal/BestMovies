@@ -104,7 +104,7 @@ public class SavedMoviesFunctions
         }
         catch(Exception ex)
         {
-            log.LogError(ex, $"Error occured while retrieving saved movies for user {userId}");
+            log.LogError(ex, "Error occured while retrieving saved movies for user {userId}", userId);
             return ActionResultHelpers.ServerErrorResult();
         }
     }

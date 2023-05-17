@@ -10,7 +10,7 @@ public class SavedMovie
 
     public bool IsWatched { get; set; }
 
-    public SavedMovie(string? userId, int movieId, bool isWatched)
+    public SavedMovie(string userId, int movieId, bool isWatched)
     {
         UserId = userId ?? throw new ArgumentNullException(nameof(userId));
         MovieId = movieId;

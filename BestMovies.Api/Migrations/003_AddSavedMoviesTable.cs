@@ -7,7 +7,7 @@ using Migr8;
 
 public class _003_AddSavedMoviesTable : ISqlMigration {
     public string Sql => @"
-        create table SavedMovies (
+        CREATE TABLE SavedMovies (
             [UserId] NVARCHAR(50) NOT NULL,
             [MovieId] INT NOT NULL,
             [IsWatched] BIT NOT NULL,
