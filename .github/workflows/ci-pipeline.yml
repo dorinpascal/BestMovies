@@ -1,0 +1,14 @@
+name: Best Movies CI Pipeline
+on: 
+  push:
+      branches:
+        - main
+      paths:
+        - ".github/workflows/**"
+        - "BestMovies.Shared/**"
+        - "BestMovies.Api/**"
+  workflow_dispatch:
+
+env:
+    DOTNET_VERSION: '6.0.x'
+    OUTPUT_PATH: './BestMovies.Api/output'
