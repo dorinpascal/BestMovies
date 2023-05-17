@@ -10,7 +10,7 @@ public class _002_AddReviewTable : ISqlMigration
             [UserId] NVARCHAR(50) NOT NULL,
             [MovieId] INT NOT NULL,
             [Rating] INT NOT NULL,
-			[Comment] NVARCHAR(MAX) NULL, 
+            [Comment] NVARCHAR(MAX) NULL, 
              
             CONSTRAINT PK_Reviews_UserId_MovieId PRIMARY KEY ([UserId], [MovieId]),
             CONSTRAINT FK_Reviews_UserId FOREIGN KEY ([UserId]) REFERENCES Users([Id])
