@@ -48,7 +48,7 @@ public class GetReviewsForMovieEndpointTests
         var result = (OkObjectResult)response;
 
         //Assert
-        Assert.Equal(400, result.StatusCode);
+        Assert.Equal(200, result.StatusCode);
     }
 
 }
