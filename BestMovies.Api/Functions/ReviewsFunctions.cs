@@ -16,6 +16,7 @@ using System.Net;
 using System.Threading.Tasks;
 using BestMovies.Api.Extensions;
 using BestMovies.Api.Repositories;
+using BestMovies.Shared.CustomExceptions;
 
 namespace BestMovies.Api.Functions;
 
@@ -33,6 +34,7 @@ public class ReviewFunctions
     [OpenApiOperation(operationId: nameof(AddReview), tags: new[] { Tag })]
     [OpenApiRequestBody("application/json", typeof(CreateReviewDto))]
     [OpenApiParameter(name: "userId", In = ParameterLocation.Path, Required = true, Type = typeof(string), Description = "The user id.")]
+    [OpenApiResponseWithoutBody(statusCode: HttpStatusCode.OK, Description = "Successfully added the review")]
     public async Task<IActionResult> AddReview(
         [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "users/{userId}/reviews")] HttpRequest req, string userId, ILogger log)
     { 
@@ -45,6 +47,10 @@ public class ReviewFunctions
             }
             await _reviewRepository.CreateReview(reviewDto.MovieId, userId, reviewDto.Rating, reviewDto.Comment);
             return new OkResult();
+        }
+        catch (DuplicateException ex)
+        {
+            return ActionResultHelpers.Conflict(ex.Message);
         }
         catch (ArgumentException ex)
         {

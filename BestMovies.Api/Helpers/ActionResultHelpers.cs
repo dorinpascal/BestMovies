@@ -3,6 +3,7 @@ namespace BestMovies.Api.Helpers;
 
 public static class ActionResultHelpers
 {
+    public static IActionResult Conflict(string content) => Result(409, content);
     public static IActionResult BadRequestResult(string content) => Result(400, content);
 
     public static IActionResult NotFoundResult(string content) => Result(404, content);

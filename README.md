@@ -1,6 +1,6 @@
 # BestMovies Inc.
 
-
+---
 ### BestMovies.WebApp & BestMovies.Bff
 
 Both projects are run as a Static Web App:
@@ -17,10 +17,25 @@ swa start http://localhost:5124 --run "dotnet watch run --project ./BestMovies.W
 
 Add `BestMoviesApi.BaseUrl` to your `local.settings.json` file
 
-### BestMovies.Api
-The project is an azure functions
+----
+###### BestMovies.Bff - Authenticate locally
+* Add header `x-ms-client-principal` that contains the `ClientPrincipal` as base64
 
-To run locally the project:
+**Note** `ClientPrincipal` looks like: 
+```json
+{
+  "identityProvider": "google",
+  "userId": "<userId>",
+  "userDetails": "<email>@gmail",
+  "userRoles": ["anonymous", "authenticated"]
+}
+```
+
+---
+### BestMovies.Api
+The project is an azure function
+
+###### Run the project locally:
 1. Create a database in your local Sql Server 
 2. Get the connection string to it.
 3. Create a new `local.settings.json` file similar to one in the **BestMovies.Bff** project. 

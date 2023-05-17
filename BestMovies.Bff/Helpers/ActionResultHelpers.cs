@@ -4,6 +4,8 @@ namespace BestMovies.Bff.Helpers;
 
 public static class ActionResultHelpers
 {
+    public static IActionResult Conflict(string content) => Result(409, content);
+    public static IActionResult UnauthorizedResult() => Result(401, "Authentication is required");
     public static IActionResult BadRequestResult(string content) => Result(400, content);
     
     public static IActionResult NotFoundResult(string content) => Result(404, content);

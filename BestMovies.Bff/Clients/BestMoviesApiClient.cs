@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Net;
 using System.Net.Http;
-using System.Security.Authentication;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
+using BestMovies.Bff.Extensions;
+using BestMovies.Shared.CustomExceptions;
 using BestMovies.Shared.Dtos.Review;
+using BestMovies.Shared.Dtos.User;
 
 namespace BestMovies.Bff.Clients;
 
@@ -28,21 +30,42 @@ public class BestMoviesApiClient : IBestMoviesApiClient, IDisposable
         var responseMessage = await _client.PostAsync($"users/{userId}/reviews", reviewStringContent);
         if (!responseMessage.IsSuccessStatusCode)
         {
-            var message = await responseMessage.Content.ReadAsStringAsync();
-
-            switch (responseMessage.StatusCode)
-            {
-                case HttpStatusCode.BadRequest:
-                    throw new ArgumentException(message);
-                case HttpStatusCode.Unauthorized:
-                case HttpStatusCode.Forbidden:
-                    throw new AuthenticationException(message);
-                case HttpStatusCode.InternalServerError:
-                default:
-                    throw new Exception(message);
-            }
-            
+            await responseMessage.ThrowBasedOnStatusCode();
         }
+    }
+
+    public async Task SaveUser(CreateUserDto user)
+    {
+        var userJson = JsonSerializer.Serialize(user);
+        var userStringContent = new StringContent(
+            userJson,
+            Encoding.UTF8,
+            "application/json"
+        );
+        var responseMessage = await _client.PostAsync("users", userStringContent);
+        if (!responseMessage.IsSuccessStatusCode)
+        {
+            await responseMessage.ThrowBasedOnStatusCode();
+        }
+    }
+
+    public async Task<UserDto> GetUser(string userId)
+    {
+        var responseMessage = await _client.GetAsync($"users/{userId}");
+        
+        var content = await responseMessage.ReadContentSafe();
+
+        if (responseMessage.IsSuccessStatusCode)
+        {
+            return JsonSerializer.Deserialize<UserDto>(content)!;
+        }
+
+        if (responseMessage.StatusCode is HttpStatusCode.NotFound)
+        {
+            throw new NotFoundException(content);
+        }
+
+        throw new Exception(content);
     }
 
     public void Dispose() => _client.Dispose();
