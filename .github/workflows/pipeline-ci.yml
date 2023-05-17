@@ -1,0 +1,47 @@
+name: Best Movies CI Pipeline
+on: 
+  push:
+  pull_request:
+      types: [opened, synchronize, reopened]
+      branches:
+        - main
+  workflow_dispatch:
+
+env:
+    DOTNET_VERSION: '6.0.x'
+    OUTPUT_PATH: './BestMovies.Api/output'
+
+jobs:
+  build_api:
+    runs-on: ubuntu-latest
+    steps:
+    - name: 'Checkout GitHub Action'
+      uses: actions/checkout@v3
+
+    - name: Setup .NET Core SDK
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: ${{ env.DOTNET_VERSION }}
+    - name: Build Best Movies Api
+      run: dotnet build './BestMovies.Api/BestMovies.Api.csproj' 
+
+    - name: Test Best Movies Api
+      run: dotnet test './BestMovies.Api.Test/BestMovies.Api.Test.csproj'
+
+  build_bff:
+    runs-on: ubuntu-latest
+    steps:
+    - name: 'Checkout GitHub Action'
+      uses: actions/checkout@v3
+
+    - name: Setup .NET Core SDK
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: ${{ env.DOTNET_VERSION }}
+    - name: Build Best Movies Bff
+      run: dotnet build './BestMovies.Bff/BestMovies.Bff.csproj' 
+       
+    - name: Test Best Movies Bff
+      run: dotnet test './BestMovies.Bff.Test/BestMovies.Bff.Test.csproj'
+
+    
