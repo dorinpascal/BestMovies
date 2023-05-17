@@ -9,7 +9,7 @@ public class BestMoviesDbContext : DbContext
     public DbSet<Review> Reviews { get; set; }
     public DbSet<User> Users { get; set; }
     
-    public DbSet<SavedMovies> SavedMovies { get; set; }
+    public DbSet<SavedMovie> SavedMovies { get; set; }
 
     public BestMoviesDbContext(DbContextOptions<BestMoviesDbContext> options) : base(options)
     { }
@@ -32,7 +32,7 @@ public class BestMoviesDbContext : DbContext
             table.Property(x => x.Comment).IsRequired(false);
         });
         
-        builder.Entity<SavedMovies>(table =>
+        builder.Entity<SavedMovie>(table =>
         {
             table.HasKey(x => new {x.MovieId, x.UserId});
             table.Property(x => x.IsWatched);

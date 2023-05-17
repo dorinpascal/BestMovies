@@ -24,7 +24,7 @@ public class ReviewRepository : IReviewRepository
         var existingReview = await _dbContext.Reviews.FirstOrDefaultAsync(r => r.MovieId == movieId && r.UserId == userId);
         if (existingReview is not null)
         {
-            throw new ArgumentException($"The user with id '{userId}' has already a review for the movie with id '{movieId}'");
+            throw new ArgumentException($"The user with id '{userId}' already has a review for the movie with id '{movieId}'");
         }
         
         await _dbContext.Reviews.AddAsync(review);
