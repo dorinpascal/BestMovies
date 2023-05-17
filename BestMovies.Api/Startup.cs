@@ -1,7 +1,7 @@
 using System;
 using BestMovies.Api.Persistence;
-using BestMovies.Api.Repo;
-using BestMovies.Api.Repo.Impl;
+using BestMovies.Api.Repositories;
+using BestMovies.Api.Repositories.Impl;
 using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -14,14 +14,17 @@ public class Startup : FunctionsStartup
 {
     public override void Configure(IFunctionsHostBuilder builder)
     {
-        var dbConnectionString = Environment.GetEnvironmentVariable("DbConnectionString") 
-                                 ?? throw new ArgumentException("Please make sure you have DbConnectionString as an environmental variable");
+        var dbConnectionString = Environment.GetEnvironmentVariable("DbConnectionString") ?? throw new ArgumentException("Please make sure you have DbConnectionString as an environmental variable");
+        
         builder.Services.AddDbContext<BestMoviesDbContext>(options =>
         {
             options.UseSqlServer(dbConnectionString);
         });
+        
         MigrateDatabase(dbConnectionString);
+        
         builder.Services.AddTransient<IReviewRepository, ReviewRepository>();
+        builder.Services.AddTransient<IUserRepository, UserRepository>();
     }
 
     private static void MigrateDatabase(string connectionString)

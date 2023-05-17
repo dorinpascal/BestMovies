@@ -1,13 +1,27 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-using System.ComponentModel.DataAnnotations;
-
+﻿using System;
 
 namespace BestMovies.Api.Persistence.Entity;
 
 public class Review
 {
-    public int Id { get; set; }
-    public string? UserId { get; set; }
-    public int Rating { get; set; }
-    public string? Comment { get; set; }
+    public string UserId { get; }
+    public virtual User User { get; }
+    public int MovieId { get; }
+    public int Rating { get; }
+    public string? Comment { get; }
+
+    public Review(int movieId, string userId, int rating, string? comment)
+    {
+        MovieId = movieId;
+        UserId = userId ?? throw new ArgumentNullException(nameof(userId));
+        Rating = rating;
+        Comment = comment;
+    }
+    
+#pragma warning disable CS8618
+    public Review()
+    {
+        // Needed by EF Core
+    }
+#pragma warning restore CS8618
 }
