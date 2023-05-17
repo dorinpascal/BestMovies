@@ -29,7 +29,7 @@ jobs:
       run: dotnet build './BestMovies.Api/BestMovies.Api.csproj' 
 
     - name: Test
-      run: dotnet test './BestMovies.Api.Test/BestMovies.Api.Test.csproj' --no-restore --verbosity normal
+      run: dotnet test './BestMovies.Api.Test/BestMovies.Api.Test.csproj'
 
     - name: Publish
       run: dotnet publish './BestMovies.Api/BestMovies.Api.csproj' --configuration Release --output ${{ env.OUTPUT_PATH }}
