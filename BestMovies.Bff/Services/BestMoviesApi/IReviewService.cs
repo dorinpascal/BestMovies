@@ -5,5 +5,5 @@ namespace BestMovies.Bff.Services.BestMoviesApi;
 
 public interface IReviewService
 {
-    Task AddReview(string userId, ReviewDto review);
+    Task AddReview(string userId, CreateReviewDto review);
 }

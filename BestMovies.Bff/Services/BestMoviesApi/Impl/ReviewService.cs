@@ -1,12 +1,6 @@
-﻿using BestMovies.Shared.CustomExceptions;
-using BestMovies.Shared.Dtos.Review;
-using System;
-using System.Net.Http;
-using System.Text.Json;
-using System.Text;
+﻿using BestMovies.Shared.Dtos.Review;
 using System.Threading.Tasks;
-using BestMovies.Bff.Services.BestMoviesApi;
-using BestMovies.Bff.BestMoviesAPIClient;
+using BestMovies.Bff.Clients;
 
 namespace BestMovies.Bff.Services.BestMoviesApi.Impl;
 
@@ -18,8 +12,9 @@ public class ReviewService : IReviewService
     {
         _client = client;
     }
-    public async Task AddReview(string userId, ReviewDto review)
+    public async Task AddReview(string userId, CreateReviewDto review)
     {
+        // ToDo : add validation for email
         await _client.AddReview(userId, review);
     }
 }
