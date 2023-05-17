@@ -41,7 +41,6 @@ public class ReviewFunctions
             var reviewDto = JsonConvert.DeserializeObject<ReviewDto>(await new StreamReader(req.Body).ReadToEndAsync());
             if (string.IsNullOrEmpty(userId) || reviewDto is null )
             {
-                log.LogError("Invalid parameters.");
                 return ActionResultHelpers.BadRequestResult("Invalid parameters.");
             }
             await _reviewRepository.CreateReview(reviewDto.MovieId, userId, reviewDto.Rating, reviewDto.Comment);
