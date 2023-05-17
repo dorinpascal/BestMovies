@@ -8,7 +8,6 @@ namespace BestMovies.Api.Test.FunctionTests.ReviewFunctionTest.GetReviewsForMovi
 
 public class GetReviewsForMovieEndpointTests
 {
-
     private readonly IReviewRepository _reviewRepository;
     private readonly ReviewFunctions _sut;
     private readonly MockLogger<ReviewFunctions> _logger;
