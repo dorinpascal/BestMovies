@@ -1,12 +1,10 @@
 name: Best Movies CI Pipeline
 on: 
   push:
+  pull_request:
+      types: [opened, synchronize, reopened]
       branches:
         - main
-      paths:
-        - ".github/workflows/**"
-        - "BestMovies.Shared/**"
-        - "BestMovies.Api/**"
   workflow_dispatch:
 
 env:
