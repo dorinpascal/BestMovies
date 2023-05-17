@@ -1,5 +1,4 @@
 ﻿using BestMovies.Bff.Functions;
-using BestMovies.Bff.Services;
 using BestMovies.Bff.Services.Tmdb;
 using BestMovies.Bff.Test.Helpers;
 
@@ -31,5 +30,4 @@ public class ParameterTest
         //Assert
         Assert.Equal(400, result.StatusCode);
     }
-
 }
