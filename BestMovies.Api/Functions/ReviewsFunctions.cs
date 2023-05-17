@@ -39,11 +39,10 @@ public class ReviewFunctions
         try
         {
             var reviewDto = JsonConvert.DeserializeObject<ReviewDto>(await new StreamReader(req.Body).ReadToEndAsync());
-            if (reviewDto is null)
+            if (string.IsNullOrEmpty(userId) || reviewDto is null )
             {
                 return ActionResultHelpers.BadRequestResult("Invalid parameters.");
             }
-            
             await _reviewRepository.CreateReview(reviewDto.MovieId, userId, reviewDto.Rating, reviewDto.Comment);
             return new OkResult();
         }
@@ -68,8 +67,7 @@ public class ReviewFunctions
         if (id <= 0)
         {
             return ActionResultHelpers.BadRequestResult("Invalid value for the id. The value must be greater than 0");
-        }
-        
+        }   
         try
         {
             var reviews = await _reviewRepository.GetReviewsForMovie(id);

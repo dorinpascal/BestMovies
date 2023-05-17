@@ -24,6 +24,12 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Test", "Test", "{CB00C9E5-1
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BestMovies.Bff.Test", "BestMovies.Bff.Test\BestMovies.Bff.Test.csproj", "{9037F791-B32E-45E7-97E6-AA3A4A5678D2}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BestMovies.Api.Test", "BestMovies.Api.Test\BestMovies.Api.Test.csproj", "{802551E5-6F09-4354-8225-90667EBB7D7C}"
+	ProjectSection(ProjectDependencies) = postProject
+		{224A10E6-036D-4768-99AA-58EEC464E1CF} = {224A10E6-036D-4768-99AA-58EEC464E1CF}
+		{559BA178-F3D3-4E63-9E61-18664894717C} = {559BA178-F3D3-4E63-9E61-18664894717C}
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -50,6 +56,10 @@ Global
 		{9037F791-B32E-45E7-97E6-AA3A4A5678D2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9037F791-B32E-45E7-97E6-AA3A4A5678D2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9037F791-B32E-45E7-97E6-AA3A4A5678D2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{802551E5-6F09-4354-8225-90667EBB7D7C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{802551E5-6F09-4354-8225-90667EBB7D7C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{802551E5-6F09-4354-8225-90667EBB7D7C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{802551E5-6F09-4354-8225-90667EBB7D7C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -60,6 +70,7 @@ Global
 		{47FA9BCC-C5D6-43DF-8935-6B002098E0D3} = {95593C7A-F100-4857-93D0-0728C328E2A1}
 		{224A10E6-036D-4768-99AA-58EEC464E1CF} = {B1E99CAA-95E7-419A-9AFD-F28E55C42744}
 		{9037F791-B32E-45E7-97E6-AA3A4A5678D2} = {CB00C9E5-1033-4600-9BAE-85043F3E7B52}
+		{802551E5-6F09-4354-8225-90667EBB7D7C} = {CB00C9E5-1033-4600-9BAE-85043F3E7B52}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {AE338DFC-D263-4F6B-B833-ABFF741A4341}
