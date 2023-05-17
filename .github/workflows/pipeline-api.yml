@@ -7,8 +7,7 @@ on:
         - ".github/workflows/**"
         - "BestMovies.Shared/**"
         - "BestMovies.Api/**"
-        - "BestMovies.Api.Test/**"
-        
+        - "BestMovies.Api.Test/**"       
   workflow_dispatch:
 
 env:
