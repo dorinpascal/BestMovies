@@ -29,7 +29,7 @@ jobs:
         run: dotnet build './BestMovies.Bff/BestMovies.Bff.csproj' 
        
       - name: Test
-        run: dotnet test './BestMovies.Bff.Test/BestMovies.Bff.Test.csproj' --no-restore --verbosity normal
+        run: dotnet test './BestMovies.Bff.Test/BestMovies.Bff.Test.csproj' 
 
       - name: Deploy
         uses: Azure/static-web-apps-deploy@v1
