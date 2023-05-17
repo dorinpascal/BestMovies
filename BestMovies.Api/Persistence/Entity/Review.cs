@@ -2,10 +2,12 @@
 
 namespace BestMovies.Api.Persistence.Entity;
 
+// ReSharper disable once ClassWithVirtualMembersNeverInherited.Global
+
 public class Review
 {
     public string UserId { get; }
-    public virtual User User { get; }
+    public virtual User User { get; } = null!;
     public int MovieId { get; }
     public int Rating { get; }
     public string? Comment { get; }
@@ -17,11 +19,4 @@ public class Review
         Rating = rating;
         Comment = comment;
     }
-    
-#pragma warning disable CS8618
-    public Review()
-    {
-        // Needed by EF Core
-    }
-#pragma warning restore CS8618
 }
