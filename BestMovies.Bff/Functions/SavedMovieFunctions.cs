@@ -33,10 +33,9 @@ public class SavedMovieFunctions
     [FunctionName(nameof(SaveMovie))]
     [OpenApiOperation(operationId: nameof(SaveMovie), tags: new[] { Tag })]
     [OpenApiRequestBody("application/json", typeof(SavedMovieDto))]
-    [OpenApiParameter(name: "id", In = ParameterLocation.Path, Required = true, Type = typeof(int), Description = "The movie id.")]
     [OpenApiParameter(name: "x-ms-client-principal", In = ParameterLocation.Header, Required = true, Type = typeof(string), Description = "base64 of ClientPrincipal")]
     public async Task<IActionResult> SaveMovie(
-        [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "savedMovies")] HttpRequest req, int id, ILogger log)
+        [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "savedMovies")] HttpRequest req, ILogger log)
     {
         try
         {
@@ -53,12 +52,7 @@ public class SavedMovieFunctions
             {
                 return ActionResultHelpers.BadRequestResult("Invalid parameters.");
             }
-
-            if (id != savedMovie.MovieId)
-            {
-                return ActionResultHelpers.BadRequestResult("The movie id from path does not match the one from body");
-            }
-
+            
             var user = new CreateUserDto(
                 Id: userId,
                 Email: claims.Identity!.Name!
