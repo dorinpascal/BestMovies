@@ -41,7 +41,7 @@ public class ReviewFunctions
         try
         {
             var reviewDto = JsonConvert.DeserializeObject<ReviewDto>(await new StreamReader(req.Body).ReadToEndAsync());
-            if (string.IsNullOrEmpty(userId) || reviewDto is null )
+            if (string.IsNullOrWhiteSpace(userId) || reviewDto is null )
             {
                 return ActionResultHelpers.BadRequestResult("Invalid parameters.");
             }

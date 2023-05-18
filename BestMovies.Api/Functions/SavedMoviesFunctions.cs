@@ -41,7 +41,7 @@ public class SavedMoviesFunctions
         try
         {
             var savedMovieDto = JsonConvert.DeserializeObject<SavedMovieDto>(await new StreamReader(req.Body).ReadToEndAsync());
-            if (string.IsNullOrEmpty(userId) || savedMovieDto is null )
+            if (string.IsNullOrWhiteSpace(userId) || savedMovieDto is null )
             {
                 return ActionResultHelpers.BadRequestResult("Invalid parameters.");
             }
@@ -73,7 +73,7 @@ public class SavedMoviesFunctions
         try
         {
             var savedMovieDto = JsonConvert.DeserializeObject<SavedMovieDto>(await new StreamReader(req.Body).ReadToEndAsync());
-            if (string.IsNullOrEmpty(userId) || savedMovieDto is null)
+            if (string.IsNullOrWhiteSpace(userId) || savedMovieDto is null)
             {
                 return ActionResultHelpers.BadRequestResult("Invalid parameters.");
             }
