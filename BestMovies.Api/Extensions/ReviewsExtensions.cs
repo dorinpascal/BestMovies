@@ -8,7 +8,7 @@ public static class ReviewsExtensions
     public static ReviewDto ToDto(this Review review) =>
         new(
             MovieId: review.MovieId,
-            UserDto: review.User.ToDto(),
+            User: review.User.ToDto(),
             Rating: review.Rating,
             Comment: review.Comment);
 }

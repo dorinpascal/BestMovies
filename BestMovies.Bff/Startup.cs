@@ -30,6 +30,7 @@ public class Startup : FunctionsStartup
         builder.Services.AddTransient<IActorService, ActorService>();
         builder.Services.AddTransient<IReviewService, ReviewService>();
         builder.Services.AddTransient<IUserService, UserService>();
+        builder.Services.AddTransient<IStatisticsService, StatisticsService>();
         
         builder.Services.AddTransient<ITMDbWrapperService, TMDbWrapperService>();
         

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using BestMovies.Shared.Dtos.Review;
 using System.Threading.Tasks;
@@ -38,5 +39,10 @@ public class ReviewService : IReviewService
         //ToDo add the movie as watched if not there
         
         await _client.AddReview(user.Id, review);
+    }
+
+    public async Task<IEnumerable<ReviewDto>> GetReviewsForMovie(int movieId)
+    {
+        return await _client.GetReviewsForMovie(movieId);
     }
 }
