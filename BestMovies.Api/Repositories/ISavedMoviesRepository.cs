@@ -12,4 +12,5 @@ public interface ISavedMoviesRepository
 
     Task<List<SavedMovie>> GetSavedMoviesForUser(string userId);
 
+    Task DeleteSavedMovie(string userId, int movieId);
 }

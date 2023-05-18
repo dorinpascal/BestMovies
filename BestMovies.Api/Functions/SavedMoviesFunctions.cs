@@ -16,6 +16,7 @@ using Microsoft.Azure.WebJobs.Extensions.OpenApi.Core.Attributes;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json;
+using static System.Int32;
 
 namespace BestMovies.Api.Functions;
 
@@ -79,6 +80,33 @@ public class SavedMoviesFunctions
             }
 
             await _savedMoviesRepository.UpdateSavedMovie(userId, savedMovieDto.MovieId, savedMovieDto.IsWatched);
+            return new OkResult();
+        }
+        catch (NotFoundException ex)
+        {
+            return ActionResultHelpers.NotFoundResult(ex.Message);
+        }
+        catch (ArgumentException ex)
+        {
+            return ActionResultHelpers.BadRequestResult(ex.Message);
+        }
+        catch(Exception ex)
+        {
+            log.LogError(ex, "Error occured while updating the saved movie");
+            return ActionResultHelpers.ServerErrorResult();
+        }
+    }
+    
+    [FunctionName(nameof(DeleteSavedMovie))]
+    [OpenApiOperation(operationId: nameof(DeleteSavedMovie), tags: new[] { Tag })]
+    [OpenApiParameter(name: "userId", In = ParameterLocation.Path, Required = true, Type = typeof(string), Description = "The user id.")]
+    [OpenApiParameter(name: "movieId", In = ParameterLocation.Path, Required = true, Type = typeof(int), Description = "The movie id.")]
+    public async Task<IActionResult> DeleteSavedMovie(
+        [HttpTrigger(AuthorizationLevel.Anonymous, "delete", Route = "users/{userId}/savedMovies/{movieId}")] HttpRequest req, string userId, int movieId, ILogger log)
+    {
+        try
+        {
+            await _savedMoviesRepository.DeleteSavedMovie(userId, movieId);
             return new OkResult();
         }
         catch (NotFoundException ex)
