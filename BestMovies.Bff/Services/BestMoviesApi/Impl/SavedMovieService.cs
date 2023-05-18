@@ -25,7 +25,7 @@ public class SavedMovieService : ISavedMovieService
     {
         await ValidateSavedMovie(savedMovieDto);
         
-        await  _userService.GetUserOrCreate(userDto);
+        await _userService.GetUserOrCreate(userDto);
 
         await _client.SaveMovie(userDto.Id, savedMovieDto);
 
