@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using BestMovies.Bff.Extensions;
 using BestMovies.Shared.CustomExceptions;
 using BestMovies.Shared.Dtos.Actor;
-using TMDbLib.Client;
 
 namespace BestMovies.Bff.Services.Tmdb.Impl;
 

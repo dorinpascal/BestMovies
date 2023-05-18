@@ -1,4 +1,3 @@
-using System;
 using System.Threading.Tasks;
 using BestMovies.Api.Persistence;
 using BestMovies.Api.Persistence.Entity;
