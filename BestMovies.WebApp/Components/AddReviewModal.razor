@@ -1,0 +1,91 @@
+@using BestMovies.WebApp.Repositories
+@using BestMovies.Shared.Dtos.Review
+@using FluentValidation
+@using BestMovies.Shared.CustomExceptions
+
+<MudDialog DisableSidePadding="true">
+    <DialogContent>
+        <MudContainer MaxWidth="MaxWidth.Small" Class="d-flex flex-column justify-start gap-2 px-8 pb-2" Style="max-height: 500px; overflow-y: auto;">
+            
+            <div class="d-flex flex-column align-center">
+                <MudText Typo="Typo.subtitle2" Class="mb-2">@LabelText</MudText>
+                <MudRating @bind-SelectedValue="_rating" HoveredValueChanged="HandleHoveredValueChanged"/>
+            </div>
+            
+            <div class="d-flex flex-column justify-start gap-1">
+                <MudTextField T="string" Label="Write your review" Lines="3" Variant="Variant.Outlined" @bind-Text="@_comment" />
+            </div>
+
+        </MudContainer>
+    </DialogContent>
+    <DialogActions>
+        <div>
+            @if (_isLoading)
+            {
+                <MudProgressCircular Indeterminate="true"/>
+            }
+            else
+            {
+                <MudButton Disabled="_rating <= 0" OnClick="AddReview">Add</MudButton>
+
+            }
+        </div>
+    </DialogActions>
+</MudDialog>
+
+
+
+@code {
+
+    [Inject]
+    protected IReviewRepository ReviewRepository { get; set; } = default!;
+
+    [Inject]
+    protected IValidator<CreateReviewDto> Validator { get; set; } = default!;
+
+    [CascadingParameter]
+    public MudDialogInstance MudDialog { get; set; } = null!;
+
+    [Parameter]
+    public int MovieId { get; set; }
+
+    private int _rating;
+    private string? _comment;
+    
+    private int? _activeVal;
+    private bool _isLoading;
+
+    private void HandleHoveredValueChanged(int? val) => _activeVal = val;
+
+    private string LabelText => (_activeVal ?? _rating) switch
+    {
+        1 => "Very bad",
+        2 => "Bad",
+        3 => "Sufficient",
+        4 => "Good",
+        5 => "Awesome!",
+        _ => "Rate the movie!"
+        };
+
+    private async Task AddReview()
+    {
+        _isLoading = true;
+        await InvokeAsync(StateHasChanged);
+        
+        var review = new CreateReviewDto(MovieId, _rating, _comment);
+
+        try
+        {
+            var validationResult = await Validator.ValidateAsync(review);
+            if (validationResult.IsValid)
+            {
+                await ReviewRepository.AddReview(review);
+                MudDialog.Close(DialogResult.Ok(true));
+            }
+        }
+        catch (ApiException) { }
+        
+        _isLoading = false;
+        await InvokeAsync(StateHasChanged);
+    } 
+}

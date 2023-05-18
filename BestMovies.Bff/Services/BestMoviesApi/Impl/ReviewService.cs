@@ -35,6 +35,8 @@ public class ReviewService : IReviewService
             await _userService.SaveUser(user);
         }
         
+        //ToDo add the movie as watched if not there
+        
         await _client.AddReview(user.Id, review);
     }
 }
