@@ -108,9 +108,9 @@ public class SavedMoviesFunctions
             await _savedMoviesRepository.DeleteSavedMovie(userId, movieId);
             return new OkResult();
         }
-        catch (NotFoundException ex)
+        catch (NotFoundException)
         {
-            return ActionResultHelpers.NotFoundResult(ex.Message);
+            return new OkResult();
         }
         catch (ArgumentException ex)
         {

@@ -61,7 +61,7 @@ public class SavedMoviesRepository : ISavedMoviesRepository
         
         if (movieToDelete is null)
         {
-            throw new NotFoundException($"A movie with id {movieId} is not found in {userId} user's saved list");
+            return;
         }
 
         _dbContext.SavedMovies.Remove(movieToDelete);
