@@ -23,7 +23,7 @@ public class UserRepository : IUserRepository
         var existingUser = await _dbContext.Users.FirstOrDefaultAsync(u => u.Id == userId);
         if (existingUser is not null)
         {
-            throw new ArgumentException($"A user with id '{userId}' is already saved");
+            throw new DuplicateException($"A user with id '{userId}' is already saved");
         }
 
         await _dbContext.Users.AddAsync(user);

@@ -1,12 +1,13 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using BestMovies.Api.Extensions;
 using BestMovies.Api.Helpers;
 using BestMovies.Api.Repositories;
+using BestMovies.Shared.CustomExceptions;
 using BestMovies.Shared.Dtos.Movies;
-using BestMovies.Shared.Dtos.Review;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
@@ -33,6 +34,7 @@ public class SavedMoviesFunctions
     [OpenApiOperation(operationId: nameof(AddSavedMovie), tags: new[] { Tag })]
     [OpenApiRequestBody("application/json", typeof(SavedMovieDto))]
     [OpenApiParameter(name: "userId", In = ParameterLocation.Path, Required = true, Type = typeof(string), Description = "The user id.")]
+    [OpenApiResponseWithoutBody(statusCode: HttpStatusCode.OK, Description = "Successfully saved the movie")]
     public async Task<IActionResult> AddSavedMovie(
         [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "users/{userId}/savedMovies")] HttpRequest req, string userId, ILogger log)
     { 
@@ -45,6 +47,10 @@ public class SavedMoviesFunctions
             }
             await _savedMoviesRepository.SaveMovie(userId, savedMovieDto.MovieId, savedMovieDto.IsWatched);
             return new OkResult();
+        }
+        catch (DuplicateException ex)
+        {
+            return ActionResultHelpers.Conflict(ex.Message);
         }
         catch (ArgumentException ex)
         {
@@ -63,16 +69,21 @@ public class SavedMoviesFunctions
     [OpenApiParameter(name: "userId", In = ParameterLocation.Path, Required = true, Type = typeof(string), Description = "The user id.")]
     public async Task<IActionResult> UpdateSavedMovie(
         [HttpTrigger(AuthorizationLevel.Anonymous, "patch", Route = "users/{userId}/savedMovies")] HttpRequest req, string userId, ILogger log)
-    { 
+    {
         try
         {
             var savedMovieDto = JsonConvert.DeserializeObject<SavedMovieDto>(await new StreamReader(req.Body).ReadToEndAsync());
-            if (string.IsNullOrEmpty(userId) || savedMovieDto is null )
+            if (string.IsNullOrEmpty(userId) || savedMovieDto is null)
             {
                 return ActionResultHelpers.BadRequestResult("Invalid parameters.");
             }
+
             await _savedMoviesRepository.UpdateSavedMovie(userId, savedMovieDto.MovieId, savedMovieDto.IsWatched);
             return new OkResult();
+        }
+        catch (NotFoundException ex)
+        {
+            return ActionResultHelpers.NotFoundResult(ex.Message);
         }
         catch (ArgumentException ex)
         {
@@ -93,9 +104,9 @@ public class SavedMoviesFunctions
     { 
         try
         {
-            
             var savedMoviesForUser = await _savedMoviesRepository.GetSavedMoviesForUser(userId);
             var dtos = savedMoviesForUser.Select(sm => sm.ToDto());
+            
             return new OkObjectResult(dtos);
         }
         catch (ArgumentException ex)
@@ -104,7 +115,7 @@ public class SavedMoviesFunctions
         }
         catch(Exception ex)
         {
-            log.LogError(ex, "Error occured while retrieving saved movies for user {userId}", userId);
+            log.LogError(ex, "Error occured while retrieving saved movies for user {UserId}", userId);
             return ActionResultHelpers.ServerErrorResult();
         }
     }

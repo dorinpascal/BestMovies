@@ -31,21 +31,25 @@ public class UsersFunctions
 
     [FunctionName(nameof(SaveUser))]
     [OpenApiOperation(operationId: nameof(SaveUser), tags: new[] { Tag })]
-    [OpenApiRequestBody("application/json", typeof(UserDto))]
-    [OpenApiParameter(name: "userId", In = ParameterLocation.Path, Required = true, Type = typeof(string), Description = "The user id.")]
+    [OpenApiRequestBody("application/json", typeof(CreateUserDto))]
+    [OpenApiResponseWithoutBody(statusCode: HttpStatusCode.OK, Description = "Successfully saved the user")]
     public async Task<IActionResult> SaveUser(
-        [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "users/{userId}")] HttpRequest req, string userId, ILogger log)
+        [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "users")] HttpRequest req, ILogger log)
     {
         try
         {
-            var userDto = JsonConvert.DeserializeObject<UserDto>(await new StreamReader(req.Body).ReadToEndAsync());
+            var userDto = JsonConvert.DeserializeObject<CreateUserDto>(await new StreamReader(req.Body).ReadToEndAsync());
             if (userDto is null)
             {
                 return ActionResultHelpers.BadRequestResult("Invalid parameters.");
             }
 
-            await _userRepository.SaveUser(userId, userDto.Email);
+            await _userRepository.SaveUser(userDto.Id, userDto.Email);
             return new OkResult();
+        }
+        catch (DuplicateException ex)
+        {
+            return ActionResultHelpers.Conflict(ex.Message);
         }
         catch (ArgumentException ex)
         {

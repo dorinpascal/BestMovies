@@ -1,9 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using BestMovies.Api.Persistence;
 using BestMovies.Api.Persistence.Entity;
+using BestMovies.Shared.CustomExceptions;
 using Microsoft.EntityFrameworkCore;
 
 namespace BestMovies.Api.Repositories.Impl;
@@ -25,7 +25,7 @@ public class SavedMoviesRepository : ISavedMoviesRepository
 
         if (existing is not null)
         {
-            throw new ArgumentException($"A movie with id {movieId} is already in {userId} user's saved list");
+            throw new DuplicateException($"A movie with id {movieId} is already in {userId} user's saved list");
         }
         
         var savedMovie = new SavedMovie(userId, movieId, isWatched);
@@ -40,7 +40,7 @@ public class SavedMoviesRepository : ISavedMoviesRepository
 
         if (existing is null)
         {
-            throw new ArgumentException($"A movie with id {movieId} is not found in {userId} user's saved list");
+            throw new NotFoundException($"A movie with id {movieId} is not found in {userId} user's saved list");
         }
 
         existing.IsWatched = isWatched;

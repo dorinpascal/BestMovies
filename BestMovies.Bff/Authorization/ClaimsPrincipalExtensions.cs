@@ -13,29 +13,42 @@ public static class ClaimsPrincipalExtensions
     {
         ClientPrincipal principal = new();
 
-        if (req.Headers.TryGetValue("x-ms-client-principal", out var header))
+        try
         {
-            var data = header[0];
-            var decoded = Convert.FromBase64String(data);
-            var json = Encoding.UTF8.GetString(decoded);
-            principal = JsonSerializer.Deserialize<ClientPrincipal>(json, new JsonSerializerOptions { PropertyNameCaseInsensitive = true }) ?? new ClientPrincipal();
+            if (req.Headers.TryGetValue("x-ms-client-principal", out var header))
+            {
+                var data = header[0];
+                var decoded = Convert.FromBase64String(data);
+                var json = Encoding.UTF8.GetString(decoded);
+                
+                principal = JsonSerializer.Deserialize<ClientPrincipal>(json,
+                    new JsonSerializerOptions
+                    {
+                        PropertyNameCaseInsensitive = true
+                    }) ?? new ClientPrincipal();
+            }
+
+            principal.UserRoles = principal.UserRoles
+                .Except(new[] {"anonymous"}, StringComparer.CurrentCultureIgnoreCase)
+                .ToArray();
+
+            if (!principal.UserRoles.Any())
+            {
+                return new ClaimsPrincipal();
+            }
+
+            var identity = new ClaimsIdentity(principal.IdentityProvider);
+            identity.AddClaim(new Claim(ClaimTypes.NameIdentifier, principal.UserId));
+            identity.AddClaim(new Claim(ClaimTypes.Name, principal.UserDetails));
+            identity.AddClaims(principal.UserRoles.Select(role => new Claim(ClaimTypes.Role, role)));
+
+            return new ClaimsPrincipal(identity);
         }
-
-        principal.UserRoles = principal.UserRoles
-            .Except(new[] { "anonymous" }, StringComparer.CurrentCultureIgnoreCase)
-            .ToArray();
-
-        if (!principal.UserRoles.Any())
+        catch (Exception ex)
         {
-            return new ClaimsPrincipal();
+            throw new ArgumentException(ex.Message);
         }
-
-        var identity = new ClaimsIdentity(principal.IdentityProvider);
-        identity.AddClaim(new Claim(ClaimTypes.NameIdentifier, principal.UserId));
-        identity.AddClaim(new Claim(ClaimTypes.Name, principal.UserDetails));
-        identity.AddClaims(principal.UserRoles.Select(role => new Claim(ClaimTypes.Role, role)));
-
-        return new ClaimsPrincipal(identity);
+        
     }
     
     private class ClientPrincipal
