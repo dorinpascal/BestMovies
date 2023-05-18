@@ -45,13 +45,13 @@ public class UserService : IUserService
 
     public async Task<UserDto> GetUserOrCreate(CreateUserDto user)
     {
-        var userToReturn = await GetUserOrDefault(user.Id);
-        if (userToReturn is null)
+        var existingUser = await GetUserOrDefault(user.Id);
+        if (existingUser is not null)
         {
-            await SaveUser(user);
-            userToReturn = await GetUserOrDefault(user.Id);
+            return existingUser;
         }
-
-        return userToReturn!;
+        
+        await SaveUser(user);
+        return await _client.GetUser(user.Id);
     }
 }

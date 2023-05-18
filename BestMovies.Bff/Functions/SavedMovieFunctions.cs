@@ -36,7 +36,7 @@ public class SavedMovieFunctions
     [OpenApiParameter(name: "id", In = ParameterLocation.Path, Required = true, Type = typeof(int), Description = "The movie id.")]
     [OpenApiParameter(name: "x-ms-client-principal", In = ParameterLocation.Header, Required = true, Type = typeof(string), Description = "base64 of ClientPrincipal")]
     public async Task<IActionResult> SaveMovie(
-        [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "movies/{id:int}/savedMovies")] HttpRequest req, int id, ILogger log)
+        [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "savedMovies")] HttpRequest req, int id, ILogger log)
     {
         try
         {
