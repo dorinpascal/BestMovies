@@ -18,6 +18,9 @@ public static class HttpResponseMessageExtensions
             case HttpStatusCode.BadRequest:
                 throw new ArgumentException(message);
             
+            case HttpStatusCode.NotFound:
+                throw new NotFoundException(message);
+            
             case HttpStatusCode.Unauthorized:
             case HttpStatusCode.Forbidden:
                 throw new AuthenticationException(message);

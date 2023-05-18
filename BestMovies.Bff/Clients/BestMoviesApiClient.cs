@@ -1,11 +1,9 @@
 ﻿using System;
-using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 using BestMovies.Bff.Extensions;
-using BestMovies.Shared.CustomExceptions;
 using BestMovies.Shared.Dtos.Review;
 using BestMovies.Shared.Dtos.User;
 
@@ -52,20 +50,13 @@ public class BestMoviesApiClient : IBestMoviesApiClient, IDisposable
     public async Task<UserDto> GetUser(string userId)
     {
         var responseMessage = await _client.GetAsync($"users/{userId}");
+        if (!responseMessage.IsSuccessStatusCode)
+        {
+            await responseMessage.ThrowBasedOnStatusCode();
+        }
         
         var content = await responseMessage.ReadContentSafe();
-
-        if (responseMessage.IsSuccessStatusCode)
-        {
-            return JsonSerializer.Deserialize<UserDto>(content)!;
-        }
-
-        if (responseMessage.StatusCode is HttpStatusCode.NotFound)
-        {
-            throw new NotFoundException(content);
-        }
-
-        throw new Exception(content);
+        return JsonSerializer.Deserialize<UserDto>(content)!;
     }
 
     public void Dispose() => _client.Dispose();
