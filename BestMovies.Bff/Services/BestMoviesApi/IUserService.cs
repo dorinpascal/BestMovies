@@ -7,4 +7,5 @@ public interface IUserService
 {
     Task SaveUser(CreateUserDto user);
     Task<UserDto?> GetUserOrDefault(string userId);
+    Task<UserDto> GetUserOrCreate(CreateUserDto user);
 }

@@ -42,4 +42,16 @@ public class UserService : IUserService
             return null;
         }
     }
+
+    public async Task<UserDto> GetUserOrCreate(CreateUserDto user)
+    {
+        var userToReturn = await GetUserOrDefault(user.Id);
+        if (userToReturn is null)
+        {
+            await SaveUser(user);
+            userToReturn = await GetUserOrDefault(user.Id);
+        }
+
+        return userToReturn!;
+    }
 }
