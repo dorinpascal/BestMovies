@@ -95,8 +95,8 @@ public class ReviewFunctions
             {
                 return ActionResultHelpers.BadRequestResult("Invalid value for the id. The value must be greater than 0");
             }
-            var reviews = await _reviewService.GetMovieReviews(movieId);
-            return new OkResult();
+            var reviews = await _reviewService.GetReviews(movieId);
+            return new OkResult(reviews);
         }
         catch (DuplicateException ex)
         {

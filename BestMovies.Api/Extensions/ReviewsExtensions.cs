@@ -15,9 +15,9 @@ public static class ReviewsExtensions
             Comment: review.Comment);
 
 
-    public static ReviewListDto ToDto(this IEnumerable<ReviewDto> reviewDtos)
+    public static ReviewStatsDto ToDto(this IEnumerable<ReviewDto> reviewDtos)
     {
-        var reviewListDto = new ReviewListDto(
+        var reviewListDto = new ReviewStatsDto(
             Reviews: reviewDtos.ToList(),
             AvgRating: reviewDtos.Any() ? (int)reviewDtos.Average(r => r.Rating) : 0,
             ReviewCount: reviewDtos.Count()
