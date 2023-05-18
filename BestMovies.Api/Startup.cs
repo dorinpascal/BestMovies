@@ -25,6 +25,7 @@ public class Startup : FunctionsStartup
         
         builder.Services.AddTransient<IReviewRepository, ReviewRepository>();
         builder.Services.AddTransient<IUserRepository, UserRepository>();
+        builder.Services.AddTransient<ISavedMoviesRepository, SavedMoviesRepository>();
     }
 
     private static void MigrateDatabase(string connectionString)
