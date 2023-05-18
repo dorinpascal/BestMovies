@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 using BestMovies.Bff.Clients;
@@ -17,10 +18,11 @@ public class StatisticsService : IStatisticsService
     public async Task<MovieStatsDto> GetMovieStats(int movieId)
     {
         // ToDo: Move this to db as a query for performance
-        var reviews = (await _client.GetReviewsForMovie(movieId)).ToArray();
+        var reviews = await _client.GetReviewsForMovie(movieId);
+        var reviewsList = reviews.ToArray();
 
-        var averageRating = (decimal)reviews.Average(r => r.Rating);
-        var reviewsCount = reviews.Count(r => !string.IsNullOrEmpty(r.Comment));
+        var averageRating = (decimal)reviewsList.Average(r => r.Rating);
+        var reviewsCount = reviewsList.Count(r => !string.IsNullOrEmpty(r.Comment));
 
         return new MovieStatsDto(averageRating, reviewsCount, 0, 0);
     }
