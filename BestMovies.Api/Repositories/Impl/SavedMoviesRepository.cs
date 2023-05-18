@@ -59,13 +59,12 @@ public class SavedMoviesRepository : ISavedMoviesRepository
         var movieToDelete = await _dbContext.SavedMovies
             .FirstOrDefaultAsync(sm => sm.UserId == userId && sm.MovieId == movieId);
         
-        if (movieToDelete is null)
+        if (movieToDelete is not null)
         {
-            return;
+            _dbContext.SavedMovies.Remove(movieToDelete);
+            await _dbContext.SaveChangesAsync();
         }
-
-        _dbContext.SavedMovies.Remove(movieToDelete);
-        await _dbContext.SaveChangesAsync();
+        
     }
     
 }
