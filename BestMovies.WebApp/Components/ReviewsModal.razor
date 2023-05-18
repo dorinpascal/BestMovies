@@ -1,0 +1,59 @@
+@using BestMovies.WebApp.Repositories
+@using BestMovies.Shared.Dtos.Review
+
+<MudDialog DisableSidePadding="true">
+    <DialogContent>
+        <MudContainer MaxWidth="MaxWidth.Small" Class="d-flex flex-column justify-start gap-2 px-8" Style="max-height: 500px; overflow-y: auto;">
+            <div class="mb-2">
+                <MudText Typo="Typo.h6" Align="Align.Start">Reviews</MudText>
+            </div>
+            
+            <div class="d-flex flex-column justify-start gap-1">
+                @if (_reviews is null)
+                {
+                    <MudSkeleton Class="rounded" Animation="Animation.Wave" SkeletonType="SkeletonType.Rectangle" Height="300px"/>
+                }
+                else if (!_reviews.Any())
+                {
+                    <MudText Align="Align.Center" Typo="Typo.overline"><em>No reviews yet. Be the first to add a review.</em></MudText>
+                }
+                else
+                {
+                    foreach (var review in _reviews)
+                    {
+                        <div class="d-flex flex-row justify-start align-start gap-1 pa-3">
+                            <MudIcon Icon="@Icons.Material.Rounded.Person" Size="Size.Large"/>
+                                
+                            <div class="d-flex flex-column justify-start align-start gap-2">
+                                <MudText Typo="Typo.body1">@review.User.Email</MudText>
+                                
+                                <MudRating ReadOnly="true" SelectedValue="@review.Rating"/>
+                                
+                                <MudText Typo="Typo.body2">@review.Comment</MudText>
+                            </div>
+                        </div>
+                    }
+                }
+            </div>
+        </MudContainer>
+    </DialogContent>
+</MudDialog>
+
+@code {
+
+    [Inject]
+    protected IReviewRepository ReviewRepository { get; set; } = default!;
+
+    [CascadingParameter]
+    public MudDialogInstance MudDialog { get; set; } = null!;
+
+    [Parameter]
+    public int MovieId { get; set; }
+
+    private IEnumerable<ReviewDto>? _reviews;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _reviews = await ReviewRepository.GetReviewsForMovie(MovieId);
+    }
+}

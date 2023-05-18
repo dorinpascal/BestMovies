@@ -20,7 +20,7 @@ public class StatisticsService : IStatisticsService
         var reviews = await _client.GetReviewsForMovie(movieId);
         var reviewsList = reviews.ToArray();
 
-        var averageRating = (decimal)reviewsList.Average(r => r.Rating);
+        var averageRating = reviewsList.Any() ? (decimal)reviewsList.Average(r => r.Rating) : decimal.Zero;
         var reviewsCount = reviewsList.Count(r => !string.IsNullOrEmpty(r.Comment));
 
         return new MovieStatsDto(averageRating, reviewsCount, 0, 0);
