@@ -44,7 +44,6 @@ public class BestMoviesApiClient : IBestMoviesApiClient, IDisposable
             await responseMessage.ThrowBasedOnStatusCode();
         }
         var content = await responseMessage.ReadContentSafe();
-        Console.WriteLine(content);
         
         return JsonSerializer.Deserialize<IList<ReviewDto>>(content, _jsonSerializerOptions) ?? Enumerable.Empty<ReviewDto>();
     }
