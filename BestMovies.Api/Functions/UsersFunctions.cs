@@ -69,7 +69,7 @@ public class UsersFunctions
     public async Task<IActionResult> GetUser(
         [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "users/{userId}")] HttpRequest req, string userId, ILogger log)
     { 
-        if (string.IsNullOrEmpty(userId))
+        if (string.IsNullOrWhiteSpace(userId))
         {
             return ActionResultHelpers.BadRequestResult("Invalid value for the userId.");
         }
