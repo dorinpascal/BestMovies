@@ -65,6 +65,7 @@ public class ReviewFunctions
             );
             
             await _reviewService.AddReview(user, review);
+            
             return new OkResult();
         }
         catch (DuplicateException ex)

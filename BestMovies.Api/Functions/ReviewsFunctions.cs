@@ -54,6 +54,7 @@ public class ReviewFunctions
         }
         catch (ArgumentException ex)
         {
+            log.LogDebug(ex, "ArgumentException: ");
             return ActionResultHelpers.BadRequestResult(ex.Message);
         }
         catch(Exception ex)

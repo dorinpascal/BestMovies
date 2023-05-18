@@ -11,7 +11,6 @@ using BestMovies.Shared.Dtos.Review;
 using BestMovies.Shared.Dtos.User;
 using BestMovies.Shared.Validators;
 using FluentValidation;
-using TMDbLib.Objects.People;
 
 [assembly: FunctionsStartup(typeof(BestMovies.Bff.Startup))]
 namespace BestMovies.Bff;
@@ -37,5 +36,6 @@ public class Startup : FunctionsStartup
         // Validators
         builder.Services.AddScoped<IValidator<CreateUserDto>, CreateUserDtoValidator>();
         builder.Services.AddScoped<IValidator<CreateReviewDto>, CreateReviewDtoValidator>();
+        
     }
 }

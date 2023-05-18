@@ -38,8 +38,7 @@ public class UsersFunctions
     {
         try
         {
-            var userDto =
-                JsonConvert.DeserializeObject<CreateUserDto>(await new StreamReader(req.Body).ReadToEndAsync());
+            var userDto = JsonConvert.DeserializeObject<CreateUserDto>(await new StreamReader(req.Body).ReadToEndAsync());
             if (userDto is null)
             {
                 return ActionResultHelpers.BadRequestResult("Invalid parameters.");

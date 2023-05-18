@@ -22,13 +22,13 @@ public class UserService : IUserService
     public async Task SaveUser(CreateUserDto user)
     {
         var validationResult = await _validator.ValidateAsync(user);
-        if (validationResult.IsValid)
+        if (!validationResult.IsValid)
         {
-            await _client.SaveUser(user);
+            var errors = string.Join("; ", validationResult.Errors.Select(x => x.ErrorMessage));
+            throw new ArgumentException(errors);
         }
-
-        var errors = string.Join("; ", validationResult.Errors.Select(x => x.ErrorMessage));
-        throw new ArgumentException(errors);
+        
+        await _client.SaveUser(user);
     }
 
     public async Task<UserDto?> GetUserOrDefault(string userId)
