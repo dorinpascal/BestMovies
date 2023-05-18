@@ -29,12 +29,8 @@ public class ReviewService : IReviewService
             var errors = string.Join("; ", validationResult.Errors.Select(x => x.ErrorMessage));
             throw new ArgumentException(errors);
         }
-        
-        var existingUser = await  _userService.GetUserOrDefault(user.Id);
-        if (existingUser is null)
-        {
-            await _userService.SaveUser(user);
-        }
+
+        await _userService.GetUserOrCreate(user);
         
         //ToDo add the movie as watched if not there
         

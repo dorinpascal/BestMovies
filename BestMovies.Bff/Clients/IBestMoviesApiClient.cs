@@ -1,5 +1,6 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
+using BestMovies.Shared.Dtos.Movies;
+using System.Collections.Generic;
 using BestMovies.Shared.Dtos.Review;
 using BestMovies.Shared.Dtos.User;
 
@@ -11,4 +12,5 @@ public interface IBestMoviesApiClient
     Task<IEnumerable<ReviewDto>> GetReviewsForMovie(int movieId);
     Task SaveUser(CreateUserDto user);
     Task<UserDto> GetUser(string userId);
+    Task SaveMovie(string userId, SavedMovieDto savedMovie);
 }

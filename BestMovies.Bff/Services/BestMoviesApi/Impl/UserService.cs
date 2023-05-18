@@ -42,4 +42,16 @@ public class UserService : IUserService
             return null;
         }
     }
+
+    public async Task<UserDto> GetUserOrCreate(CreateUserDto user)
+    {
+        var existingUser = await GetUserOrDefault(user.Id);
+        if (existingUser is not null)
+        {
+            return existingUser;
+        }
+        
+        await SaveUser(user);
+        return await _client.GetUser(user.Id);
+    }
 }
