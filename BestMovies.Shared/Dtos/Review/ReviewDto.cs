@@ -2,4 +2,4 @@
 
 namespace BestMovies.Shared.Dtos.Review;
 
-public record ReviewDto(int MovieId, UserDto UserDto, int Rating, string? Comment);
+public record ReviewDto(int MovieId, UserDto User, int Rating, string? Comment);
