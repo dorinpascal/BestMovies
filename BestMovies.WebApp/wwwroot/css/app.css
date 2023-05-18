@@ -120,7 +120,7 @@ a, .btn-link {
     background-color: var(--mud-palette-action-disabled-background);
 }
 
-.app-background .mud-input-label-outlined {
+.label-navbar-background .mud-input-label-outlined {
     background-color: var(--mud-palette-appbar-background);
 }
 
