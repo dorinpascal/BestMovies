@@ -55,7 +55,7 @@ public class GetUserEndpointTests
     }
 
     [Fact]
-    public async Task GetReviewsForMovieEndpoint_ReturnsListOfReviews_ReturnsSC200()
+    public async Task GetUserEndpoint_ReturnsUser_ReturnsSC200()
     {
         //Arrange
         var user = new User("userId", "email");
