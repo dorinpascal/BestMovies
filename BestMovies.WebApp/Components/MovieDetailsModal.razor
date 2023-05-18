@@ -53,7 +53,7 @@
                         </div>
                     </div>
 
-                    <div class="highlight-on-hover rounded pa-2 cursor-pointer">
+                    <div class="highlight-on-hover rounded pa-2 cursor-pointer" @onclick="OpenReviewsModal">
                         <div class="d-flex flex-column justify-center align-center">
                             <MudText Typo="Typo.button">@_movieStats.ReviewsCount </MudText>
                             <MudText Typo="Typo.overline">Reviews</MudText>
@@ -117,7 +117,7 @@
             <div class="d-flex flex-column justify-start gap-1">
                 <MudText Typo="Typo.h6" Align="Align.Start">Actors</MudText>
 
-                <div class="d-flex flex-row gap-2 justify-space-between px-4 pb-2" style="overflow-x: auto;">
+                <div class="d-flex flex-row gap-2 justify-space-between px-4 pb-2 hide-scrollbar" style="overflow-x: auto; ">
                     @if (_movieDetails is null)
                     {
                         for (var i = 0; i < 5; i++)
@@ -133,8 +133,8 @@
                                 <div class="d-flex flex-column justify-start align-center cursor-pointer" @onclick="() => OpenActorDetails(actor.Id)">
                                     <MudImage Class="mud-skeleton-circle" ObjectFit="@ObjectFit.Cover" ObjectPosition="ObjectPosition.Center" Height="120" Width="120" Src="@($"api/actors/{actor.Id}/image?size=w300")" Alt="@actor.Name"/>
 
-                                    <MudText Typo="Typo.button">@actor.Name</MudText>
-                                    <MudText Typo="Typo.overline">@actor.RoleName</MudText>
+                                    <MudText Align="Align.Center" Typo="Typo.button">@actor.Name</MudText>
+                                    <MudText Align="Align.Center" Typo="Typo.overline">@actor.RoleName</MudText>
                                 </div>
                             </div>
                         }
@@ -204,14 +204,31 @@
         DialogService.Show<ActorDetailsModal>(string.Empty, parameters, options);
     }
     
-    private void OpenAddReviewModal()
+    private async Task OpenAddReviewModal()
     {
         var parameters = new DialogParameters
         {
             { "MovieId", MovieId }
         };
         var options = new DialogOptions { CloseOnEscapeKey = true, CloseButton = true, FullWidth = true, MaxWidth = MaxWidth.ExtraSmall};
-        DialogService.Show<AddReviewModal>(_movieDetails!.Title, parameters, options);
+        var dialog = await DialogService.ShowAsync<AddReviewModal>(_movieDetails!.Title, parameters, options);
+        var result = await dialog.Result;
+
+        if (!result.Canceled)
+        {
+            await FetchMovieStats();
+        }
+
+    }
+    
+    private void OpenReviewsModal()
+    {
+        var parameters = new DialogParameters
+        {
+            { "MovieId", MovieId }
+        };
+        var options = new DialogOptions { CloseOnEscapeKey = true, CloseButton = true, FullWidth = true, MaxWidth = MaxWidth.ExtraSmall};
+        DialogService.Show<ReviewsModal>(_movieDetails!.Title, parameters, options);
     }
 
     private async Task SaveRemoveMovie()
