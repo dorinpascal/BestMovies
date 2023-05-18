@@ -96,6 +96,29 @@ public class SavedMoviesFunctions
         }
     }
     
+    [FunctionName(nameof(DeleteSavedMovie))]
+    [OpenApiOperation(operationId: nameof(DeleteSavedMovie), tags: new[] { Tag })]
+    [OpenApiParameter(name: "userId", In = ParameterLocation.Path, Required = true, Type = typeof(string), Description = "The user id.")]
+    [OpenApiParameter(name: "movieId", In = ParameterLocation.Path, Required = true, Type = typeof(int), Description = "The movie id.")]
+    public async Task<IActionResult> DeleteSavedMovie(
+        [HttpTrigger(AuthorizationLevel.Anonymous, "delete", Route = "users/{userId}/savedMovies/{movieId}")] HttpRequest req, string userId, int movieId, ILogger log)
+    {
+        try
+        {
+            await _savedMoviesRepository.DeleteSavedMovie(userId, movieId);
+            return new OkResult();
+        }
+        catch (ArgumentException ex)
+        {
+            return ActionResultHelpers.BadRequestResult(ex.Message);
+        }
+        catch(Exception ex)
+        {
+            log.LogError(ex, "Error occured while updating the saved movie");
+            return ActionResultHelpers.ServerErrorResult();
+        }
+    }
+    
     [FunctionName(nameof(GetSavedMovies))]
     [OpenApiOperation(operationId: nameof(GetSavedMovies), tags: new[] { Tag })]
     [OpenApiParameter(name: "userId", In = ParameterLocation.Path, Required = true, Type = typeof(string), Description = "The user id.")]

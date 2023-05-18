@@ -53,5 +53,18 @@ public class SavedMoviesRepository : ISavedMoviesRepository
         var movieList = await _dbContext.SavedMovies.Where(sm => sm.UserId == userId).ToListAsync();
         return movieList;
     }
+
+    public async Task DeleteSavedMovie(string userId, int movieId)
+    {
+        var movieToDelete = await _dbContext.SavedMovies
+            .FirstOrDefaultAsync(sm => sm.UserId == userId && sm.MovieId == movieId);
+        
+        if (movieToDelete is not null)
+        {
+            _dbContext.SavedMovies.Remove(movieToDelete);
+            await _dbContext.SaveChangesAsync();
+        }
+        
+    }
     
 }
