@@ -15,6 +15,7 @@ public class SavedMoviesRepository : ISavedMoviesRepository
     {
         _client = client ?? throw new ArgumentNullException(nameof(client));
     }
+    
     public async Task SaveMovie(SavedMovieDto movieDto)
     {
         var json = JsonSerializer.Serialize(movieDto);
