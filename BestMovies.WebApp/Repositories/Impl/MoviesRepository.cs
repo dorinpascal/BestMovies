@@ -1,11 +1,11 @@
+using System.Text;
+using System.Text.Json;
 using BestMovies.Shared.Dtos.Movies;
 using BestMovies.WebApp.Helpers;
 using BestMovies.WebApp.Services;
 using Microsoft.AspNetCore.WebUtilities;
-using System.Text.Json;
-using System.Text;
 
-namespace BestMovies.WebApp.Repositories;
+namespace BestMovies.WebApp.Repositories.Impl;
 
 public class MoviesRepository : IMoviesRepository
 {

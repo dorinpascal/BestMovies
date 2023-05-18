@@ -1,6 +1,6 @@
 ﻿using BestMovies.WebApp.Helpers;
 
-namespace BestMovies.WebApp.Repositories;
+namespace BestMovies.WebApp.Repositories.Impl;
 
 public class GenresRepository : IGenresRepository
 {

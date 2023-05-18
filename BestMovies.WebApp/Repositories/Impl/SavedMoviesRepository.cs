@@ -4,7 +4,7 @@ using BestMovies.Shared.CustomExceptions;
 using BestMovies.Shared.Dtos.Movies;
 using BestMovies.WebApp.Helpers;
 
-namespace BestMovies.WebApp.Repositories;
+namespace BestMovies.WebApp.Repositories.Impl;
 
 public class SavedMoviesRepository : ISavedMoviesRepository
 {

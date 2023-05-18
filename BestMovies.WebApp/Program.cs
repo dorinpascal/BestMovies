@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using BestMovies.WebApp;
 using BestMovies.WebApp.Repositories;
+using BestMovies.WebApp.Repositories.Impl;
 using BestMovies.WebApp.Services;
 using FluentValidation;
 using MudBlazor.Services;
@@ -20,10 +21,11 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 
 // Repositories
 builder.Services.AddTransient<IMoviesRepository, MoviesRepository>();
-builder.Services.AddTransient<ISavedMoviesRepository, SavedMoviesRepository>();
 builder.Services.AddTransient<IGenresRepository, GenresRepository>();
 builder.Services.AddTransient<IActorsRepository, ActorsRepository>();
 builder.Services.AddTransient<IReviewRepository, ReviewRepository>();
+builder.Services.AddTransient<ISavedMoviesRepository, SavedMoviesRepository>();
+builder.Services.AddTransient<IStatisticsRepository, StatisticsRepository>();
 
 // Mud Blazor
 builder.Services.AddMudServices();
