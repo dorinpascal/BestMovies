@@ -45,7 +45,7 @@ public class ReviewFunctions
     {
         try
         {
-            if (AuthenticationHelpers.AuthenticateUser(req, out var user, out var actionResult)) return actionResult;
+            if (!AuthenticationHelpers.AuthenticateUser(req, out var user)) return ActionResultHelpers.UnauthorizedResult();
 
             var review =
                 JsonConvert.DeserializeObject<CreateReviewDto>(await new StreamReader(req.Body).ReadToEndAsync());

@@ -149,4 +149,39 @@ public class SavedMoviesFunctions
             return ActionResultHelpers.ServerErrorResult();
         }
     }
+    
+    [FunctionName(nameof(GetSavedMovie))]
+    [OpenApiOperation(operationId: nameof(GetSavedMovie), tags: new[] {Tag})]
+    [OpenApiParameter(name: "userId", In = ParameterLocation.Path, Required = true, Type = typeof(string), Description = "The user id.")]
+    [OpenApiParameter(name: "movieId", In = ParameterLocation.Path, Required = true, Type = typeof(int), Description = "The movie id.")]
+    
+    public async Task<IActionResult> GetSavedMovie(
+        [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "users/{userId}/savedMovies/{movieId:int}")]
+        HttpRequest req, string userId, int movieId, ILogger log)
+    {
+        try
+        {
+             
+            var savedMovie = await _savedMoviesRepository.GetSavedMovieForUser(userId, movieId);
+
+            if (savedMovie is null)
+            {
+                return ActionResultHelpers.NotFoundResult(
+                    $"Saved movie with id {movieId} not found for user {userId}");
+            }
+    
+            return new OkObjectResult(savedMovie.ToDto());
+        }
+        
+        catch (ArgumentException ex)
+        {
+            return ActionResultHelpers.BadRequestResult(ex.Message);
+        }
+         
+        catch (Exception ex)
+        {
+            log.LogError(ex, "Error occured while retrieving the movie");
+            return ActionResultHelpers.ServerErrorResult();
+        }
+    }
 }

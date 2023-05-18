@@ -64,4 +64,16 @@ public partial class BestMoviesApiClient
         
         return JsonSerializer.Deserialize<IList<SavedMovieDto>>(content, _jsonSerializerOptions) ?? Enumerable.Empty<SavedMovieDto>();
     }
+    
+    public async Task<SavedMovieDto?> GetSavedMovie(string userId, int movieId)
+    {
+        var responseMessage = await _client.GetAsync($"users/{userId}/savedMovies/{movieId}");
+        if (!responseMessage.IsSuccessStatusCode)
+        {
+            await responseMessage.ThrowBasedOnStatusCode();
+        }
+        var content = await responseMessage.ReadContentSafe();
+        
+        return JsonSerializer.Deserialize<SavedMovieDto>(content, _jsonSerializerOptions);
+    }
 }

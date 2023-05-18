@@ -29,24 +29,28 @@ public class SavedMovieService : ISavedMovieService
         await _userService.GetUserOrCreate(userDto);
 
         await _client.SaveMovie(userDto.Id, savedMovieDto);
-
     }
 
-    public async Task UpdateMovie(SavedMovieDto savedMovieDto, CreateUserDto userDto)
+    public async Task UpdateMovie(SavedMovieDto savedMovieDto, string userId)
     {
         await ValidateSavedMovie(savedMovieDto);
 
-        await _client.UpdateMovie(userDto.Id, savedMovieDto);
+        await _client.UpdateMovie(userId, savedMovieDto);
     }
 
-    public async Task DeleteMovie(int movieId, CreateUserDto userDto)
+    public async Task DeleteMovie(int movieId, string userId)
     {
-        await _client.DeleteMovie(userDto.Id, movieId);
+        await _client.DeleteMovie(userId, movieId);
     }
 
-    public async Task<IEnumerable<SavedMovieDto>> GetSavedMoviesForUser(CreateUserDto userDto, bool onlyUnwatched)
+    public async Task<IEnumerable<SavedMovieDto>> GetSavedMoviesForUser(string userId, bool onlyUnwatched)
     {
-        return await _client.GetSavedMoviesForUser(userDto.Id, onlyUnwatched);
+        return await _client.GetSavedMoviesForUser(userId, onlyUnwatched);
+    }
+
+    public async Task<SavedMovieDto?> GetSavedMovie(int movieId, string userId)
+    {
+        return await _client.GetSavedMovie(userId, movieId);
     }
 
     private async Task ValidateSavedMovie(SavedMovieDto savedMovieDto)

@@ -41,7 +41,7 @@ public class SavedMovieFunctions
     {
         try
         {
-            if (AuthenticationHelpers.AuthenticateUser(req, out var user, out var actionResult)) return actionResult;
+            if (!AuthenticationHelpers.AuthenticateUser(req, out var user)) return ActionResultHelpers.UnauthorizedResult();
 
             var savedMovie =
                 JsonConvert.DeserializeObject<SavedMovieDto>(await new StreamReader(req.Body).ReadToEndAsync());
@@ -81,7 +81,7 @@ public class SavedMovieFunctions
     {
         try
         {
-            if (AuthenticationHelpers.AuthenticateUser(req, out var user, out var actionResult)) return actionResult;
+            if (!AuthenticationHelpers.AuthenticateUser(req, out var user)) return ActionResultHelpers.UnauthorizedResult();
 
             var savedMovie =
                 JsonConvert.DeserializeObject<SavedMovieDto>(await new StreamReader(req.Body).ReadToEndAsync());
@@ -91,7 +91,7 @@ public class SavedMovieFunctions
                 return ActionResultHelpers.BadRequestResult("Invalid parameters.");
             }
             
-            await _savedMovieService.UpdateMovie(savedMovie, user!);
+            await _savedMovieService.UpdateMovie(savedMovie, user!.Id);
 
             return new OkResult();
         }
@@ -118,9 +118,9 @@ public class SavedMovieFunctions
     {
         try
         {
-            if (AuthenticationHelpers.AuthenticateUser(req, out var user, out var actionResult)) return actionResult;
+            if (!AuthenticationHelpers.AuthenticateUser(req, out var user)) return ActionResultHelpers.UnauthorizedResult();
             
-            await _savedMovieService.DeleteMovie(movieId, user!);
+            await _savedMovieService.DeleteMovie(movieId, user!.Id);
 
             return new OkResult();
         }
@@ -148,7 +148,7 @@ public class SavedMovieFunctions
     {
         try
         {
-            if (AuthenticationHelpers.AuthenticateUser(req, out var user, out var actionResult)) return actionResult;
+            if (!AuthenticationHelpers.AuthenticateUser(req, out var user)) return ActionResultHelpers.UnauthorizedResult();
 
             if (!bool.TryParse(req.Query["onlyUnwatched"], out var onlyUnwatched))
             {
@@ -156,7 +156,7 @@ public class SavedMovieFunctions
                     "Only unwatched query parameter could not be converted to a boolean");
             }
             
-            var savedMovies = await _savedMovieService.GetSavedMoviesForUser(user!, onlyUnwatched);
+            var savedMovies = await _savedMovieService.GetSavedMoviesForUser(user!.Id, onlyUnwatched);
 
             return new OkObjectResult(savedMovies);
         }
@@ -173,35 +173,47 @@ public class SavedMovieFunctions
         }
     }
     
-    //TODO implement this vertical slice
-    // [FunctionName(nameof(GetSavedMovie))]
-    // [OpenApiOperation(operationId: nameof(GetSavedMovie), tags: new[] {Tag})]
-    // [OpenApiParameter(name: "id", In = ParameterLocation.Path, Required = true, Type = typeof(int), Description = "The movie id.")]
-    // [OpenApiParameter(name: "x-ms-client-principal", In = ParameterLocation.Header, Required = true,
-    //     Type = typeof(string), Description = "base64 of ClientPrincipal")]
-    // public async Task<IActionResult> GetSavedMovie(
-    //     [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "savedMovies/{movieId:int}")]
-    //     HttpRequest req, int id, ILogger log)
-    // {
-    //     try
-    //     {
-    //         if (AuthenticationHelpers.AuthenticateUser(req, out var user, out var actionResult)) return actionResult;
-    //         
-    //         await _savedMovieService.GetSavedMovie(id, user!);
-    //
-    //         return new OkResult();
-    //     }
-    //    
-    //     catch (ArgumentException ex)
-    //     {
-    //         return ActionResultHelpers.BadRequestResult(ex.Message);
-    //     }
-    //     
-    //     catch (Exception ex)
-    //     {
-    //         log.LogError(ex, "Error occured while deleting the movie");
-    //         return ActionResultHelpers.ServerErrorResult();
-    //     }
-    // }
+     [FunctionName(nameof(GetSavedMovie))]
+     [OpenApiOperation(operationId: nameof(GetSavedMovie), tags: new[] {Tag})]
+     [OpenApiParameter(name: "movieId", In = ParameterLocation.Path, Required = true, Type = typeof(int), Description = "The movie id.")]
+     [OpenApiParameter(name: "x-ms-client-principal", In = ParameterLocation.Header, Required = true,
+         Type = typeof(string), Description = "base64 of ClientPrincipal")]
+     public async Task<IActionResult> GetSavedMovie(
+         [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "savedMovies/{movieId:int}")]
+         HttpRequest req, int movieId, ILogger log)
+     {
+         try
+         {
+             if (!AuthenticationHelpers.AuthenticateUser(req, out var user))
+                 return ActionResultHelpers.UnauthorizedResult();
+
+             var savedMovie = await _savedMovieService.GetSavedMovie(movieId, user!.Id);
+
+             if (savedMovie is null)
+             {
+                 return ActionResultHelpers.NotFoundResult(
+                     $"Saved movie with id {movieId} not found for user {user!.Id}");
+             }
+
+             return new OkObjectResult(savedMovie);
+         }
+
+         catch (NotFoundException)
+         {
+             return ActionResultHelpers.NotFoundResult(
+                 $"Saved movie with id {movieId} not found for user ");
+         }
+         
+         catch (ArgumentException ex)
+         {
+             return ActionResultHelpers.BadRequestResult(ex.Message);
+         }
+         
+         catch (Exception ex)
+         {
+             log.LogError(ex, "Error occured while retrieving the movie");
+             return ActionResultHelpers.ServerErrorResult();
+         }
+     }
 }
 

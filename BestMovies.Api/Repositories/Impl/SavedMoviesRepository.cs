@@ -55,6 +55,13 @@ public class SavedMoviesRepository : ISavedMoviesRepository
         return onlyUnwatched ? movieList.Where(m=> m.IsWatched == false).ToList() : movieList;
     }
 
+    public async Task<SavedMovie?> GetSavedMovieForUser(string userId, int movieId)
+    {
+        var savedMovie = await _dbContext.SavedMovies
+            .FirstOrDefaultAsync(sm => sm.UserId == userId && sm.MovieId == movieId);
+        return savedMovie;
+    }
+
     public async Task DeleteSavedMovie(string userId, int movieId)
     {
         var movieToDelete = await _dbContext.SavedMovies

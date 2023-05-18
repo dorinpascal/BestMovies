@@ -8,7 +8,7 @@ namespace BestMovies.Bff.Helpers;
 
 public static class AuthenticationHelpers
 {
-    public static bool AuthenticateUser(HttpRequest req, out CreateUserDto? user, out IActionResult actionResult)
+    public static bool AuthenticateUser(HttpRequest req, out CreateUserDto? user)
     {
         var claims = req.RetrieveClaimsPrincipal();
         var userId = claims.FindFirst(ClaimTypes.NameIdentifier)?.Value;
@@ -16,9 +16,8 @@ public static class AuthenticationHelpers
         if (claims.Identity is null || !claims.Identity.IsAuthenticated || string.IsNullOrEmpty(userId))
         {
             {
-                actionResult = ActionResultHelpers.UnauthorizedResult();
                 user = null;
-                return true;
+                return false;
             }
         }
 
@@ -27,7 +26,6 @@ public static class AuthenticationHelpers
             Email: claims.Identity!.Name!
         );
         
-        actionResult = default!;
-        return false;
+        return true;
     }
 }
