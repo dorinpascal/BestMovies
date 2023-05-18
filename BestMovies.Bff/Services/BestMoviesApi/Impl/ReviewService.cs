@@ -37,4 +37,9 @@ public class ReviewService : IReviewService
         
         await _client.AddReview(user.Id, review);
     }
+
+    public async Task<ReviewListDto> GetMovieReviews(int movieId)
+    {
+        var reviews = await _client.GetReviewList(movieId);
+    }
 }

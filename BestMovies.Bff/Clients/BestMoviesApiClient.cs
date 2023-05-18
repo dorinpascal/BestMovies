@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Net.Http;
 using System.Text;
 using System.Text.Json;
@@ -60,4 +61,15 @@ public class BestMoviesApiClient : IBestMoviesApiClient, IDisposable
     }
 
     public void Dispose() => _client.Dispose();
+
+    public async Task<IEnumerable<ReviewDto>> GetReviewList(int movieId)
+    {
+        var responseMessage = await _client.GetAsync($"movies/{movieId:int}/reviews");
+        if (!responseMessage.IsSuccessStatusCode)
+        {
+            await responseMessage.ThrowBasedOnStatusCode();
+        }
+        var content = await responseMessage.ReadContentSafe();
+        return JsonSerializer.Deserialize<List<ReviewDto>>(content)!;
+    }
 }

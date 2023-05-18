@@ -82,5 +82,36 @@ public class ReviewFunctions
             return ActionResultHelpers.ServerErrorResult();
         }
     }
+
+    [FunctionName(nameof(GetReviews))]
+    [OpenApiOperation(operationId: nameof(GetReviews), tags: new[] { Tag })]
+    [OpenApiParameter(name: "id", In = ParameterLocation.Path, Required = true, Type = typeof(int), Description = "The movie id.")]
+      public async Task<IActionResult> GetReviews(
+        [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "movies/{id:int}/reviews")] HttpRequest req, int movieId, ILogger log)
+      {
+        try
+        {
+            if (movieId <= 0)
+            {
+                return ActionResultHelpers.BadRequestResult("Invalid value for the id. The value must be greater than 0");
+            }
+            var reviews = await _reviewService.GetMovieReviews(movieId);
+            return new OkResult();
+        }
+        catch (DuplicateException ex)
+        {
+            return ActionResultHelpers.Conflict(ex.Message);
+        }
+        catch (ArgumentException ex)
+        {
+            return ActionResultHelpers.BadRequestResult(ex.Message);
+        }
+        catch (Exception ex)
+        {
+            log.LogError(ex, "Error occured while adding a review");
+            return ActionResultHelpers.ServerErrorResult();
+        }
+      }
+
 }
 
