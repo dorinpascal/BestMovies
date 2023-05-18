@@ -7,6 +7,7 @@ using BestMovies.Bff.Services.BestMoviesApi;
 using BestMovies.Bff.Services.BestMoviesApi.Impl;
 using BestMovies.Bff.Services.Tmdb;
 using BestMovies.Bff.Services.Tmdb.Impl;
+using BestMovies.Shared.Dtos.Movies;
 using BestMovies.Shared.Dtos.Review;
 using BestMovies.Shared.Dtos.User;
 using BestMovies.Shared.Validators;
@@ -30,12 +31,14 @@ public class Startup : FunctionsStartup
         builder.Services.AddTransient<IActorService, ActorService>();
         builder.Services.AddTransient<IReviewService, ReviewService>();
         builder.Services.AddTransient<IUserService, UserService>();
+        builder.Services.AddTransient<ISavedMovieService, SavedMovieService>();
         
         builder.Services.AddTransient<ITMDbWrapperService, TMDbWrapperService>();
         
         // Validators
         builder.Services.AddScoped<IValidator<CreateUserDto>, CreateUserDtoValidator>();
         builder.Services.AddScoped<IValidator<CreateReviewDto>, CreateReviewDtoValidator>();
+        builder.Services.AddScoped<IValidator<SavedMovieDto>, SavedMovieDtoValidator>();
         
     }
 }
