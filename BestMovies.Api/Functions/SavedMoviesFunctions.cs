@@ -72,8 +72,7 @@ public class SavedMoviesFunctions
     {
         try
         {
-            var savedMovieDto =
-                JsonConvert.DeserializeObject<SavedMovieDto>(await new StreamReader(req.Body).ReadToEndAsync());
+            var savedMovieDto = JsonConvert.DeserializeObject<SavedMovieDto>(await new StreamReader(req.Body).ReadToEndAsync());
             if (string.IsNullOrEmpty(userId) || savedMovieDto is null)
             {
                 return ActionResultHelpers.BadRequestResult("Invalid parameters.");
@@ -105,9 +104,9 @@ public class SavedMoviesFunctions
     { 
         try
         {
-            
             var savedMoviesForUser = await _savedMoviesRepository.GetSavedMoviesForUser(userId);
             var dtos = savedMoviesForUser.Select(sm => sm.ToDto());
+            
             return new OkObjectResult(dtos);
         }
         catch (ArgumentException ex)

@@ -45,7 +45,9 @@ public class ReviewFunctions
             {
                 return ActionResultHelpers.BadRequestResult("Invalid parameters.");
             }
+            
             await _reviewRepository.CreateReview(reviewDto.MovieId, userId, reviewDto.Rating, reviewDto.Comment);
+            
             return new OkResult();
         }
         catch (DuplicateException ex)
@@ -54,7 +56,6 @@ public class ReviewFunctions
         }
         catch (ArgumentException ex)
         {
-            log.LogDebug(ex, "ArgumentException: ");
             return ActionResultHelpers.BadRequestResult(ex.Message);
         }
         catch(Exception ex)
