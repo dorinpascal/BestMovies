@@ -1,4 +1,6 @@
-﻿using System.Net.Http;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Net.Http;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -23,5 +25,43 @@ public partial class BestMoviesApiClient
         {
             await responseMessage.ThrowBasedOnStatusCode();
         }
+    }
+
+    public async Task UpdateMovie(string userId, SavedMovieDto savedMovie)
+    {
+        var savedMovieJson = JsonSerializer.Serialize(savedMovie);
+        var savedMovieStringContent = new StringContent(
+            savedMovieJson,
+            Encoding.UTF8,
+            "application/json"
+        );
+        
+        var responseMessage = await _client.PatchAsync($"users/{userId}/savedMovies", savedMovieStringContent);
+        if (!responseMessage.IsSuccessStatusCode)
+        {
+            await responseMessage.ThrowBasedOnStatusCode();
+        }
+    }
+    
+    public async Task DeleteMovie(string userId, int movieId)
+    {
+        var responseMessage = await _client.DeleteAsync($"users/{userId}/savedMovies/{movieId}");
+        
+        if (!responseMessage.IsSuccessStatusCode)
+        {
+            await responseMessage.ThrowBasedOnStatusCode();
+        }
+    }
+    
+    public  async Task<IEnumerable<SavedMovieDto>> GetSavedMoviesForUser(string userId, bool onlyUnwatched)
+    {
+        var responseMessage = await _client.GetAsync($"users/{userId}/savedMovies?onlyUnwatched={onlyUnwatched}");
+        if (!responseMessage.IsSuccessStatusCode)
+        {
+            await responseMessage.ThrowBasedOnStatusCode();
+        }
+        var content = await responseMessage.ReadContentSafe();
+        
+        return JsonSerializer.Deserialize<IList<SavedMovieDto>>(content, _jsonSerializerOptions) ?? Enumerable.Empty<SavedMovieDto>();
     }
 }

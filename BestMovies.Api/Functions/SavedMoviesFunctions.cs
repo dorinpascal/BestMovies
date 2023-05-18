@@ -122,12 +122,19 @@ public class SavedMoviesFunctions
     [FunctionName(nameof(GetSavedMovies))]
     [OpenApiOperation(operationId: nameof(GetSavedMovies), tags: new[] { Tag })]
     [OpenApiParameter(name: "userId", In = ParameterLocation.Path, Required = true, Type = typeof(string), Description = "The user id.")]
+    [OpenApiParameter(name: "onlyUnwatched", In = ParameterLocation.Query, Required = true, Type = typeof(bool), Description = "Get only unwatched movies.")]
     public async Task<IActionResult> GetSavedMovies(
         [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "users/{userId}/savedMovies")] HttpRequest req, string userId, ILogger log)
     { 
         try
         {
-            var savedMoviesForUser = await _savedMoviesRepository.GetSavedMoviesForUser(userId);
+            if (!bool.TryParse(req.Query["onlyUnwatched"], out var onlyUnwatched))
+            {
+                return ActionResultHelpers.BadRequestResult(
+                    "Only unwatched query parameter could not be converted to a boolean");
+            }
+            
+            var savedMoviesForUser = await _savedMoviesRepository.GetSavedMoviesForUser(userId, onlyUnwatched);
             var dtos = savedMoviesForUser.Select(sm => sm.ToDto());
             
             return new OkObjectResult(dtos);

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using BestMovies.Bff.Clients;
@@ -34,17 +35,18 @@ public class SavedMovieService : ISavedMovieService
     public async Task UpdateMovie(SavedMovieDto savedMovieDto, CreateUserDto userDto)
     {
         await ValidateSavedMovie(savedMovieDto);
-        
+
+        await _client.UpdateMovie(userDto.Id, savedMovieDto);
     }
 
-    public Task DeleteMovie(SavedMovieDto savedMovieDto, CreateUserDto userDto)
+    public async Task DeleteMovie(int movieId, CreateUserDto userDto)
     {
-        throw new System.NotImplementedException();
+        await _client.DeleteMovie(userDto.Id, movieId);
     }
 
-    public Task GetSavedMoviesForUser(CreateUserDto userDto)
+    public async Task<IEnumerable<SavedMovieDto>> GetSavedMoviesForUser(CreateUserDto userDto, bool onlyUnwatched)
     {
-        throw new System.NotImplementedException();
+        return await _client.GetSavedMoviesForUser(userDto.Id, onlyUnwatched);
     }
 
     private async Task ValidateSavedMovie(SavedMovieDto savedMovieDto)

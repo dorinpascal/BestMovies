@@ -45,16 +45,11 @@ public class ReviewFunctions
     {
         try
         {
-            var claims = req.RetrieveClaimsPrincipal();
-            var userId = claims.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-
-            if (claims.Identity is null || !claims.Identity.IsAuthenticated || string.IsNullOrEmpty(userId))
-            {
-                return ActionResultHelpers.UnauthorizedResult();
-            }
+            if (AuthenticationHelpers.AuthenticateUser(req, out var user, out var actionResult)) return actionResult;
 
             var review =
                 JsonConvert.DeserializeObject<CreateReviewDto>(await new StreamReader(req.Body).ReadToEndAsync());
+            
             if (review is null)
             {
                 return ActionResultHelpers.BadRequestResult("Invalid parameters.");
@@ -64,13 +59,8 @@ public class ReviewFunctions
             {
                 return ActionResultHelpers.BadRequestResult("The movie id from path does not match the one from body");
             }
-
-            var user = new CreateUserDto(
-                Id: userId,
-                Email: claims.Identity!.Name!
-            );
-
-            await _reviewService.AddReview(user, review);
+            
+            await _reviewService.AddReview(user!, review);
 
             return new OkResult();
         }

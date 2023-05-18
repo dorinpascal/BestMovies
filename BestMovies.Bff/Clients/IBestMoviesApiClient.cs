@@ -13,4 +13,7 @@ public interface IBestMoviesApiClient
     Task SaveUser(CreateUserDto user);
     Task<UserDto> GetUser(string userId);
     Task SaveMovie(string userId, SavedMovieDto savedMovie);
+    Task UpdateMovie(string userDtoId, SavedMovieDto savedMovieDto);
+    Task DeleteMovie(string userDtoId, int savedMovieDto);
+    Task<IEnumerable<SavedMovieDto>> GetSavedMoviesForUser(string userDtoId, bool onlyUnwatched);
 }

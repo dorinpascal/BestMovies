@@ -37,4 +37,6 @@ public partial class BestMoviesApiClient
         
         return JsonSerializer.Deserialize<IList<ReviewDto>>(content, _jsonSerializerOptions) ?? Enumerable.Empty<ReviewDto>();
     }
+
+    
 }
