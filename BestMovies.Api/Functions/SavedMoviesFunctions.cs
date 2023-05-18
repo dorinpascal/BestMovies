@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using BestMovies.Api.Extensions;
 using BestMovies.Api.Helpers;
@@ -33,6 +34,7 @@ public class SavedMoviesFunctions
     [OpenApiOperation(operationId: nameof(AddSavedMovie), tags: new[] { Tag })]
     [OpenApiRequestBody("application/json", typeof(SavedMovieDto))]
     [OpenApiParameter(name: "userId", In = ParameterLocation.Path, Required = true, Type = typeof(string), Description = "The user id.")]
+    [OpenApiResponseWithoutBody(statusCode: HttpStatusCode.OK, Description = "Successfully added the review")]
     public async Task<IActionResult> AddSavedMovie(
         [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "users/{userId}/savedMovies")] HttpRequest req, string userId, ILogger log)
     { 
