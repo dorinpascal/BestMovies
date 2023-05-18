@@ -1,7 +1,7 @@
 using BestMovies.Shared.Dtos.Actor;
 using BestMovies.WebApp.Helpers;
 
-namespace BestMovies.WebApp.Repositories;
+namespace BestMovies.WebApp.Repositories.Impl;
 
 public class ActorsRepository : IActorsRepository
 {

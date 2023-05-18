@@ -4,7 +4,7 @@ using BestMovies.Shared.CustomExceptions;
 using BestMovies.Shared.Dtos.Review;
 using BestMovies.WebApp.Helpers;
 
-namespace BestMovies.WebApp.Repositories;
+namespace BestMovies.WebApp.Repositories.Impl;
 
 public class ReviewRepository : IReviewRepository
 {
@@ -28,8 +28,16 @@ public class ReviewRepository : IReviewRepository
         }
     }
 
-    public Task<IEnumerable<ReviewDto>> GetReviewsForMovie(int movieId)
+    public async Task<IEnumerable<ReviewDto>> GetReviewsForMovie(int movieId)
     {
-        throw new NotImplementedException();
+        using var response = await _client.GetAsync($"{BaseUri}/{movieId}/reviews");
+        
+        if (!response.IsSuccessStatusCode)
+        {
+            return Enumerable.Empty<ReviewDto>();
+        }
+
+        var genres = await HttpClientHelper.ReadFromJsonSafe<IEnumerable<ReviewDto>>(response);
+        return genres ?? Enumerable.Empty<ReviewDto>();
     }
 }

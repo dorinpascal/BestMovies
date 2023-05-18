@@ -23,7 +23,7 @@
                 }
             </div>
 
-            <div class="d-flex flex-row flex-wrap justify-center align-start gap-6">
+            <div class="d-flex flex-row flex-wrap justify-center align-start gap-4">
                 @if (_movieDetails is not null)
                 {
                     <div class="d-flex flex-column justify-center align-center pa-2 mr-12">
@@ -35,37 +35,46 @@
                         <MudText Typo="Typo.button">@DisplayHelper.DisplayValue(_movieDetails.VoteAverage, _culture)</MudText>
                         <MudText Typo="Typo.overline">TMDB Rating</MudText>
                     </div>
-                    
-                    <div class="highlight-on-hover rounded pa-2">
+                }
+                
+                @if (_movieStats is not null) 
+                {
+                    <div class="rounded pa-2">
                         <div class="d-flex flex-column justify-center align-center">
-                            <MudText Typo="Typo.button">1023</MudText>
+                            <MudText Typo="Typo.button">@_movieStats.Watched</MudText>
                             <MudText Typo="Typo.overline">Watched</MudText>
                         </div>
                     </div>
-
-                    <div class="highlight-on-hover rounded pa-2">
+                    
+                    <div class="rounded pa-2">
                         <div class="d-flex flex-column justify-center align-center">
-                            <MudText Typo="Typo.button">123 </MudText>
+                            <MudText Typo="Typo.button">@_movieStats.AverageRating </MudText>
+                            <MudText Typo="Typo.overline">Rating</MudText>
+                        </div>
+                    </div>
+
+                    <div class="highlight-on-hover rounded pa-2 cursor-pointer" @onclick="OpenReviewsModal">
+                        <div class="d-flex flex-column justify-center align-center">
+                            <MudText Typo="Typo.button">@_movieStats.ReviewsCount </MudText>
                             <MudText Typo="Typo.overline">Reviews</MudText>
                         </div>
                     </div>
-                    
-                    @if (_userInformation?.ClientPrincipal is not null)
-                    {
-                        <div class="d-flex flex-row justify-center align-center ml-12 border-solid">
-                            <MudTooltip Text="@(_isMovieSaved ? "Remove from your list" : "Add the movie to your list")">
-                                <MudToggleIconButton Toggled="@_isMovieSaved"
-                                                     Icon="@Icons.Material.Filled.PlaylistAdd"  
-                                                     ToggledIcon="@Icons.Material.Filled.PlaylistAddCheck"
-                                                     @onclick="SaveRemoveMovie"/>
-                            </MudTooltip>
-                    
-                            <MudTooltip Text="Review the movie">
-                                <MudIconButton Icon="@Icons.Material.Filled.ThumbUp" @onclick="OpenAddReviewModal" />
-                            </MudTooltip>
-                        </div>
-                    }
-                    
+                }
+                
+                @if (_userInformation?.ClientPrincipal is not null)
+                {
+                    <div class="d-flex flex-row justify-center align-center ml-12 border-solid">
+                        <MudTooltip Text="@(_isMovieSaved ? "Remove from your list" : "Add the movie to your list")">
+                            <MudToggleIconButton Toggled="@_isMovieSaved"
+                                                 Icon="@Icons.Material.Filled.PlaylistAdd"  
+                                                 ToggledIcon="@Icons.Material.Filled.PlaylistAddCheck"
+                                                 @onclick="SaveRemoveMovie"/>
+                        </MudTooltip>
+                
+                        <MudTooltip Text="Review the movie">
+                            <MudIconButton Icon="@Icons.Material.Filled.ThumbUp" @onclick="OpenAddReviewModal" />
+                        </MudTooltip>
+                    </div>
                 }
             </div>
 
@@ -108,7 +117,7 @@
             <div class="d-flex flex-column justify-start gap-1">
                 <MudText Typo="Typo.h6" Align="Align.Start">Actors</MudText>
 
-                <div class="d-flex flex-row gap-2 justify-space-between px-4 pb-2" style="overflow-x: auto;">
+                <div class="d-flex flex-row gap-2 justify-space-between px-4 pb-2 hide-scrollbar" style="overflow-x: auto; ">
                     @if (_movieDetails is null)
                     {
                         for (var i = 0; i < 5; i++)
@@ -124,8 +133,8 @@
                                 <div class="d-flex flex-column justify-start align-center cursor-pointer" @onclick="() => OpenActorDetails(actor.Id)">
                                     <MudImage Class="mud-skeleton-circle" ObjectFit="@ObjectFit.Cover" ObjectPosition="ObjectPosition.Center" Height="120" Width="120" Src="@($"api/actors/{actor.Id}/image?size=w300")" Alt="@actor.Name"/>
 
-                                    <MudText Typo="Typo.button">@actor.Name</MudText>
-                                    <MudText Typo="Typo.overline">@actor.RoleName</MudText>
+                                    <MudText Align="Align.Center" Typo="Typo.button">@actor.Name</MudText>
+                                    <MudText Align="Align.Center" Typo="Typo.overline">@actor.RoleName</MudText>
                                 </div>
                             </div>
                         }
@@ -144,6 +153,9 @@
     
     [Inject]
     protected ISavedMoviesRepository SavedMoviesRepository { get; set; } = default!;
+
+    [Inject]
+    protected IStatisticsRepository StatisticsRepository { get; set; } = default!;
     
     [Inject]
     protected IAuthService AuthService { get; set; } = default!;
@@ -159,18 +171,28 @@
 
     private readonly CultureInfo _culture = CultureInfo.InvariantCulture;
     private MovieDetailsDto? _movieDetails;
-
-    private UserInformation? _userInformation; 
+    private MovieStatsDto? _movieStats; 
+    private UserInformation? _userInformation;
 
     private bool _isMovieSaved;
 
     protected override async Task OnInitializedAsync()
     {
-        _movieDetails = await MoviesRepository.GetMovieDetails(MovieId);
-
-        _userInformation = await AuthService.RetrieveUserInformation();
+        var tasks = new[]
+        {
+            FetchMovieDetails(),
+            FetchMovieStats(),
+            FetchUserInfo()
+        };
+        
+        await Task.WhenAll(tasks);
+        
         //_isMovieSaved = await SavedMoviesRepository.IsMovieSaved(MovieId);
     }
+
+    private async Task FetchMovieDetails() => _movieDetails = await MoviesRepository.GetMovieDetails(MovieId);
+    private async Task FetchUserInfo() => _userInformation = await AuthService.RetrieveUserInformation();
+    private async Task FetchMovieStats() => _movieStats = await StatisticsRepository.GetMovieStatistics(MovieId);
 
     private void OpenActorDetails(int actorId)
     {
@@ -182,14 +204,31 @@
         DialogService.Show<ActorDetailsModal>(string.Empty, parameters, options);
     }
     
-    private void OpenAddReviewModal()
+    private async Task OpenAddReviewModal()
     {
         var parameters = new DialogParameters
         {
             { "MovieId", MovieId }
         };
         var options = new DialogOptions { CloseOnEscapeKey = true, CloseButton = true, FullWidth = true, MaxWidth = MaxWidth.ExtraSmall};
-        DialogService.Show<AddReviewModal>(_movieDetails!.Title, parameters, options);
+        var dialog = await DialogService.ShowAsync<AddReviewModal>(_movieDetails!.Title, parameters, options);
+        var result = await dialog.Result;
+
+        if (!result.Canceled)
+        {
+            await FetchMovieStats();
+        }
+
+    }
+    
+    private void OpenReviewsModal()
+    {
+        var parameters = new DialogParameters
+        {
+            { "MovieId", MovieId }
+        };
+        var options = new DialogOptions { CloseOnEscapeKey = true, CloseButton = true, FullWidth = true, MaxWidth = MaxWidth.ExtraSmall};
+        DialogService.Show<ReviewsModal>(_movieDetails!.Title, parameters, options);
     }
 
     private async Task SaveRemoveMovie()
