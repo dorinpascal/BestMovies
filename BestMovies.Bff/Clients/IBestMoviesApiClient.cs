@@ -8,7 +8,7 @@ namespace BestMovies.Bff.Clients;
 public interface IBestMoviesApiClient
 {
     Task AddReview(string userId, CreateReviewDto review);
+    Task<IEnumerable<ReviewDto>> GetReviewsForMovie(int movieId);
     Task SaveUser(CreateUserDto user);
     Task<UserDto> GetUser(string userId);
-    Task<IEnumerable<ReviewDto>> GetReviewList(int movieId);
 }

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using BestMovies.Shared.Dtos.Review;
@@ -42,8 +41,8 @@ public class ReviewService : IReviewService
         await _client.AddReview(user.Id, review);
     }
 
-    public async Task<IEnumerable<ReviewDto>> GetReviews(int movieId)
+    public async Task<IEnumerable<ReviewDto>> GetReviewsForMovie(int movieId)
     {
-        return await _client.GetReviewList(movieId);
+        return await _client.GetReviewsForMovie(movieId);
     }
 }

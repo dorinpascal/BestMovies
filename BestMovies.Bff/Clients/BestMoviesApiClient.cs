@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Text.Json;
@@ -32,6 +33,18 @@ public class BestMoviesApiClient : IBestMoviesApiClient, IDisposable
             await responseMessage.ThrowBasedOnStatusCode();
         }
     }
+    
+    public async Task<IEnumerable<ReviewDto>> GetReviewsForMovie(int movieId)
+    {
+        var responseMessage = await _client.GetAsync($"movies/{movieId}/reviews");
+        if (!responseMessage.IsSuccessStatusCode)
+        {
+            await responseMessage.ThrowBasedOnStatusCode();
+        }
+        var content = await responseMessage.ReadContentSafe();
+        
+        return JsonSerializer.Deserialize<IEnumerable<ReviewDto>>(content) ?? Enumerable.Empty<ReviewDto>();
+    }
 
     public async Task SaveUser(CreateUserDto user)
     {
@@ -61,15 +74,4 @@ public class BestMoviesApiClient : IBestMoviesApiClient, IDisposable
     }
 
     public void Dispose() => _client.Dispose();
-
-    public async Task<IEnumerable<ReviewDto>> GetReviewList(int movieId)
-    {
-        var responseMessage = await _client.GetAsync($"movies/{movieId:int}/reviews");
-        if (!responseMessage.IsSuccessStatusCode)
-        {
-            await responseMessage.ThrowBasedOnStatusCode();
-        }
-        var content = await responseMessage.ReadContentSafe();
-        return JsonSerializer.Deserialize<List<ReviewDto>>(content)!;
-    }
 }
