@@ -22,7 +22,13 @@ public class Startup : FunctionsStartup
     {
         var bestMoviesApiBaseUrl = Environment.GetEnvironmentVariable("BestMoviesApi.BaseUrl") ?? throw new ArgumentException("Please make sure you have BestMoviesApi.BaseUrl as an environmental variable");
 
-        builder.Services.AddHttpClient<IBestMoviesApiClient, BestMoviesApiClient>(client => client.BaseAddress = new Uri(bestMoviesApiBaseUrl));
+        builder.Services.AddHttpClient<IBestMoviesApiClient, BestMoviesApiClient>()
+        .ConfigureHttpClient((serviceProvider, httpClient) =>
+        {
+            httpClient.BaseAddress = new Uri(bestMoviesApiBaseUrl);
+            httpClient.DefaultRequestHeaders.Add("x-functions-key", Environment.GetEnvironmentVariable("MASTER_KEY"));
+        });
+
         builder.Services.AddScoped<TMDbClient>(c => new TMDbClient(Environment.GetEnvironmentVariable("TMDB_API_KEY")));
         
         // Services
