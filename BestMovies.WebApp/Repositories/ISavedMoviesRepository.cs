@@ -5,8 +5,7 @@ namespace BestMovies.WebApp.Repositories;
 public interface ISavedMoviesRepository
 {
     Task SaveMovie(SavedMovieDto movieDto);
-    Task<IEnumerable<SavedMovieDto>> GetSavedMovies();
+    Task<SavedMovieDto?> GetSavedMovie(int movieId);
+    Task<IEnumerable<SearchMovieDto>> GetSavedMovies();
     Task RemoveMovie(int movieId);
-
-    Task<bool> IsMovieSaved(int movieId);
 }

@@ -54,6 +54,6 @@
 
     protected override async Task OnInitializedAsync()
     {
-        _reviews = await ReviewRepository.GetReviewsForMovie(MovieId);
+        _reviews = await ReviewRepository.GetReviewsForMovie(MovieId, onlyReviewsWithComments: true);
     }
 }

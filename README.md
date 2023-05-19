@@ -15,13 +15,14 @@ swa start http://localhost:5124 --run "dotnet watch run --project ./BestMovies.W
 
 **Note:** Make sure you use Node v20.0.0+ and you have `local.settings.json` file
 
-Add `BestMoviesApi.BaseUrl` to your `local.settings.json` file
-Add `TMDB_API_KEY` to your `local.settings.json` file
+* Add `BestMoviesApi.BaseUrl` to your `local.settings.json` file \
+* Add `TMDB_API_KEY` to your `local.settings.json` file \
+* Add `MASTER_KEY` to your `local.settings.json` file, which is used in the header `x-functions-key` 
+
 
 ----
 ###### BestMovies.Bff - Authenticate locally
 * Add header `x-ms-client-principal` that contains the `ClientPrincipal` as base64
-* Add header `x-functions-key` that contains the `MASTER_KEY`
 
 **Note** `ClientPrincipal` looks like: 
 ```json

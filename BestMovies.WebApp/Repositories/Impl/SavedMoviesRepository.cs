@@ -9,7 +9,7 @@ namespace BestMovies.WebApp.Repositories.Impl;
 public class SavedMoviesRepository : ISavedMoviesRepository
 {
     private readonly HttpClient _client;
-    private const string BaseUri = "/api/movies";
+    private const string BaseUri = "/api/savedMovies";
 
     public SavedMoviesRepository(HttpClient client)
     {
@@ -20,7 +20,30 @@ public class SavedMoviesRepository : ISavedMoviesRepository
     {
         var json = JsonSerializer.Serialize(movieDto);
         var content = new StringContent(json, Encoding.UTF8, "application/json");
-        var response = await _client.PostAsync($"{BaseUri}/savedMovies", content);
+        var response = await _client.PostAsync(BaseUri, content);
+
+        if (!response.IsSuccessStatusCode)
+        {
+            throw new ApiException(await HttpClientHelper.ReadContentSafe(response), (int)response.StatusCode);
+        }
+    }
+
+    public async Task<IEnumerable<SearchMovieDto>> GetSavedMovies()
+    {
+        using var response = await _client.GetAsync($"{BaseUri}?onlyUnwatched=true");
+        
+        if (!response.IsSuccessStatusCode)
+        {
+            return Enumerable.Empty<SearchMovieDto>();
+        }
+
+        var savedMovies = await HttpClientHelper.ReadFromJsonSafe<IEnumerable<SearchMovieDto>>(response);
+        return savedMovies ?? Enumerable.Empty<SearchMovieDto>();
+    }
+
+    public async Task RemoveMovie(int movieId)
+    {
+        var response = await _client.DeleteAsync($"{BaseUri}/{movieId}");
         
         if (!response.IsSuccessStatusCode)
         {
@@ -28,26 +51,23 @@ public class SavedMoviesRepository : ISavedMoviesRepository
         }
     }
 
-    public async Task<IEnumerable<SavedMovieDto>> GetSavedMovies()
+    public async Task<SavedMovieDto?> GetSavedMovie(int movieId)
     {
-        using var response = await _client.GetAsync(BaseUri);
-        
-        if (!response.IsSuccessStatusCode)
+        try
         {
-            return Enumerable.Empty<SavedMovieDto>();
+            using var response = await _client.GetAsync($"{BaseUri}/{movieId}");
+        
+            if (!response.IsSuccessStatusCode)
+            {
+                return null;
+            }
+
+            return await HttpClientHelper.ReadFromJsonSafe<SavedMovieDto>(response);
         }
-
-        var savedMovies = await HttpClientHelper.ReadFromJsonSafe<IEnumerable<SavedMovieDto>>(response);
-        return savedMovies ?? Enumerable.Empty<SavedMovieDto>();
-    }
-
-    public Task RemoveMovie(int movieId)
-    {
-        throw new NotImplementedException();
-    }
-
-    public Task<bool> IsMovieSaved(int movieId)
-    {
-        throw new NotImplementedException();
+        catch (ApiException)
+        {
+            return null;
+        }
+        
     }
 }

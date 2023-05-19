@@ -30,4 +30,11 @@ public static class MoviesExtensions
            Genres: movie.Genres.Select(g => g.Name).ToList(),
            Actors: actors.Select(a => new ActorDto(a.Id, a.Name, a.Character))
             );
+    
+    public static SearchMovieDto ToSearchDto(this Movie movie) =>
+        new(
+            Id: movie.Id,
+            Title: movie.Title,
+            Genres: movie.Genres.Select(g => g.Name).ToList()
+        );
 }

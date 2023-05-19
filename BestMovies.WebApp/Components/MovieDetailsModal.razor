@@ -2,6 +2,8 @@
 @using BestMovies.WebApp.Helpers
 @using BestMovies.WebApp.Repositories
 @using System.Globalization
+@using BestMovies.Shared.CustomExceptions
+@using BestMovies.Shared.Dtos.Review
 @using BestMovies.WebApp.Authorization
 @using BestMovies.WebApp.Services
 
@@ -36,8 +38,8 @@
                         <MudText Typo="Typo.overline">TMDB Rating</MudText>
                     </div>
                 }
-                
-                @if (_movieStats is not null) 
+
+                @if (_movieStats is not null)
                 {
                     <div class="rounded pa-2">
                         <div class="d-flex flex-column justify-center align-center">
@@ -45,10 +47,10 @@
                             <MudText Typo="Typo.overline">Watched</MudText>
                         </div>
                     </div>
-                    
+
                     <div class="rounded pa-2">
                         <div class="d-flex flex-column justify-center align-center">
-                            <MudText Typo="Typo.button">@_movieStats.AverageRating </MudText>
+                            <MudText Typo="Typo.button">@DisplayHelper.DisplayValue(_movieStats.AverageRating, _culture, numberOfDecimals: 1)/5</MudText>
                             <MudText Typo="Typo.overline">Rating</MudText>
                         </div>
                     </div>
@@ -60,24 +62,40 @@
                         </div>
                     </div>
                 }
-                
+
                 @if (_userInformation?.ClientPrincipal is not null)
                 {
-                    <div class="d-flex flex-row justify-center align-center ml-12 border-solid">
-                        <MudTooltip Text="@(_isMovieSaved ? "Remove from your list" : "Add the movie to your list")">
-                            <MudToggleIconButton Toggled="@_isMovieSaved"
-                                                 Icon="@Icons.Material.Filled.PlaylistAdd"  
-                                                 ToggledIcon="@Icons.Material.Filled.PlaylistAddCheck"
-                                                 @onclick="SaveRemoveMovie"/>
-                        </MudTooltip>
-                
-                        <MudTooltip Text="Review the movie">
-                            <MudIconButton Icon="@Icons.Material.Filled.ThumbUp" @onclick="OpenAddReviewModal" />
-                        </MudTooltip>
+                    <div class="d-flex flex-row justify-center align-center gap-2 ml-12">
+
+                        @if (_savedMovie is not null && _savedMovie.IsWatched && _review is not null)
+                        {
+                            <MudTooltip Text="Your rating">
+                                <MudChip Icon="@Icons.Material.Filled.Star" IconColor="Color.Warning">@_review.Rating/5</MudChip>
+                            </MudTooltip>
+                        }
+                        else
+                        {
+                            <MudTooltip Text="@(_savedMovie is null ? "Add the movie to your list" : "Remove from your list")">
+                                @if (_isLoading)
+                                {
+                                    <MudProgressCircular Indeterminate="true"/>
+                                }
+                                else
+                                {
+                                    <MudToggleIconButton Toggled="@(_savedMovie is not null)"
+                                                         Icon="@Icons.Material.Filled.PlaylistAdd"
+                                                         ToggledIcon="@Icons.Material.Filled.PlaylistAddCheck"
+                                                         @onclick="SaveRemoveMovie"/>
+                                }
+                            </MudTooltip>
+                            
+                            <MudTooltip Text="Review the movie">
+                                <MudIconButton Icon="@Icons.Material.Filled.ThumbUp" @onclick="OpenAddReviewModal"/>
+                            </MudTooltip>
+                        }
                     </div>
                 }
             </div>
-
 
             <MudDivider FlexItem="true"/>
 
@@ -113,7 +131,7 @@
                     </div>
                 }
             </div>
-            
+
             <div class="d-flex flex-column justify-start gap-1">
                 <MudText Typo="Typo.h6" Align="Align.Start">Actors</MudText>
 
@@ -141,7 +159,6 @@
                     }
                 </div>
             </div>
-
         </MudContainer>
     </DialogContent>
 </MudDialog>
@@ -150,16 +167,19 @@
 
     [Inject]
     protected IMoviesRepository MoviesRepository { get; set; } = default!;
-    
+
     [Inject]
     protected ISavedMoviesRepository SavedMoviesRepository { get; set; } = default!;
+    
+    [Inject]
+    protected IReviewRepository ReviewRepository { get; set; } = default!;
 
     [Inject]
     protected IStatisticsRepository StatisticsRepository { get; set; } = default!;
-    
+
     [Inject]
     protected IAuthService AuthService { get; set; } = default!;
-    
+
     [Inject]
     protected IDialogService DialogService { get; set; } = default!;
 
@@ -171,10 +191,13 @@
 
     private readonly CultureInfo _culture = CultureInfo.InvariantCulture;
     private MovieDetailsDto? _movieDetails;
-    private MovieStatsDto? _movieStats; 
+    private MovieStatsDto? _movieStats;
     private UserInformation? _userInformation;
+    private SavedMovieDto? _savedMovie;
 
-    private bool _isMovieSaved;
+    private ReviewDto? _review;
+
+    private bool _isLoading;
 
     protected override async Task OnInitializedAsync()
     {
@@ -182,67 +205,81 @@
         {
             FetchMovieDetails(),
             FetchMovieStats(),
-            FetchUserInfo()
+            FetchUserInfo(),
+            FetchSavedMovie(),
+            FetchMovieReview()
         };
-        
+
         await Task.WhenAll(tasks);
-        
-        //_isMovieSaved = await SavedMoviesRepository.IsMovieSaved(MovieId);
     }
 
     private async Task FetchMovieDetails() => _movieDetails = await MoviesRepository.GetMovieDetails(MovieId);
     private async Task FetchUserInfo() => _userInformation = await AuthService.RetrieveUserInformation();
     private async Task FetchMovieStats() => _movieStats = await StatisticsRepository.GetMovieStatistics(MovieId);
+    private async Task FetchSavedMovie() => _savedMovie = await SavedMoviesRepository.GetSavedMovie(MovieId);
+    private async Task FetchMovieReview() => _review = await ReviewRepository.GetMovieReview(MovieId);
 
     private void OpenActorDetails(int actorId)
     {
         var parameters = new DialogParameters
         {
-            { "ActorId", actorId }
+            {"ActorId", actorId}
         };
-        var options = new DialogOptions { CloseOnEscapeKey = true, CloseButton = true, FullWidth = true, MaxWidth = MaxWidth.Small};
+        var options = new DialogOptions {CloseOnEscapeKey = true, CloseButton = true, FullWidth = true, MaxWidth = MaxWidth.Small};
         DialogService.Show<ActorDetailsModal>(string.Empty, parameters, options);
     }
-    
+
     private async Task OpenAddReviewModal()
     {
         var parameters = new DialogParameters
         {
-            { "MovieId", MovieId }
+            {"MovieId", MovieId}
         };
-        var options = new DialogOptions { CloseOnEscapeKey = true, CloseButton = true, FullWidth = true, MaxWidth = MaxWidth.ExtraSmall};
+        var options = new DialogOptions {CloseOnEscapeKey = true, CloseButton = true, FullWidth = true, MaxWidth = MaxWidth.ExtraSmall};
         var dialog = await DialogService.ShowAsync<AddReviewModal>(_movieDetails!.Title, parameters, options);
         var result = await dialog.Result;
 
         if (!result.Canceled)
         {
             await FetchMovieStats();
+            await FetchSavedMovie();
+            await FetchMovieReview();
         }
-
     }
-    
+
     private void OpenReviewsModal()
     {
         var parameters = new DialogParameters
         {
-            { "MovieId", MovieId }
+            {"MovieId", MovieId}
         };
-        var options = new DialogOptions { CloseOnEscapeKey = true, CloseButton = true, FullWidth = true, MaxWidth = MaxWidth.ExtraSmall};
+        var options = new DialogOptions {CloseOnEscapeKey = true, CloseButton = true, FullWidth = true, MaxWidth = MaxWidth.ExtraSmall};
         DialogService.Show<ReviewsModal>(_movieDetails!.Title, parameters, options);
     }
 
     private async Task SaveRemoveMovie()
     {
-        if (_isMovieSaved)
+        _isLoading = true;
+        await InvokeAsync(StateHasChanged);
+
+        try
         {
-            var savedMovie = new SavedMovieDto(_movieDetails!.Id, false);
-            await SavedMoviesRepository.SaveMovie(savedMovie);
+            if (_savedMovie is null)
+            {
+                var savedMovie = new SavedMovieDto(_movieDetails!.Id, false);
+                await SavedMoviesRepository.SaveMovie(savedMovie);
+            }
+            else if (_savedMovie is not null && !_savedMovie.IsWatched)
+            {
+                await SavedMoviesRepository.RemoveMovie(_movieDetails!.Id);
+            }
+
+            await FetchSavedMovie();
         }
-        else
-        {
-            await SavedMoviesRepository.RemoveMovie(_movieDetails!.Id);
-        }
-        
-        _isMovieSaved = await SavedMoviesRepository.IsMovieSaved(MovieId);
+        catch (ApiException) { }
+
+        _isLoading = false;
+        await InvokeAsync(StateHasChanged);
     }
+
 }

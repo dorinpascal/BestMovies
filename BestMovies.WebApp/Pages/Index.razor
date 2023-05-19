@@ -1,14 +1,21 @@
 ﻿@page "/"
 @page "/movies"
 
+@implements IDisposable
+
 @using BestMovies.WebApp.Repositories
 @using BestMovies.WebApp.Components
 @using BestMovies.Shared.Dtos.Movies
+@using EventHandler = BestMovies.WebApp.Services.EventHandler
 
 <PageTitle>Movies</PageTitle>
 
 <MudContainer Class="d-flex flex-column gap-4 justify-center pa-4" MaxWidth="MaxWidth.ExtraExtraLarge">
     <MovieCardList Title="Popular now" Movies="_popularMovies" SkeletonCardsCount="5"/>
+</MudContainer>
+
+<MudContainer Class="d-flex flex-column gap-4 justify-center pa-4" MaxWidth="MaxWidth.ExtraExtraLarge">
+    <MovieCardList Title="My list" Movies="_savedMovies" SkeletonCardsCount="4"/>
 </MudContainer>
 
 @if (_moviesPerGenre is not null)
@@ -25,17 +32,49 @@
 @code {
 
     [Inject]
+    protected EventHandler EventHandler { get; set; } = default!;
+
+    [Inject]
     protected IMoviesRepository MoviesRepository { get; set; } = default!;
+    
     [Inject]
     protected IGenresRepository GenresRepository { get; set; } = default!;
+    
+    [Inject]
+    protected ISavedMoviesRepository SavedMoviesRepository { get; set; } = default!;
 
     private IEnumerable<SearchMovieDto>? _popularMovies;
+
+    private IEnumerable<SearchMovieDto>? _savedMovies;
+        
     private (string genre, IEnumerable<SearchMovieDto> movies)[]? _moviesPerGenre;
 
     protected override async Task OnInitializedAsync()
     {
-        _popularMovies = await MoviesRepository.GetPopularMovies();
+        EventHandler.OnChange += OnChange;
+        
+        await FetchPopularMovies();
+        
+        var tasks = new[]
+        {
+            FetchSavedMovies(),
+            FetchPopularMoviesPerGenre()
+        };
 
+        await Task.WhenAll(tasks);
+        StateHasChanged();
+    }
+    
+    private async Task FetchPopularMovies() => _popularMovies = await MoviesRepository.GetPopularMovies();
+
+    private async Task FetchSavedMovies()
+    {
+        _savedMovies = await SavedMoviesRepository.GetSavedMovies();
+        await InvokeAsync(StateHasChanged);
+    }
+
+    private async Task FetchPopularMoviesPerGenre()
+    {
         var genres = await GenresRepository.GetAllGenres();
         
         var tasks = genres
@@ -43,8 +82,13 @@
             .Select(async g => (g, await MoviesRepository.GetPopularMovies(g)));
 
         _moviesPerGenre = await Task.WhenAll(tasks);
-        
-        StateHasChanged();
     }
+
+    private async void OnChange()
+    {
+        await FetchSavedMovies();
+    }
+
+    public void Dispose() => EventHandler.OnChange -= OnChange;
 
 }
