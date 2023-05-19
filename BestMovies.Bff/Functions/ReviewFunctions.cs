@@ -9,7 +9,6 @@ using BestMovies.Bff.Helpers;
 using BestMovies.Bff.Services.BestMoviesApi;
 using BestMovies.Shared.CustomExceptions;
 using BestMovies.Shared.Dtos.Review;
-using BestMovies.Shared.Dtos.User;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
@@ -79,8 +78,9 @@ public class ReviewFunctions
     }
 
     [FunctionName(nameof(GetReviewsForMovie))]
-    [OpenApiOperation(operationId: nameof(GetReviewsForMovie), tags: new[] {Tag})]
+    [OpenApiOperation(operationId: nameof(GetReviewsForMovie), tags: new[] { Tag })]
     [OpenApiParameter(name: "id", In = ParameterLocation.Path, Required = true, Type = typeof(int), Description = "The movie id.")]
+    [OpenApiParameter(name: "onlyReviewsWithComments", In = ParameterLocation.Path, Required = false, Type = typeof(bool), Description = "The movie id.")]
     [OpenApiResponseWithBody(statusCode: HttpStatusCode.OK, contentType: "application/json", bodyType: typeof(IEnumerable<ReviewDto>), Description = "Returns all reviews for the given movie.")]
     public async Task<IActionResult> GetReviewsForMovie(
         [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "movies/{id:int}/reviews")] HttpRequest req, int id, ILogger log)
@@ -91,8 +91,14 @@ public class ReviewFunctions
             {
                 return ActionResultHelpers.BadRequestResult("Invalid value for the id. The value must be greater than 0");
             }
+            
+            if (!bool.TryParse(req.Query["onlyReviewsWithComments"], out var onlyReviewsWithComments))
+            {
+                onlyReviewsWithComments = false;
+            }
 
-            var reviews = await _reviewService.GetReviewsForMovie(id);
+            var reviews = await _reviewService.GetReviewsForMovie(id, onlyReviewsWithComments);
+            
             return new OkObjectResult(reviews);
         }
         catch (ArgumentException ex)
@@ -143,7 +149,7 @@ public class ReviewFunctions
         }
         catch (Exception ex)
         {
-            log.LogError(ex, "Error occured while retrieving the review for the movie with id {movieId}", movieId);
+            log.LogError(ex, "Error occured while retrieving the review for the movie with id {MovieId}", movieId);
             return ActionResultHelpers.ServerErrorResult();
         }
     }

@@ -7,6 +7,7 @@ using BestMovies.Bff.Clients;
 using BestMovies.Shared.Dtos.User;
 using FluentValidation;
 using BestMovies.Shared.CustomExceptions;
+using BestMovies.Shared.Dtos.Movies;
 
 namespace BestMovies.Bff.Services.BestMoviesApi.Impl;
 
@@ -36,17 +37,29 @@ public class ReviewService : IReviewService
 
         await _userService.GetUserOrCreate(user);
         
-        
-        //ToDo set the movie as watched, if not there - add it
+        var savedMovie = await _savedMovieService.GetSavedMovieOrDefault(review.MovieId, user.Id);
+        if (savedMovie is null)
+        {
+            await _savedMovieService.SaveMovie(new SavedMovieDto(review.MovieId, true), user);
+        }
+        else
+        {
+            var watchedMovie = savedMovie with { IsWatched = true };
+            await _savedMovieService.UpdateMovie(watchedMovie, user.Id);
+        }
         
         await _client.AddReview(user.Id, review);
     }
     
     
 
-    public async Task<IEnumerable<ReviewDto>> GetReviewsForMovie(int movieId)
+    public async Task<IEnumerable<ReviewDto>> GetReviewsForMovie(int movieId, bool onlyReviewsWithComments = false)
     {
-        return await _client.GetReviewsForMovie(movieId);
+        var reviews = await _client.GetReviewsForMovie(movieId);
+
+        return onlyReviewsWithComments 
+            ? reviews.Where(r => !string.IsNullOrEmpty(r.Comment)) 
+            : reviews;
     }
 
     public async Task<ReviewDto> GetUserReviewForMovie(int movieId, string userId)

@@ -11,5 +11,5 @@ public interface ISavedMovieService
     Task UpdateMovie(SavedMovieDto savedMovieDto, string userId);
     Task DeleteMovie(int movieId, string userId);
     Task<IEnumerable<SavedMovieDto>> GetSavedMoviesForUser(string userId, bool onlyUnwatched);
-    Task<SavedMovieDto?> GetSavedMovie(int movieId, string userId);
+    Task<SavedMovieDto?> GetSavedMovieOrDefault(int movieId, string userId);
 }

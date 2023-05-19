@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using BestMovies.Bff.Clients;
+using BestMovies.Shared.CustomExceptions;
 using BestMovies.Shared.Dtos.Movies;
 using BestMovies.Shared.Dtos.User;
 using FluentValidation;
@@ -48,9 +49,16 @@ public class SavedMovieService : ISavedMovieService
         return await _client.GetSavedMoviesForUser(userId, onlyUnwatched);
     }
 
-    public async Task<SavedMovieDto?> GetSavedMovie(int movieId, string userId)
+    public async Task<SavedMovieDto?> GetSavedMovieOrDefault(int movieId, string userId)
     {
-        return await _client.GetSavedMovie(userId, movieId);
+        try
+        {
+            return await _client.GetSavedMovie(userId, movieId);
+        }
+        catch (NotFoundException)
+        {
+            return null;
+        }
     }
 
     private async Task ValidateSavedMovie(SavedMovieDto savedMovieDto)

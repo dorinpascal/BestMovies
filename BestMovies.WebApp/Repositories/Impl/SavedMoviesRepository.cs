@@ -9,7 +9,7 @@ namespace BestMovies.WebApp.Repositories.Impl;
 public class SavedMoviesRepository : ISavedMoviesRepository
 {
     private readonly HttpClient _client;
-    private const string BaseUri = "/api/movies";
+    private const string BaseUri = "/api/savedMovies";
 
     public SavedMoviesRepository(HttpClient client)
     {
@@ -20,8 +20,9 @@ public class SavedMoviesRepository : ISavedMoviesRepository
     {
         var json = JsonSerializer.Serialize(movieDto);
         var content = new StringContent(json, Encoding.UTF8, "application/json");
-        var response = await _client.PostAsync($"{BaseUri}/savedMovies", content);
-        
+        var response = await _client.PostAsync(BaseUri, content);
+
+        Console.WriteLine(await response.Content.ReadAsStringAsync());
         if (!response.IsSuccessStatusCode)
         {
             throw new ApiException(await HttpClientHelper.ReadContentSafe(response), (int)response.StatusCode);
@@ -41,13 +42,33 @@ public class SavedMoviesRepository : ISavedMoviesRepository
         return savedMovies ?? Enumerable.Empty<SavedMovieDto>();
     }
 
-    public Task RemoveMovie(int movieId)
+    public async Task RemoveMovie(int movieId)
     {
-        throw new NotImplementedException();
+        var response = await _client.DeleteAsync($"{BaseUri}/{movieId}");
+        
+        if (!response.IsSuccessStatusCode)
+        {
+            throw new ApiException(await HttpClientHelper.ReadContentSafe(response), (int)response.StatusCode);
+        }
     }
 
-    public Task<bool> IsMovieSaved(int movieId)
+    public async Task<SavedMovieDto?> GetSavedMovie(int movieId)
     {
-        throw new NotImplementedException();
+        try
+        {
+            using var response = await _client.GetAsync($"{BaseUri}/{movieId}");
+        
+            if (!response.IsSuccessStatusCode)
+            {
+                return null;
+            }
+
+            return await HttpClientHelper.ReadFromJsonSafe<SavedMovieDto>(response);
+        }
+        catch (ApiException)
+        {
+            return null;
+        }
+        
     }
 }

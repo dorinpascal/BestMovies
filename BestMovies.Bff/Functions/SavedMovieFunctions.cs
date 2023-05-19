@@ -1,13 +1,10 @@
 ﻿using System;
 using System.IO;
-using System.Security.Claims;
 using System.Threading.Tasks;
-using BestMovies.Bff.Authorization;
 using BestMovies.Bff.Helpers;
 using BestMovies.Bff.Services.BestMoviesApi;
 using BestMovies.Shared.CustomExceptions;
 using BestMovies.Shared.Dtos.Movies;
-using BestMovies.Shared.Dtos.User;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
@@ -33,18 +30,18 @@ public class SavedMovieFunctions
     [FunctionName(nameof(SaveMovie))]
     [OpenApiOperation(operationId: nameof(SaveMovie), tags: new[] {Tag})]
     [OpenApiRequestBody("application/json", typeof(SavedMovieDto))]
-    [OpenApiParameter(name: "x-ms-client-principal", In = ParameterLocation.Header, Required = true,
-        Type = typeof(string), Description = "base64 of ClientPrincipal")]
+    [OpenApiParameter(name: "x-ms-client-principal", In = ParameterLocation.Header, Required = true, Type = typeof(string), Description = "base64 of ClientPrincipal")]
     public async Task<IActionResult> SaveMovie(
-        [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "savedMovies")]
-        HttpRequest req, ILogger log)
+        [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "savedMovies")] HttpRequest req, ILogger log)
     {
         try
         {
-            if (!AuthenticationHelpers.AuthenticateUser(req, out var user)) return ActionResultHelpers.UnauthorizedResult();
+            if (!AuthenticationHelpers.AuthenticateUser(req, out var user))
+            {
+                return ActionResultHelpers.UnauthorizedResult();
+            }
 
-            var savedMovie =
-                JsonConvert.DeserializeObject<SavedMovieDto>(await new StreamReader(req.Body).ReadToEndAsync());
+            var savedMovie = JsonConvert.DeserializeObject<SavedMovieDto>(await new StreamReader(req.Body).ReadToEndAsync());
             
             if (savedMovie is null)
             {
@@ -73,18 +70,18 @@ public class SavedMovieFunctions
     [FunctionName(nameof(UpdateSavedMovie))]
     [OpenApiOperation(operationId: nameof(UpdateSavedMovie), tags: new[] {Tag})]
     [OpenApiRequestBody("application/json", typeof(SavedMovieDto))]
-    [OpenApiParameter(name: "x-ms-client-principal", In = ParameterLocation.Header, Required = true,
-        Type = typeof(string), Description = "base64 of ClientPrincipal")]
+    [OpenApiParameter(name: "x-ms-client-principal", In = ParameterLocation.Header, Required = true, Type = typeof(string), Description = "base64 of ClientPrincipal")]
     public async Task<IActionResult> UpdateSavedMovie(
-        [HttpTrigger(AuthorizationLevel.Anonymous, "patch", Route = "savedMovies")]
-        HttpRequest req, ILogger log)
+        [HttpTrigger(AuthorizationLevel.Anonymous, "patch", Route = "savedMovies")] HttpRequest req, ILogger log)
     {
         try
         {
-            if (!AuthenticationHelpers.AuthenticateUser(req, out var user)) return ActionResultHelpers.UnauthorizedResult();
+            if (!AuthenticationHelpers.AuthenticateUser(req, out var user))
+            {
+                return ActionResultHelpers.UnauthorizedResult();
+            }
 
-            var savedMovie =
-                JsonConvert.DeserializeObject<SavedMovieDto>(await new StreamReader(req.Body).ReadToEndAsync());
+            var savedMovie = JsonConvert.DeserializeObject<SavedMovieDto>(await new StreamReader(req.Body).ReadToEndAsync());
             
             if (savedMovie is null)
             {
@@ -95,7 +92,6 @@ public class SavedMovieFunctions
 
             return new OkResult();
         }
-       
         catch (ArgumentException ex)
         {
             return ActionResultHelpers.BadRequestResult(ex.Message);
@@ -110,15 +106,16 @@ public class SavedMovieFunctions
     [FunctionName(nameof(DeleteSavedMovie))]
     [OpenApiOperation(operationId: nameof(DeleteSavedMovie), tags: new[] {Tag})]
     [OpenApiParameter(name: "movieId", In = ParameterLocation.Path, Required = true, Type = typeof(int), Description = "The movie id.")]
-    [OpenApiParameter(name: "x-ms-client-principal", In = ParameterLocation.Header, Required = true,
-        Type = typeof(string), Description = "base64 of ClientPrincipal")]
+    [OpenApiParameter(name: "x-ms-client-principal", In = ParameterLocation.Header, Required = true, Type = typeof(string), Description = "base64 of ClientPrincipal")]
     public async Task<IActionResult> DeleteSavedMovie(
-        [HttpTrigger(AuthorizationLevel.Anonymous, "delete", Route = "savedMovies/{movieId:int}")]
-        HttpRequest req, int movieId, ILogger log)
+        [HttpTrigger(AuthorizationLevel.Anonymous, "delete", Route = "savedMovies/{movieId:int}")] HttpRequest req, int movieId, ILogger log)
     {
         try
         {
-            if (!AuthenticationHelpers.AuthenticateUser(req, out var user)) return ActionResultHelpers.UnauthorizedResult();
+            if (!AuthenticationHelpers.AuthenticateUser(req, out var user))
+            {
+                return ActionResultHelpers.UnauthorizedResult();
+            }
             
             await _savedMovieService.DeleteMovie(movieId, user!.Id);
 
@@ -140,15 +137,17 @@ public class SavedMovieFunctions
     [FunctionName(nameof(GetSavedMovies))]
     [OpenApiOperation(operationId: nameof(GetSavedMovies), tags: new[] {Tag})]
     [OpenApiParameter(name: "onlyUnwatched", In = ParameterLocation.Query, Required = false, Type = typeof(bool), Description = "Get only unwatched movies.")]
-    [OpenApiParameter(name: "x-ms-client-principal", In = ParameterLocation.Header, Required = true,
-        Type = typeof(string), Description = "base64 of ClientPrincipal")]
+    [OpenApiParameter(name: "x-ms-client-principal", In = ParameterLocation.Header, Required = true, Type = typeof(string), Description = "base64 of ClientPrincipal")]
     public async Task<IActionResult> GetSavedMovies(
         [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "savedMovies")]
         HttpRequest req, ILogger log)
     {
         try
         {
-            if (!AuthenticationHelpers.AuthenticateUser(req, out var user)) return ActionResultHelpers.UnauthorizedResult();
+            if (!AuthenticationHelpers.AuthenticateUser(req, out var user))
+            {
+                return ActionResultHelpers.UnauthorizedResult();
+            }
 
             if (!bool.TryParse(req.Query["onlyUnwatched"], out var onlyUnwatched))
             {
@@ -184,30 +183,27 @@ public class SavedMovieFunctions
          try
          {
              if (!AuthenticationHelpers.AuthenticateUser(req, out var user))
+             {
                  return ActionResultHelpers.UnauthorizedResult();
+             }
 
-             var savedMovie = await _savedMovieService.GetSavedMovie(movieId, user!.Id);
-
+             var savedMovie = await _savedMovieService.GetSavedMovieOrDefault(movieId, user!.Id);
              if (savedMovie is null)
              {
-                 return ActionResultHelpers.NotFoundResult(
-                     $"Saved movie with id {movieId} not found for user {user!.Id}");
+                 return ActionResultHelpers.NotFoundResult($"Saved movie with id {movieId} not found for user {user!.Id}");
              }
 
              return new OkObjectResult(savedMovie);
          }
-
          catch (NotFoundException)
          {
              return ActionResultHelpers.NotFoundResult(
                  $"Saved movie with id {movieId} not found for user ");
          }
-         
          catch (ArgumentException ex)
          {
              return ActionResultHelpers.BadRequestResult(ex.Message);
          }
-         
          catch (Exception ex)
          {
              log.LogError(ex, "Error occured while retrieving the movie");

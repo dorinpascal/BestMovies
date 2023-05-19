@@ -28,9 +28,9 @@ public class ReviewRepository : IReviewRepository
         }
     }
 
-    public async Task<IEnumerable<ReviewDto>> GetReviewsForMovie(int movieId)
+    public async Task<IEnumerable<ReviewDto>> GetReviewsForMovie(int movieId, bool onlyReviewsWithComments = false)
     {
-        using var response = await _client.GetAsync($"{BaseUri}/{movieId}/reviews");
+        using var response = await _client.GetAsync($"{BaseUri}/{movieId}/reviews?onlyReviewsWithComments={onlyReviewsWithComments}");
         
         if (!response.IsSuccessStatusCode)
         {
@@ -39,5 +39,17 @@ public class ReviewRepository : IReviewRepository
 
         var genres = await HttpClientHelper.ReadFromJsonSafe<IEnumerable<ReviewDto>>(response);
         return genres ?? Enumerable.Empty<ReviewDto>();
+    }
+    
+    public async Task<ReviewDto?> GetMovieReview(int movieId)
+    {
+        using var response = await _client.GetAsync($"{BaseUri}/{movieId}/review");
+
+        if (response.IsSuccessStatusCode)
+        {
+            return await HttpClientHelper.ReadFromJsonSafe<ReviewDto>(response);
+        }
+
+        return null;
     }
 }

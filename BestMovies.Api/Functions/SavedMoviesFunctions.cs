@@ -155,18 +155,16 @@ public class SavedMoviesFunctions
     [OpenApiParameter(name: "movieId", In = ParameterLocation.Path, Required = true, Type = typeof(int), Description = "The movie id.")]
     
     public async Task<IActionResult> GetSavedMovie(
-        [HttpTrigger(AuthorizationLevel.Admin, "get", Route = "users/{userId}/savedMovies/{movieId:int}")]
+        [HttpTrigger(AuthorizationLevel.Admin, "get", Route = "users/{userId}/savedMovies/{movieId:int}")] 
         HttpRequest req, string userId, int movieId, ILogger log)
     {
         try
         {
-             
             var savedMovie = await _savedMoviesRepository.GetSavedMovieForUser(userId, movieId);
 
             if (savedMovie is null)
             {
-                return ActionResultHelpers.NotFoundResult(
-                    $"Saved movie with id {movieId} not found for user {userId}");
+                return ActionResultHelpers.NotFoundResult($"Saved movie with id {movieId} not found for user {userId}");
             }
     
             return new OkObjectResult(savedMovie.ToDto());
