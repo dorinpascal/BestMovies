@@ -71,7 +71,7 @@ public class ReviewFunctions
     [OpenApiParameter(name: "id", In = ParameterLocation.Path, Required = true, Type = typeof(int), Description = "The movie id.")]
     [OpenApiResponseWithBody(statusCode: HttpStatusCode.OK, contentType: "application/json", bodyType: typeof(IEnumerable<ReviewDto>), Description = "Retrieve reviews for a specific movie")]
     public async Task<IActionResult> GetReviewsForMovie(
-        [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "movies/{id:int}/reviews")] HttpRequest req, int id, ILogger log)
+        [HttpTrigger(AuthorizationLevel.Admin, "get", Route = "movies/{id:int}/reviews")] HttpRequest req, int id, ILogger log)
     { 
         if (id <= 0)
         {
@@ -99,7 +99,7 @@ public class ReviewFunctions
     [OpenApiParameter(name: "userId", In = ParameterLocation.Query, Required = true, Type = typeof(string), Description = "The user id.")]
     [OpenApiResponseWithBody(statusCode: HttpStatusCode.OK, contentType: "application/json", bodyType: typeof(ReviewDto), Description = "Returns the user review for a movie. ")]
     public async Task<IActionResult> GetUserReviewForMovie(
-       [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "movies/{movieId}/review")] HttpRequest req, int movieId, ILogger log)
+       [HttpTrigger(AuthorizationLevel.Admin, "get", Route = "movies/{movieId}/review")] HttpRequest req, int movieId, ILogger log)
     {
         try
         {

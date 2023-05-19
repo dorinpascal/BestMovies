@@ -36,7 +36,7 @@ public class SavedMoviesFunctions
     [OpenApiParameter(name: "userId", In = ParameterLocation.Path, Required = true, Type = typeof(string), Description = "The user id.")]
     [OpenApiResponseWithoutBody(statusCode: HttpStatusCode.OK, Description = "Successfully saved the movie")]
     public async Task<IActionResult> AddSavedMovie(
-        [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "users/{userId}/savedMovies")] HttpRequest req, string userId, ILogger log)
+        [HttpTrigger(AuthorizationLevel.Admin, "post", Route = "users/{userId}/savedMovies")] HttpRequest req, string userId, ILogger log)
     { 
         try
         {
@@ -68,7 +68,7 @@ public class SavedMoviesFunctions
     [OpenApiRequestBody("application/json", typeof(SavedMovieDto))]
     [OpenApiParameter(name: "userId", In = ParameterLocation.Path, Required = true, Type = typeof(string), Description = "The user id.")]
     public async Task<IActionResult> UpdateSavedMovie(
-        [HttpTrigger(AuthorizationLevel.Anonymous, "patch", Route = "users/{userId}/savedMovies")] HttpRequest req, string userId, ILogger log)
+        [HttpTrigger(AuthorizationLevel.Admin, "patch", Route = "users/{userId}/savedMovies")] HttpRequest req, string userId, ILogger log)
     {
         try
         {
@@ -101,7 +101,7 @@ public class SavedMoviesFunctions
     [OpenApiParameter(name: "userId", In = ParameterLocation.Path, Required = true, Type = typeof(string), Description = "The user id.")]
     [OpenApiParameter(name: "movieId", In = ParameterLocation.Path, Required = true, Type = typeof(int), Description = "The movie id.")]
     public async Task<IActionResult> DeleteSavedMovie(
-        [HttpTrigger(AuthorizationLevel.Anonymous, "delete", Route = "users/{userId}/savedMovies/{movieId}")] HttpRequest req, string userId, int movieId, ILogger log)
+        [HttpTrigger(AuthorizationLevel.Admin, "delete", Route = "users/{userId}/savedMovies/{movieId}")] HttpRequest req, string userId, int movieId, ILogger log)
     {
         try
         {
@@ -124,7 +124,7 @@ public class SavedMoviesFunctions
     [OpenApiParameter(name: "userId", In = ParameterLocation.Path, Required = true, Type = typeof(string), Description = "The user id.")]
     [OpenApiParameter(name: "onlyUnwatched", In = ParameterLocation.Query, Required = true, Type = typeof(bool), Description = "Get only unwatched movies.")]
     public async Task<IActionResult> GetSavedMovies(
-        [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "users/{userId}/savedMovies")] HttpRequest req, string userId, ILogger log)
+        [HttpTrigger(AuthorizationLevel.Admin, "get", Route = "users/{userId}/savedMovies")] HttpRequest req, string userId, ILogger log)
     { 
         try
         {
@@ -155,7 +155,7 @@ public class SavedMoviesFunctions
     [OpenApiParameter(name: "movieId", In = ParameterLocation.Path, Required = true, Type = typeof(int), Description = "The movie id.")]
     
     public async Task<IActionResult> GetSavedMovie(
-        [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "users/{userId}/savedMovies/{movieId:int}")]
+        [HttpTrigger(AuthorizationLevel.Admin, "get", Route = "users/{userId}/savedMovies/{movieId:int}")]
         HttpRequest req, string userId, int movieId, ILogger log)
     {
         try

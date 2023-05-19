@@ -34,7 +34,7 @@ public class UsersFunctions
     [OpenApiRequestBody("application/json", typeof(CreateUserDto))]
     [OpenApiResponseWithoutBody(statusCode: HttpStatusCode.OK, Description = "Successfully saved the user")]
     public async Task<IActionResult> SaveUser(
-        [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "users")] HttpRequest req, ILogger log)
+        [HttpTrigger(AuthorizationLevel.Admin, "post", Route = "users")] HttpRequest req, ILogger log)
     {
         try
         {
@@ -67,7 +67,7 @@ public class UsersFunctions
     [OpenApiParameter(name: "userId", In = ParameterLocation.Path, Required = true, Type = typeof(string), Description = "The user id.")]
     [OpenApiResponseWithBody(statusCode: HttpStatusCode.OK, contentType: "application/json", bodyType: typeof(UserDto), Description = "Retrieve user based on the id")]
     public async Task<IActionResult> GetUser(
-        [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "users/{userId}")] HttpRequest req, string userId, ILogger log)
+        [HttpTrigger(AuthorizationLevel.Admin, "get", Route = "users/{userId}")] HttpRequest req, string userId, ILogger log)
     { 
         if (string.IsNullOrWhiteSpace(userId))
         {
