@@ -66,7 +66,11 @@ public class MovieService : IMovieService
     {
         var searchedMovies = await _tmDbClient.SearchMovieAsync(movieTitle);
         var genres = await _tmDbClient.GetMovieGenresAsync();
-        return searchedMovies.Results.Select(m => m.ToDto(genres));
+ 
+        return searchedMovies.Results
+            .Where(m => m.VoteAverage > 1 && m.VoteCount > 50)
+            .OrderByDescending(m => m.VoteCount)
+            .Select(m => m.ToDto(genres));
     }
 
     private async Task<SearchContainer<SearchMovie>> GetPopularMoviesByGenre(IEnumerable<Genre> genres, string genre, string? region, string? language)

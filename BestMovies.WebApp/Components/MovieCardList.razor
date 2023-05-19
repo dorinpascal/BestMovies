@@ -24,9 +24,10 @@
         }
         else
         {
+            var count = 0;
             foreach (var movie in Movies)
             {
-                <MovieCard Movie="movie" Width="@CardWidth" Height="@CardHeight"/>
+                <MovieCard LoadLazy="count++ > 5" Movie="movie" Width="@CardWidth" Height="@CardHeight"/>
             }
         }
     </div>
