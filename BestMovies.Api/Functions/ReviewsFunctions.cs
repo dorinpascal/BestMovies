@@ -99,7 +99,7 @@ public class ReviewFunctions
     [OpenApiParameter(name: "userId", In = ParameterLocation.Path, Required = true, Type = typeof(string), Description = "The user id.")]
     [OpenApiResponseWithBody(statusCode: HttpStatusCode.OK, contentType: "application/json", bodyType: typeof(ReviewDto), Description = "Returns the user review for a movie. ")]
     public async Task<IActionResult> GetUserReviewForMovie(
-       [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "movies/{movieId}/reviews/users/{userId}")] HttpRequest req, int movieId, string userId, ILogger log)
+       [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "movies/{movieId}/reviews?userId={userId}")] HttpRequest req, int movieId, string userId, ILogger log)
     {
         try
         {
