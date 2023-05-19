@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using BestMovies.Bff.Clients;
@@ -28,23 +29,28 @@ public class SavedMovieService : ISavedMovieService
         await _userService.GetUserOrCreate(userDto);
 
         await _client.SaveMovie(userDto.Id, savedMovieDto);
-
     }
 
-    public async Task UpdateMovie(SavedMovieDto savedMovieDto, CreateUserDto userDto)
+    public async Task UpdateMovie(SavedMovieDto savedMovieDto, string userId)
     {
         await ValidateSavedMovie(savedMovieDto);
-        
+
+        await _client.UpdateMovie(userId, savedMovieDto);
     }
 
-    public Task DeleteMovie(SavedMovieDto savedMovieDto, CreateUserDto userDto)
+    public async Task DeleteMovie(int movieId, string userId)
     {
-        throw new System.NotImplementedException();
+        await _client.DeleteMovie(userId, movieId);
     }
 
-    public Task GetSavedMoviesForUser(CreateUserDto userDto)
+    public async Task<IEnumerable<SavedMovieDto>> GetSavedMoviesForUser(string userId, bool onlyUnwatched)
     {
-        throw new System.NotImplementedException();
+        return await _client.GetSavedMoviesForUser(userId, onlyUnwatched);
+    }
+
+    public async Task<SavedMovieDto?> GetSavedMovie(int movieId, string userId)
+    {
+        return await _client.GetSavedMovie(userId, movieId);
     }
 
     private async Task ValidateSavedMovie(SavedMovieDto savedMovieDto)

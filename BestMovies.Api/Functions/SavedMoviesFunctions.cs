@@ -122,12 +122,18 @@ public class SavedMoviesFunctions
     [FunctionName(nameof(GetSavedMovies))]
     [OpenApiOperation(operationId: nameof(GetSavedMovies), tags: new[] { Tag })]
     [OpenApiParameter(name: "userId", In = ParameterLocation.Path, Required = true, Type = typeof(string), Description = "The user id.")]
+    [OpenApiParameter(name: "onlyUnwatched", In = ParameterLocation.Query, Required = true, Type = typeof(bool), Description = "Get only unwatched movies.")]
     public async Task<IActionResult> GetSavedMovies(
         [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "users/{userId}/savedMovies")] HttpRequest req, string userId, ILogger log)
     { 
         try
         {
-            var savedMoviesForUser = await _savedMoviesRepository.GetSavedMoviesForUser(userId);
+            if (!bool.TryParse(req.Query["onlyUnwatched"], out var onlyUnwatched))
+            {
+                onlyUnwatched = false;
+            }
+            
+            var savedMoviesForUser = await _savedMoviesRepository.GetSavedMoviesForUser(userId, onlyUnwatched);
             var dtos = savedMoviesForUser.Select(sm => sm.ToDto());
             
             return new OkObjectResult(dtos);
@@ -139,6 +145,41 @@ public class SavedMoviesFunctions
         catch(Exception ex)
         {
             log.LogError(ex, "Error occured while retrieving saved movies for user {UserId}", userId);
+            return ActionResultHelpers.ServerErrorResult();
+        }
+    }
+    
+    [FunctionName(nameof(GetSavedMovie))]
+    [OpenApiOperation(operationId: nameof(GetSavedMovie), tags: new[] {Tag})]
+    [OpenApiParameter(name: "userId", In = ParameterLocation.Path, Required = true, Type = typeof(string), Description = "The user id.")]
+    [OpenApiParameter(name: "movieId", In = ParameterLocation.Path, Required = true, Type = typeof(int), Description = "The movie id.")]
+    
+    public async Task<IActionResult> GetSavedMovie(
+        [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "users/{userId}/savedMovies/{movieId:int}")]
+        HttpRequest req, string userId, int movieId, ILogger log)
+    {
+        try
+        {
+             
+            var savedMovie = await _savedMoviesRepository.GetSavedMovieForUser(userId, movieId);
+
+            if (savedMovie is null)
+            {
+                return ActionResultHelpers.NotFoundResult(
+                    $"Saved movie with id {movieId} not found for user {userId}");
+            }
+    
+            return new OkObjectResult(savedMovie.ToDto());
+        }
+        
+        catch (ArgumentException ex)
+        {
+            return ActionResultHelpers.BadRequestResult(ex.Message);
+        }
+         
+        catch (Exception ex)
+        {
+            log.LogError(ex, "Error occured while retrieving the movie");
             return ActionResultHelpers.ServerErrorResult();
         }
     }
