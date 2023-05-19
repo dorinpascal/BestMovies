@@ -1,5 +1,7 @@
 @using BestMovies.Shared.Dtos.Movies
 @using BestMovies.WebApp.Repositories
+@using System.Runtime.InteropServices
+@using EventHandler = BestMovies.WebApp.Services.EventHandler
 
 <MudCard Outlined="true">
     <div style="position: relative" class="d-flex justify-center rounded">
@@ -35,6 +37,9 @@
         private const string ImageSize = "w780";
 
     [Inject]
+    protected EventHandler EventHandler { get; set; } = default!;
+
+    [Inject]
     protected IDialogService DialogService { get; set; } = default!;
     
     [Parameter]
@@ -46,13 +51,17 @@
     [Parameter]
     public SearchMovieDto? Movie { get; set; }
     
-    private void OpenMovieDetails()
+    private async Task OpenMovieDetails()
     {
         var parameters = new DialogParameters
         {
             {"MovieId", Movie!.Id}
         };
         var options = new DialogOptions { CloseOnEscapeKey = true, CloseButton = true, FullWidth = true, MaxWidth = MaxWidth.Medium};
-        DialogService.Show<MovieDetailsModal>(string.Empty, parameters, options);
+        
+        var dialog = await DialogService.ShowAsync<MovieDetailsModal>(string.Empty, parameters, options);
+
+        await dialog.Result; 
+        EventHandler.NotifyStateChanged();
     }
 }

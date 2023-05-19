@@ -22,24 +22,23 @@ public class SavedMoviesRepository : ISavedMoviesRepository
         var content = new StringContent(json, Encoding.UTF8, "application/json");
         var response = await _client.PostAsync(BaseUri, content);
 
-        Console.WriteLine(await response.Content.ReadAsStringAsync());
         if (!response.IsSuccessStatusCode)
         {
             throw new ApiException(await HttpClientHelper.ReadContentSafe(response), (int)response.StatusCode);
         }
     }
 
-    public async Task<IEnumerable<SavedMovieDto>> GetSavedMovies()
+    public async Task<IEnumerable<SearchMovieDto>> GetSavedMovies()
     {
-        using var response = await _client.GetAsync(BaseUri);
+        using var response = await _client.GetAsync($"{BaseUri}?onlyUnwatched=true");
         
         if (!response.IsSuccessStatusCode)
         {
-            return Enumerable.Empty<SavedMovieDto>();
+            return Enumerable.Empty<SearchMovieDto>();
         }
 
-        var savedMovies = await HttpClientHelper.ReadFromJsonSafe<IEnumerable<SavedMovieDto>>(response);
-        return savedMovies ?? Enumerable.Empty<SavedMovieDto>();
+        var savedMovies = await HttpClientHelper.ReadFromJsonSafe<IEnumerable<SearchMovieDto>>(response);
+        return savedMovies ?? Enumerable.Empty<SearchMovieDto>();
     }
 
     public async Task RemoveMovie(int movieId)

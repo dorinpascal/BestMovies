@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using BestMovies.Bff.Clients;
+using BestMovies.Bff.Extensions;
+using BestMovies.Bff.Services.Tmdb;
 using BestMovies.Shared.CustomExceptions;
 using BestMovies.Shared.Dtos.Movies;
 using BestMovies.Shared.Dtos.User;
@@ -14,12 +16,14 @@ public class SavedMovieService : ISavedMovieService
 {
     private readonly IUserService _userService;
     private readonly IBestMoviesApiClient _client;
+    private readonly ITMDbWrapperService _tmDbService;
     private readonly IValidator<SavedMovieDto> _validator;
 
-    public SavedMovieService(IValidator<SavedMovieDto> validator, IBestMoviesApiClient client, IUserService userService)
+    public SavedMovieService(IValidator<SavedMovieDto> validator, IBestMoviesApiClient client, ITMDbWrapperService tmDbService, IUserService userService)
     {
         _validator = validator;
         _client = client;
+        _tmDbService = tmDbService;
         _userService = userService;
     }
 
@@ -44,9 +48,16 @@ public class SavedMovieService : ISavedMovieService
         await _client.DeleteMovie(userId, movieId);
     }
 
-    public async Task<IEnumerable<SavedMovieDto>> GetSavedMoviesForUser(string userId, bool onlyUnwatched)
+    public async Task<IEnumerable<SearchMovieDto>> GetSavedMoviesForUser(string userId, bool onlyUnwatched)
     {
-        return await _client.GetSavedMoviesForUser(userId, onlyUnwatched);
+        var savedMovies = await _client.GetSavedMoviesForUser(userId, onlyUnwatched);
+
+        var tasks = savedMovies
+            .Select(savedMovie => _tmDbService.GetMovieAsync(savedMovie.MovieId));
+
+        var movies = await Task.WhenAll(tasks);
+
+        return movies.Select(m => m.ToSearchDto());
     }
 
     public async Task<SavedMovieDto?> GetSavedMovieOrDefault(int movieId, string userId)

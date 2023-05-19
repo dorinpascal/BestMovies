@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Net;
 using System.Threading.Tasks;
 using BestMovies.Bff.Helpers;
 using BestMovies.Bff.Services.BestMoviesApi;
@@ -31,6 +33,7 @@ public class SavedMovieFunctions
     [OpenApiOperation(operationId: nameof(SaveMovie), tags: new[] {Tag})]
     [OpenApiRequestBody("application/json", typeof(SavedMovieDto))]
     [OpenApiParameter(name: "x-ms-client-principal", In = ParameterLocation.Header, Required = true, Type = typeof(string), Description = "base64 of ClientPrincipal")]
+    [OpenApiResponseWithoutBody(statusCode: HttpStatusCode.OK, Description = "Successfully saved the movie")]
     public async Task<IActionResult> SaveMovie(
         [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "savedMovies")] HttpRequest req, ILogger log)
     {
@@ -71,6 +74,7 @@ public class SavedMovieFunctions
     [OpenApiOperation(operationId: nameof(UpdateSavedMovie), tags: new[] {Tag})]
     [OpenApiRequestBody("application/json", typeof(SavedMovieDto))]
     [OpenApiParameter(name: "x-ms-client-principal", In = ParameterLocation.Header, Required = true, Type = typeof(string), Description = "base64 of ClientPrincipal")]
+    [OpenApiResponseWithoutBody(statusCode: HttpStatusCode.OK, Description = "Successfully updated the saved movie")]
     public async Task<IActionResult> UpdateSavedMovie(
         [HttpTrigger(AuthorizationLevel.Anonymous, "patch", Route = "savedMovies")] HttpRequest req, ILogger log)
     {
@@ -107,6 +111,7 @@ public class SavedMovieFunctions
     [OpenApiOperation(operationId: nameof(DeleteSavedMovie), tags: new[] {Tag})]
     [OpenApiParameter(name: "movieId", In = ParameterLocation.Path, Required = true, Type = typeof(int), Description = "The movie id.")]
     [OpenApiParameter(name: "x-ms-client-principal", In = ParameterLocation.Header, Required = true, Type = typeof(string), Description = "base64 of ClientPrincipal")]
+    [OpenApiResponseWithoutBody(statusCode: HttpStatusCode.OK, Description = "Successfully deleted the saved movie")]
     public async Task<IActionResult> DeleteSavedMovie(
         [HttpTrigger(AuthorizationLevel.Anonymous, "delete", Route = "savedMovies/{movieId:int}")] HttpRequest req, int movieId, ILogger log)
     {
@@ -138,6 +143,7 @@ public class SavedMovieFunctions
     [OpenApiOperation(operationId: nameof(GetSavedMovies), tags: new[] {Tag})]
     [OpenApiParameter(name: "onlyUnwatched", In = ParameterLocation.Query, Required = false, Type = typeof(bool), Description = "Get only unwatched movies.")]
     [OpenApiParameter(name: "x-ms-client-principal", In = ParameterLocation.Header, Required = true, Type = typeof(string), Description = "base64 of ClientPrincipal")]
+    [OpenApiResponseWithBody(statusCode: HttpStatusCode.OK, contentType: "application/json", bodyType: typeof(IEnumerable<SearchMovieDto>), Description = "Returns the saved movies as searchMovie dto.")]
     public async Task<IActionResult> GetSavedMovies(
         [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "savedMovies")]
         HttpRequest req, ILogger log)
@@ -174,8 +180,8 @@ public class SavedMovieFunctions
      [FunctionName(nameof(GetSavedMovie))]
      [OpenApiOperation(operationId: nameof(GetSavedMovie), tags: new[] {Tag})]
      [OpenApiParameter(name: "movieId", In = ParameterLocation.Path, Required = true, Type = typeof(int), Description = "The movie id.")]
-     [OpenApiParameter(name: "x-ms-client-principal", In = ParameterLocation.Header, Required = true,
-         Type = typeof(string), Description = "base64 of ClientPrincipal")]
+     [OpenApiParameter(name: "x-ms-client-principal", In = ParameterLocation.Header, Required = true, Type = typeof(string), Description = "base64 of ClientPrincipal")]
+     [OpenApiResponseWithBody(statusCode: HttpStatusCode.OK, contentType: "application/json", bodyType: typeof(SavedMovieDto), Description = "Returns the saved movie. ")]
      public async Task<IActionResult> GetSavedMovie(
          [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "savedMovies/{movieId:int}")]
          HttpRequest req, int movieId, ILogger log)

@@ -8,6 +8,7 @@ using BestMovies.WebApp.Repositories.Impl;
 using BestMovies.WebApp.Services;
 using FluentValidation;
 using MudBlazor.Services;
+using EventHandler = BestMovies.WebApp.Services.EventHandler;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
@@ -26,6 +27,8 @@ builder.Services.AddTransient<IActorsRepository, ActorsRepository>();
 builder.Services.AddTransient<IReviewRepository, ReviewRepository>();
 builder.Services.AddTransient<ISavedMoviesRepository, SavedMoviesRepository>();
 builder.Services.AddTransient<IStatisticsRepository, StatisticsRepository>();
+
+builder.Services.AddScoped<EventHandler>();
 
 // Mud Blazor
 builder.Services.AddMudServices();
