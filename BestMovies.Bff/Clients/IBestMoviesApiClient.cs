@@ -13,4 +13,5 @@ public interface IBestMoviesApiClient
     Task SaveUser(CreateUserDto user);
     Task<UserDto> GetUser(string userId);
     Task SaveMovie(string userId, SavedMovieDto savedMovie);
+    Task<ReviewDto> GetUserReviewForMovie(int movieId, string userId);
 }

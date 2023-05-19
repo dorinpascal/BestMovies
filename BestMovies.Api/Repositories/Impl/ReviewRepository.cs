@@ -38,4 +38,13 @@ public class ReviewRepository : IReviewRepository
             .Include(r => r.User)
             .ToListAsync();
     }
+
+    public async Task<Review> GetUserReviewForMovie(int movieId, string userId)
+    {
+      var review = await _dbContext.Reviews
+            .Where(review => review.MovieId == movieId && review.UserId == userId)
+            .Include(r => r.User)
+            .FirstOrDefaultAsync();
+        return review ?? throw new NotFoundException("User review not found.");
+    }
 }
