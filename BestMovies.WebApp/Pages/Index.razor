@@ -7,6 +7,8 @@
 @using BestMovies.WebApp.Components
 @using BestMovies.Shared.Dtos.Movies
 @using EventHandler = BestMovies.WebApp.Services.EventHandler
+@using BestMovies.WebApp.Authorization
+@using BestMovies.WebApp.Services
 
 <PageTitle>Movies</PageTitle>
 
@@ -14,11 +16,26 @@
     <MovieCardList Title="Popular now" Movies="_popularMovies" SkeletonCardsCount="5"/>
 </MudContainer>
 
-<MudContainer Class="d-flex flex-column gap-4 justify-center pa-4" MaxWidth="MaxWidth.ExtraExtraLarge">
-    <MovieCardList Title="My list" Movies="_savedMovies" SkeletonCardsCount="4"/>
-</MudContainer>
 
-@if (_moviesPerGenre is not null)
+@if (_userInformation?.ClientPrincipal is not null)
+{
+    <MudContainer Class="d-flex flex-column gap-4 justify-center pa-4" MaxWidth="MaxWidth.ExtraExtraLarge">
+        <MovieCardList Title="My list" Movies="_savedMovies" ShowMessageIfEmpty="true" SkeletonCardsCount="4"/>
+    </MudContainer>
+    
+}
+    
+
+@if (_moviesPerGenre is null)
+{
+    foreach (var genre in _skeletonGenres)
+    {
+        <MudContainer Class="d-flex flex-column gap-4 justify-center pa-4" MaxWidth="MaxWidth.ExtraExtraLarge">
+            <MovieCardList Title= "@genre" SkeletonCardsCount="5"/>
+        </MudContainer>
+    }
+}
+else
 {
     foreach (var moviePerGenre in _moviesPerGenre)
     {
@@ -43,16 +60,23 @@
     [Inject]
     protected ISavedMoviesRepository SavedMoviesRepository { get; set; } = default!;
 
-    private IEnumerable<SearchMovieDto>? _popularMovies;
+    [Inject]
+    protected IAuthService AuthService { get; set; } = default!;
+    
+    // Used for loading skeleton
+    private readonly string[] _skeletonGenres = {"Action", "Comedy"};
 
+    private IEnumerable<SearchMovieDto>? _popularMovies;
     private IEnumerable<SearchMovieDto>? _savedMovies;
-        
     private (string genre, IEnumerable<SearchMovieDto> movies)[]? _moviesPerGenre;
+
+    private UserInformation? _userInformation;
 
     protected override async Task OnInitializedAsync()
     {
         EventHandler.OnChange += OnChange;
-        
+
+        await FetchUserInfo();
         await FetchPopularMovies();
         
         var tasks = new[]
@@ -65,6 +89,7 @@
         StateHasChanged();
     }
     
+    private async Task FetchUserInfo() => _userInformation = await AuthService.RetrieveUserInformation();
     private async Task FetchPopularMovies() => _popularMovies = await MoviesRepository.GetPopularMovies();
 
     private async Task FetchSavedMovies()
@@ -86,7 +111,10 @@
 
     private async void OnChange()
     {
-        await FetchSavedMovies();
+        if (_userInformation?.ClientPrincipal is not null)
+        {
+            await FetchSavedMovies();
+        }
     }
 
     public void Dispose() => EventHandler.OnChange -= OnChange;
