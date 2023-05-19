@@ -130,8 +130,7 @@ public class SavedMoviesFunctions
         {
             if (!bool.TryParse(req.Query["onlyUnwatched"], out var onlyUnwatched))
             {
-                return ActionResultHelpers.BadRequestResult(
-                    "Only unwatched query parameter could not be converted to a boolean");
+                onlyUnwatched = false;
             }
             
             var savedMoviesForUser = await _savedMoviesRepository.GetSavedMoviesForUser(userId, onlyUnwatched);

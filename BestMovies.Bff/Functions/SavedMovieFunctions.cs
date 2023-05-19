@@ -139,7 +139,7 @@ public class SavedMovieFunctions
     
     [FunctionName(nameof(GetSavedMovies))]
     [OpenApiOperation(operationId: nameof(GetSavedMovies), tags: new[] {Tag})]
-    [OpenApiParameter(name: "onlyUnwatched", In = ParameterLocation.Query, Required = true, Type = typeof(bool), Description = "Get only unwatched movies.")]
+    [OpenApiParameter(name: "onlyUnwatched", In = ParameterLocation.Query, Required = false, Type = typeof(bool), Description = "Get only unwatched movies.")]
     [OpenApiParameter(name: "x-ms-client-principal", In = ParameterLocation.Header, Required = true,
         Type = typeof(string), Description = "base64 of ClientPrincipal")]
     public async Task<IActionResult> GetSavedMovies(
@@ -152,8 +152,7 @@ public class SavedMovieFunctions
 
             if (!bool.TryParse(req.Query["onlyUnwatched"], out var onlyUnwatched))
             {
-                return ActionResultHelpers.BadRequestResult(
-                    "Only unwatched query parameter could not be converted to a boolean");
+                onlyUnwatched = false;
             }
             
             var savedMovies = await _savedMovieService.GetSavedMoviesForUser(user!.Id, onlyUnwatched);
