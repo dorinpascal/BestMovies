@@ -105,7 +105,7 @@ public class SavedMoviesFunctions
     {
         try
         {
-            if(movieId <=0 || string.IsNullOrWhiteSpace(userId))
+            if(movieId <= 0 || string.IsNullOrWhiteSpace(userId))
             {
                 return ActionResultHelpers.BadRequestResult("Invalid parameters.");
             }
@@ -170,7 +170,7 @@ public class SavedMoviesFunctions
     {
         try
         {
-            if(movieId <=0 || string.IsNullOrWhiteSpace(userId))
+            if(movieId <= 0 || string.IsNullOrWhiteSpace(userId))
             {
                 return ActionResultHelpers.BadRequestResult("Invalid parameters.");
             }
