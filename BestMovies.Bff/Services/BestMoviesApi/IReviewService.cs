@@ -9,4 +9,5 @@ public interface IReviewService
 {
     Task AddReview(CreateUserDto user, CreateReviewDto review);
     Task<IEnumerable<ReviewDto>> GetReviewsForMovie(int movieId);
+    Task<ReviewDto> GetUserReviewForMovie(int movieId, string userId);
 }

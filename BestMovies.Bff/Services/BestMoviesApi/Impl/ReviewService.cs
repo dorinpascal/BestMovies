@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using BestMovies.Bff.Clients;
 using BestMovies.Shared.Dtos.User;
 using FluentValidation;
+using BestMovies.Shared.CustomExceptions;
 
 namespace BestMovies.Bff.Services.BestMoviesApi.Impl;
 
@@ -40,5 +41,12 @@ public class ReviewService : IReviewService
     public async Task<IEnumerable<ReviewDto>> GetReviewsForMovie(int movieId)
     {
         return await _client.GetReviewsForMovie(movieId);
+    }
+
+    public async Task<ReviewDto> GetUserReviewForMovie(int movieId, string userId)
+    {
+       
+        return await _client.GetUserReviewForMovie(movieId, userId);
+       
     }
 }
