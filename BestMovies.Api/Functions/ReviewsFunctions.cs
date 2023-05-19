@@ -37,7 +37,7 @@ public class ReviewFunctions
     [OpenApiParameter(name: "userId", In = ParameterLocation.Path, Required = true, Type = typeof(string), Description = "The user id.")]
     [OpenApiResponseWithoutBody(statusCode: HttpStatusCode.OK, Description = "Successfully added the review")]
     public async Task<IActionResult> AddReview(
-        [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "users/{userId}/reviews")] HttpRequest req, string userId, ILogger log)
+        [HttpTrigger(AuthorizationLevel.Admin, "post", Route = "users/{userId}/reviews")] HttpRequest req, string userId, ILogger log)
     { 
         try
         {
