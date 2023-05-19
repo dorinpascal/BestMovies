@@ -5,7 +5,9 @@ using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 using BestMovies.Bff.Extensions;
+using BestMovies.Shared.CustomExceptions;
 using BestMovies.Shared.Dtos.Review;
+using BestMovies.Shared.Dtos.User;
 
 namespace BestMovies.Bff.Clients;
 
@@ -38,5 +40,16 @@ public partial class BestMoviesApiClient
         return JsonSerializer.Deserialize<IList<ReviewDto>>(content, _jsonSerializerOptions) ?? Enumerable.Empty<ReviewDto>();
     }
 
-    
+
+    public async Task<ReviewDto> GetUserReviewForMovie(int movieId, string userId)
+    {
+        var responseMessage = await _client.GetAsync($"movies/{movieId}/review?userId={userId}");
+        if (!responseMessage.IsSuccessStatusCode)
+        {
+
+            await responseMessage.ThrowBasedOnStatusCode();
+        }
+        var content = await responseMessage.ReadContentSafe();
+        return JsonSerializer.Deserialize<ReviewDto>(content, _jsonSerializerOptions) ?? throw new NotFoundException("User review not found.");
+    }
 }
