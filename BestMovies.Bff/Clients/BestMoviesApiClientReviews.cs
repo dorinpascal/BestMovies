@@ -43,7 +43,7 @@ public partial class BestMoviesApiClient
 
     public async Task<ReviewDto> GetUserReviewForMovie(int movieId, string userId)
     {
-        var responseMessage = await _client.GetAsync($"movies/{movieId}/reviews?userId={userId}");
+        var responseMessage = await _client.GetAsync($"movies/{movieId}/review?userId={userId}");
         if (!responseMessage.IsSuccessStatusCode)
         {
 

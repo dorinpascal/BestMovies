@@ -96,18 +96,18 @@ public class ReviewFunctions
     [FunctionName(nameof(GetUserReviewForMovie))]
     [OpenApiOperation(operationId: nameof(GetUserReviewForMovie), tags: new[] { Tag })]
     [OpenApiParameter(name: "movieId", In = ParameterLocation.Path, Required = true, Type = typeof(int), Description = "The movie id.")]
-    [OpenApiParameter(name: "userId", In = ParameterLocation.Path, Required = true, Type = typeof(string), Description = "The user id.")]
+    [OpenApiParameter(name: "userId", In = ParameterLocation.Query, Required = true, Type = typeof(string), Description = "The user id.")]
     [OpenApiResponseWithBody(statusCode: HttpStatusCode.OK, contentType: "application/json", bodyType: typeof(ReviewDto), Description = "Returns the user review for a movie. ")]
     public async Task<IActionResult> GetUserReviewForMovie(
-       [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "movies/{movieId}/reviews?userId={userId}")] HttpRequest req, int movieId, string userId, ILogger log)
+       [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "movies/{movieId}/review")] HttpRequest req, int movieId, ILogger log)
     {
         try
         {
+            var userId = req.Query["userId"];
             if (movieId <= 0 || string.IsNullOrWhiteSpace(userId))
             {
                 return ActionResultHelpers.BadRequestResult("Invalid value for the id. The value must be greater than 0");
             }
-
             var review = await _reviewRepository.GetUserReviewForMovie(movieId, userId);
             return new OkObjectResult(review.ToDto());
         }
@@ -122,7 +122,7 @@ public class ReviewFunctions
         }
         catch (Exception ex)
         {
-            log.LogError(ex, "Error occured while retrieving all reviews for the movie with id {movieId} and user with id {userId}", movieId, userId);
+            log.LogError(ex, "Error occured while retrieving the review for the movie with id {movieId}", movieId);
             return ActionResultHelpers.ServerErrorResult();
         }
     }
