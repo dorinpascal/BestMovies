@@ -17,7 +17,7 @@ using System.Threading.Tasks;
 using BestMovies.Api.Extensions;
 using BestMovies.Api.Repositories;
 using BestMovies.Shared.CustomExceptions;
-using BestMovies.Api.Persistence.Entity;
+
 
 namespace BestMovies.Api.Functions;
 
@@ -106,7 +106,7 @@ public class ReviewFunctions
             var userId = req.Query["userId"];
             if (movieId <= 0 || string.IsNullOrWhiteSpace(userId))
             {
-                return ActionResultHelpers.BadRequestResult("Invalid value for the id. The value must be greater than 0");
+                return ActionResultHelpers.BadRequestResult("Invalid value for the id. The value must be greater than 0 and the userId should be provided.");
             }
             var review = await _reviewRepository.GetUserReviewForMovie(movieId, userId);
             return new OkObjectResult(review.ToDto());

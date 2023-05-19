@@ -9,6 +9,7 @@ public class ParameterTests
     private readonly IUserRepository _userRepository;
     private readonly UsersFunctions _sut;
     private readonly MockLogger<UsersFunctions> _logger;
+    
 
     public ParameterTests()
     {

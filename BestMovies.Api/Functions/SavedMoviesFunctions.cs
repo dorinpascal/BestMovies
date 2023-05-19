@@ -105,6 +105,11 @@ public class SavedMoviesFunctions
     {
         try
         {
+            if(movieId <= 0 || string.IsNullOrWhiteSpace(userId))
+            {
+                return ActionResultHelpers.BadRequestResult("Invalid parameters.");
+            }
+
             await _savedMoviesRepository.DeleteSavedMovie(userId, movieId);
             return new OkResult();
         }
@@ -128,6 +133,11 @@ public class SavedMoviesFunctions
     { 
         try
         {
+            if (string.IsNullOrWhiteSpace(userId))
+            {
+                return ActionResultHelpers.BadRequestResult("Invalid parameters.");
+            }
+
             if (!bool.TryParse(req.Query["onlyUnwatched"], out var onlyUnwatched))
             {
                 onlyUnwatched = false;
@@ -160,6 +170,10 @@ public class SavedMoviesFunctions
     {
         try
         {
+            if(movieId <= 0 || string.IsNullOrWhiteSpace(userId))
+            {
+                return ActionResultHelpers.BadRequestResult("Invalid parameters.");
+            }
             var savedMovie = await _savedMoviesRepository.GetSavedMovieForUser(userId, movieId);
 
             if (savedMovie is null)
