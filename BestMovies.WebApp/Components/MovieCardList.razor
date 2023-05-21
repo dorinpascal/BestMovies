@@ -7,20 +7,27 @@
     }
     
     <div class="d-flex flex-row justify-start gap-4" style="overflow-x: auto">
-        @if (Movies is null || !Movies.Any())
+        @if (ShowMessageIfEmpty && Movies?.Any() is false)
+        {
+            <MudCard Outlined="true">
+                <MudAlert NoIcon="true" Severity="Severity.Normal">You did not add any movie to your list yet.</MudAlert>
+            </MudCard>
+        }
+        else if (Movies is null || !Movies.Any())
         {
             for (var i = 0; i < SkeletonCardsCount; i++)
             {
                 <MudCard Outlined="true">
-                    <MudSkeleton Class="rounded" SkeletonType="SkeletonType.Rectangle" Animation="Animation.Wave" Height="@($"{CardHeight}px")" Width="@($"{CardWidth}px")" />
+                    <MudSkeleton Class="rounded" SkeletonType="SkeletonType.Rectangle" Animation="Animation.Wave" Height="@($"{CardHeight}px")" Width="@($"{CardWidth}px")"/>
                 </MudCard>
             }
         }
         else
         {
+            var count = 0;
             foreach (var movie in Movies)
             {
-                <MovieCard Movie="movie" Width="@CardWidth" Height="@CardHeight"/>
+                <MovieCard LoadLazy="count++ > 5" Movie="movie" Width="@CardWidth" Height="@CardHeight"/>
             }
         }
     </div>
@@ -30,6 +37,9 @@
 @code {
         private const int CardHeight = 180;
         private const int CardWidth = 280;
+    
+    [Parameter]
+    public bool ShowMessageIfEmpty { get; set; }
 
     [Parameter]
     public string? Title { get; set; } 

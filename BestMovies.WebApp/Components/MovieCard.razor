@@ -11,9 +11,9 @@
         }
         else
         {
-            <MudImage Class="rounded" ObjectFit="@ObjectFit.Cover" Height="@Height" Width="@Width" Src="@($"api/movies/{Movie.Id}/image?size={ImageSize}")" Alt="@Movie.Title" />
+            <MudImage loading="@(LoadLazy ? "lazy" : "eager")" Class="rounded" ObjectFit="@ObjectFit.Cover" Height="@Height" Width="@Width" Src="@($"api/movies/{Movie.Id}/image?size={ImageSize}")" Alt="@Movie.Title" />
 
-            <MudPaper Class="card-overlay-footer cursor-pointer" @onclick="OpenMovieDetails">
+            <MudPaper Class="card-overlay-footer cursor-pointer z-10" @onclick="OpenMovieDetails">
                 <div class="d-flex flex-column justify-space-between">
                     <div class="d-flex flex-row align-start justify-space-between pa-2">
                         <MudText Typo="Typo.subtitle1" Align="Align.Start"><strong>@Movie.Title</strong></MudText>
@@ -41,7 +41,10 @@
 
     [Inject]
     protected IDialogService DialogService { get; set; } = default!;
-    
+
+    [Parameter]
+    public bool LoadLazy { get; set; }
+        
     [Parameter]
     public int Height { get; set; } = 220;
     
