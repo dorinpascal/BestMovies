@@ -23,7 +23,7 @@ public interface ITMDbWrapperService
 
     Task<List<Genre>> GetMovieGenresAsync(CancellationToken cancellationToken = new CancellationToken());
 
-    Task<Movie> GetMovieAsync(int movieId, MovieMethods extraMethods = MovieMethods.Undefined,
+    Task<Movie?> GetMovieAsync(int movieId, MovieMethods extraMethods = MovieMethods.Undefined,
         CancellationToken cancellationToken = new CancellationToken());
 
     Task<Credits> GetMovieCreditsAsync(int movieId, CancellationToken cancellationToken = new CancellationToken());
