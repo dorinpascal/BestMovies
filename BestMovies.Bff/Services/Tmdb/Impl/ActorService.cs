@@ -3,7 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using BestMovies.Bff.Extensions;
 using BestMovies.Shared.CustomExceptions;
-using BestMovies.Shared.Dtos.Actor;
+using BestMovies.Shared.Dtos.Person;
 
 namespace BestMovies.Bff.Services.Tmdb.Impl;
 
@@ -16,7 +16,7 @@ public class ActorService : IActorService
         _tmDbClient = tmDbClient;
     }
 
-    public async Task<ActorDetailsDto> GetActorDetails(int id)
+    public async Task<PersonDetailsDto> GetActorDetails(int id)
     {
         var person = await _tmDbClient.GetPersonAsync(id);
         if (person is null)

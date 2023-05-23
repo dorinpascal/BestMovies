@@ -1,5 +1,5 @@
 @using BestMovies.WebApp.Repositories
-@using BestMovies.Shared.Dtos.Actor
+@using BestMovies.Shared.Dtos.Person
 
 <MudDialog DisableSidePadding="true">
     <DialogContent>
@@ -54,7 +54,7 @@
     [Parameter]
     public int ActorId { get; set; }
 
-    private ActorDetailsDto? _actorDetails;
+    private PersonDetailsDto? _actorDetails;
 
     protected override async Task OnInitializedAsync()
     {

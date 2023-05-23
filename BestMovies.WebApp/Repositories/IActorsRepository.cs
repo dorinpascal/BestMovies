@@ -1,8 +1,8 @@
-using BestMovies.Shared.Dtos.Actor;
+using BestMovies.Shared.Dtos.Person;
 
 namespace BestMovies.WebApp.Repositories;
 
 public interface IActorsRepository
 {
-    Task<ActorDetailsDto?> GetActorDetails(int id);
+    Task<PersonDetailsDto?> GetActorDetails(int id);
 }

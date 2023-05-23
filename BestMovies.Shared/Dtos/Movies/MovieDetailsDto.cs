@@ -1,5 +1,5 @@
-﻿using BestMovies.Shared.Dtos.Actor;
-using BestMovies.Shared.Dtos.Director;
+﻿using BestMovies.Shared.Dtos.Person.Actor;
+using BestMovies.Shared.Dtos.Person.Director;
 
 namespace BestMovies.Shared.Dtos.Movies;
 
