@@ -20,7 +20,7 @@ public static class MoviesExtensions
             Genres: searchMovie.GenreIds.Select(id => genres.First(g => g.Id == id).Name)
         );
     
-    public static MovieDetailsDto ToDto(this Movie movie, IEnumerable<Cast> actors, Crew director) =>
+    public static MovieDetailsDto ToDto(this Movie movie, IEnumerable<Cast> actors, Crew? director) =>
         new(
            Id: movie.Id,
            Title: movie.Title,
@@ -30,7 +30,7 @@ public static class MoviesExtensions
            VoteAverage: (decimal)movie.VoteAverage,
            Genres: movie.Genres.Select(g => g.Name).ToList(),
            Actors: actors.Select(a => new ActorDto(a.Id, a.Name, a.Character)),
-           Director: new DirectorDto(director.Id, director.Name)
+           Director: director is not null ? new DirectorDto(director.Id, director.Name) : null
             );
     
     public static SearchMovieDto ToSearchDto(this Movie movie) =>

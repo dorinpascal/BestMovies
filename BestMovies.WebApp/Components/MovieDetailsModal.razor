@@ -145,15 +145,17 @@
                     }
                     else
                     {
-                        
-                        <div class="highlight-on-hover rounded pa-2">
-                            <div class="d-flex flex-column justify-start align-center cursor-pointer" @onclick="() => OpenActorDetails(_movieDetails.Director.Id)">
-                                <MudImage Class="mud-skeleton-circle" ObjectFit="@ObjectFit.Cover" ObjectPosition="ObjectPosition.Center" Height="120" Width="120" Src="@($"api/actors/{_movieDetails.Director.Id}/image?size=w300")" Alt="@_movieDetails.Director.Name"/>
+                        @if (_movieDetails.Director is not null)
+                        {
+                            <div class="highlight-on-hover rounded pa-2">
+                                <div class="d-flex flex-column justify-start align-center cursor-pointer" @onclick="() => OpenActorDetails(_movieDetails.Director.Id)">
+                                    <MudImage Class="mud-skeleton-circle" ObjectFit="@ObjectFit.Cover" ObjectPosition="ObjectPosition.Center" Height="120" Width="120" Src="@($"api/actors/{_movieDetails.Director.Id}/image?size=w300")" Alt="@_movieDetails.Director.Name"/>
 
-                                <MudText Align="Align.Center" Typo="Typo.button">@_movieDetails.Director.Name</MudText>
-                                <MudText Align="Align.Center" Typo="Typo.overline">Director</MudText>
+                                    <MudText Align="Align.Center" Typo="Typo.button">@_movieDetails.Director.Name</MudText>
+                                    <MudText Align="Align.Center" Typo="Typo.overline">Director</MudText>
+                                </div>
                             </div>
-                        </div>
+                        }
                         
                         foreach (var actor in _movieDetails.Actors)
                         {
