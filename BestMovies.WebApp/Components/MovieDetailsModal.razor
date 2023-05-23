@@ -213,7 +213,12 @@
         await Task.WhenAll(tasks);
     }
 
-    private async Task FetchMovieDetails() => _movieDetails = await MoviesRepository.GetMovieDetails(MovieId);
+    private async Task FetchMovieDetails()
+    {
+        _movieDetails = await MoviesRepository.GetMovieDetails(MovieId);
+        await InvokeAsync(StateHasChanged);
+    }
+
     private async Task FetchUserInfo() => _userInformation = await AuthService.RetrieveUserInformation();
     private async Task FetchMovieStats() => _movieStats = await StatisticsRepository.GetMovieStatistics(MovieId);
     private async Task FetchSavedMovie() => _savedMovie = await SavedMoviesRepository.GetSavedMovie(MovieId);
