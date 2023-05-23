@@ -3,6 +3,7 @@ using BestMovies.Bff.Services.Tmdb;
 using BestMovies.Bff.Test.Helpers;
 using BestMovies.Shared.CustomExceptions;
 using BestMovies.Shared.Dtos.Actor;
+using BestMovies.Shared.Dtos.Director;
 using BestMovies.Shared.Dtos.Movies;
 using NSubstitute.ExceptionExtensions;
 
@@ -58,7 +59,7 @@ public class GetMovieDetailsEndpointTest
     public async Task GetMovieDetails_MovieDetails_ReturnsOkObjectResult()
     {
         //Arrange
-        var movieDetailsDto = new MovieDetailsDto(0, "title", "description", "originalLanguage", DateOnly.MinValue, 0, new List<string>(), new List<ActorDto>());
+        var movieDetailsDto = new MovieDetailsDto(0, "title", "description", "originalLanguage", DateOnly.MinValue, 0, new List<string>(), new List<ActorDto>(), new DirectorDto(1, "Name"));
         _movieService.GetMovieDetails(Arg.Any<int>()).Returns(movieDetailsDto);
 
         //Act
