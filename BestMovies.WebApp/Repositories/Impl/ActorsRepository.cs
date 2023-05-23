@@ -1,4 +1,4 @@
-using BestMovies.Shared.Dtos.Actor;
+using BestMovies.Shared.Dtos.Person;
 using BestMovies.WebApp.Helpers;
 
 namespace BestMovies.WebApp.Repositories.Impl;
@@ -13,13 +13,13 @@ public class ActorsRepository : IActorsRepository
         _client = client ?? throw new ArgumentNullException(nameof(client));
     }
     
-    public async Task<ActorDetailsDto?> GetActorDetails(int id)
+    public async Task<PersonDetailsDto?> GetActorDetails(int id)
     {
         using var response = await _client.GetAsync($"{BaseUri}/{id}");
 
         if (response.IsSuccessStatusCode)
         {
-            return await HttpClientHelper.ReadFromJsonSafe<ActorDetailsDto>(response);
+            return await HttpClientHelper.ReadFromJsonSafe<PersonDetailsDto>(response);
         }
 
         return null;

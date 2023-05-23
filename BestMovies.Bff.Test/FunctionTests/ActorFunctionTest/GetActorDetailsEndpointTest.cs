@@ -2,7 +2,7 @@
 using BestMovies.Bff.Services.Tmdb;
 using BestMovies.Bff.Test.Helpers;
 using BestMovies.Shared.CustomExceptions;
-using BestMovies.Shared.Dtos.Actor;
+using BestMovies.Shared.Dtos.Person;
 using NSubstitute.ExceptionExtensions;
 
 namespace BestMovies.Bff.Test.FunctionTests.ActorFunctionTest;
@@ -56,7 +56,7 @@ public class GetActorDetailsEndpointTest
     public async Task GetActorDetails_ActorDetails_ReturnsOkObjectResult()
     {
         //Arrange
-        var actorDetailsDto = new ActorDetailsDto(0, "Name", "Biography", DateOnly.MinValue, new []{""});
+        var actorDetailsDto = new PersonDetailsDto(0, "Name", "Biography", DateOnly.MinValue, new []{""});
         _actorService.GetActorDetails(Arg.Any<int>()).Returns(actorDetailsDto);
 
         //Act
