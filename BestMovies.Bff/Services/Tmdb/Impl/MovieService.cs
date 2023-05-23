@@ -47,7 +47,9 @@ public class MovieService : IMovieService
 
         var credits = await _tmDbClient.GetMovieCreditsAsync(id);
 
-        var movieDetailsDto = searchContainer.ToDto(credits.Cast.Take(7));
+        var director = credits.Crew.First(c => c.Job == "Director");
+
+        var movieDetailsDto = searchContainer.ToDto(credits.Cast.Take(7), director);
         return movieDetailsDto;
     }
 
