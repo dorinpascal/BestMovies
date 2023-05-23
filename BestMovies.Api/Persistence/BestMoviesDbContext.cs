@@ -1,4 +1,7 @@
+using System;
+using System.Threading.Tasks;
 using BestMovies.Api.Persistence.Entity;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 
 namespace BestMovies.Api.Persistence;
@@ -8,12 +11,19 @@ public class BestMoviesDbContext : DbContext
 {
     public DbSet<Review> Reviews { get; set; }
     public DbSet<User> Users { get; set; }
-    
     public DbSet<SavedMovie> SavedMovies { get; set; }
 
     public BestMoviesDbContext(DbContextOptions<BestMoviesDbContext> options) : base(options)
     { }
 
+    public async Task<SqlConnection> OpenDbConnection()
+    {
+        var connection = new SqlConnection(Database.GetConnectionString());
+
+        await connection.OpenAsync();
+        return connection;
+    }
+    
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
