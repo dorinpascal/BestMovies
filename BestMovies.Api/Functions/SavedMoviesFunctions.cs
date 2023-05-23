@@ -127,7 +127,7 @@ public class SavedMoviesFunctions
     [FunctionName(nameof(GetSavedMovies))]
     [OpenApiOperation(operationId: nameof(GetSavedMovies), tags: new[] { Tag })]
     [OpenApiParameter(name: "userId", In = ParameterLocation.Path, Required = true, Type = typeof(string), Description = "The user id.")]
-    [OpenApiParameter(name: "onlyUnwatched", In = ParameterLocation.Query, Required = true, Type = typeof(bool), Description = "Get only unwatched movies.")]
+    [OpenApiParameter(name: "onlyUnwatched", In = ParameterLocation.Query, Required = false, Type = typeof(bool), Description = "Get only unwatched movies.")]
     public async Task<IActionResult> GetSavedMovies(
         [HttpTrigger(AuthorizationLevel.Admin, "get", Route = "users/{userId}/savedMovies")] HttpRequest req, string userId, ILogger log)
     { 

@@ -51,7 +51,7 @@ public class TMDbWrapperService : ITMDbWrapperService
         return _tmDbClient.GetMovieGenresAsync(cancellationToken);
     }
 
-    public Task<Movie> GetMovieAsync(int movieId, MovieMethods extraMethods = MovieMethods.Undefined,
+    public Task<Movie?> GetMovieAsync(int movieId, MovieMethods extraMethods = MovieMethods.Undefined,
         CancellationToken cancellationToken = new())
     {
         return _tmDbClient.GetMovieAsync(movieId, extraMethods, cancellationToken);

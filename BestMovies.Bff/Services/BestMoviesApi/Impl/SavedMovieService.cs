@@ -57,7 +57,7 @@ public class SavedMovieService : ISavedMovieService
 
         var movies = await Task.WhenAll(tasks);
 
-        return movies.Select(m => m.ToSearchDto());
+        return movies.Where(m => m is not null).Select(m => m!.ToSearchDto());
     }
 
     public async Task<SavedMovieDto?> GetSavedMovieOrDefault(int movieId, string userId)
