@@ -9,7 +9,7 @@ public partial class BestMoviesApiClient
 {
     public async Task<MovieStatsDto> GetMovieStats(int movieId)
     {
-        var responseMessage = await _client.GetAsync($"movies/{movieId}/stats/");
+        var responseMessage = await _client.GetAsync($"movies/{movieId}/stats");
         if (!responseMessage.IsSuccessStatusCode)
         {
             await responseMessage.ThrowBasedOnStatusCode();
