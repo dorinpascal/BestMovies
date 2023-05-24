@@ -154,17 +154,10 @@ public class SavedMovieFunctions
             {
                 return ActionResultHelpers.UnauthorizedResult();
             }
-
-            IEnumerable<SearchMovieDto> savedMovies;
             
-            if (!bool.TryParse(req.Query["isWatched"], out var isWatched))
-            {
-                savedMovies = await _savedMovieService.GetSavedMoviesForUser(user!.Id);
-            }
-            else
-            {
-                savedMovies = await _savedMovieService.GetSavedMoviesForUser(user!.Id, isWatched);
-            }
+            var isWatched = bool.TryParse(req.Query["isWatched"], out var result) ? result : default(bool?);
+
+            var savedMovies = await _savedMovieService.GetSavedMoviesForUser(user!.Id, isWatched);
             
             return new OkObjectResult(savedMovies);
         }

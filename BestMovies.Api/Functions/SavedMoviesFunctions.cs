@@ -139,17 +139,10 @@ public class SavedMoviesFunctions
             {
                 return ActionResultHelpers.BadRequestResult("Invalid parameters.");
             }
-
-            IEnumerable<SavedMovie> savedMoviesForUser;
             
-            if (!bool.TryParse(req.Query["isWatched"], out var isWatched))
-            {
-                savedMoviesForUser = await _savedMoviesRepository.GetSavedMoviesForUser(userId);
-            }
-            else
-            {
-                savedMoviesForUser = await _savedMoviesRepository.GetSavedMoviesForUser(userId, isWatched);
-            }
+            var isWatched = bool.TryParse(req.Query["isWatched"], out var result) ? result : default(bool?);
+
+            var savedMoviesForUser = await _savedMoviesRepository.GetSavedMoviesForUser(userId, isWatched);
             
             var dtos = savedMoviesForUser.Select(sm => sm.ToDto());
             
