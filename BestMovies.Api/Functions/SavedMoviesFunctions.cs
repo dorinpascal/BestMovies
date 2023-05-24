@@ -1,10 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using BestMovies.Api.Extensions;
 using BestMovies.Api.Helpers;
+using BestMovies.Api.Persistence.Entity;
 using BestMovies.Api.Repositories;
 using BestMovies.Shared.CustomExceptions;
 using BestMovies.Shared.Dtos.Movies;
@@ -127,7 +129,7 @@ public class SavedMoviesFunctions
     [FunctionName(nameof(GetSavedMovies))]
     [OpenApiOperation(operationId: nameof(GetSavedMovies), tags: new[] { Tag })]
     [OpenApiParameter(name: "userId", In = ParameterLocation.Path, Required = true, Type = typeof(string), Description = "The user id.")]
-    [OpenApiParameter(name: "onlyUnwatched", In = ParameterLocation.Query, Required = false, Type = typeof(bool), Description = "Get only unwatched movies.")]
+    [OpenApiParameter(name: "isWatched", In = ParameterLocation.Query, Required = false, Type = typeof(bool), Description = "Return only watched/unwatched movies.")]
     public async Task<IActionResult> GetSavedMovies(
         [HttpTrigger(AuthorizationLevel.Admin, "get", Route = "users/{userId}/savedMovies")] HttpRequest req, string userId, ILogger log)
     { 
@@ -138,12 +140,17 @@ public class SavedMoviesFunctions
                 return ActionResultHelpers.BadRequestResult("Invalid parameters.");
             }
 
-            if (!bool.TryParse(req.Query["onlyUnwatched"], out var onlyUnwatched))
+            IEnumerable<SavedMovie> savedMoviesForUser;
+            
+            if (!bool.TryParse(req.Query["isWatched"], out var isWatched))
             {
-                onlyUnwatched = false;
+                savedMoviesForUser = await _savedMoviesRepository.GetSavedMoviesForUser(userId);
+            }
+            else
+            {
+                savedMoviesForUser = await _savedMoviesRepository.GetSavedMoviesForUser(userId, isWatched);
             }
             
-            var savedMoviesForUser = await _savedMoviesRepository.GetSavedMoviesForUser(userId, onlyUnwatched);
             var dtos = savedMoviesForUser.Select(sm => sm.ToDto());
             
             return new OkObjectResult(dtos);

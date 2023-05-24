@@ -48,9 +48,9 @@ public class SavedMovieService : ISavedMovieService
         await _client.DeleteMovie(userId, movieId);
     }
 
-    public async Task<IEnumerable<SearchMovieDto>> GetSavedMoviesForUser(string userId, bool onlyUnwatched)
+    public async Task<IEnumerable<SearchMovieDto>> GetSavedMoviesForUser(string userId, bool? isWatched)
     {
-        var savedMovies = await _client.GetSavedMoviesForUser(userId, onlyUnwatched);
+        var savedMovies = await _client.GetSavedMoviesForUser(userId, isWatched);
 
         var tasks = savedMovies
             .Select(savedMovie => _tmDbService.GetMovieAsync(savedMovie.MovieId));

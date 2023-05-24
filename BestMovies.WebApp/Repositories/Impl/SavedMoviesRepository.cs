@@ -30,7 +30,7 @@ public class SavedMoviesRepository : ISavedMoviesRepository
 
     public async Task<IEnumerable<SearchMovieDto>> GetSavedMovies()
     {
-        using var response = await _client.GetAsync($"{BaseUri}?onlyUnwatched=true");
+        using var response = await _client.GetAsync($"{BaseUri}?isWatched=false");
         
         if (!response.IsSuccessStatusCode)
         {

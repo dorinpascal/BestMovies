@@ -141,7 +141,7 @@ public class SavedMovieFunctions
     
     [FunctionName(nameof(GetSavedMovies))]
     [OpenApiOperation(operationId: nameof(GetSavedMovies), tags: new[] {Tag})]
-    [OpenApiParameter(name: "onlyUnwatched", In = ParameterLocation.Query, Required = false, Type = typeof(bool), Description = "Get only unwatched movies.")]
+    [OpenApiParameter(name: "isWatched", In = ParameterLocation.Query, Required = false, Type = typeof(bool), Description = "Return only watched/unwatched movies.")]
     [OpenApiParameter(name: "x-ms-client-principal", In = ParameterLocation.Header, Required = true, Type = typeof(string), Description = "base64 of ClientPrincipal")]
     [OpenApiResponseWithBody(statusCode: HttpStatusCode.OK, contentType: "application/json", bodyType: typeof(IEnumerable<SearchMovieDto>), Description = "Returns the saved movies as searchMovie dto.")]
     public async Task<IActionResult> GetSavedMovies(
@@ -155,13 +155,17 @@ public class SavedMovieFunctions
                 return ActionResultHelpers.UnauthorizedResult();
             }
 
-            if (!bool.TryParse(req.Query["onlyUnwatched"], out var onlyUnwatched))
+            IEnumerable<SearchMovieDto> savedMovies;
+            
+            if (!bool.TryParse(req.Query["isWatched"], out var isWatched))
             {
-                onlyUnwatched = false;
+                savedMovies = await _savedMovieService.GetSavedMoviesForUser(user!.Id);
+            }
+            else
+            {
+                savedMovies = await _savedMovieService.GetSavedMoviesForUser(user!.Id, isWatched);
             }
             
-            var savedMovies = await _savedMovieService.GetSavedMoviesForUser(user!.Id, onlyUnwatched);
-
             return new OkObjectResult(savedMovies);
         }
        

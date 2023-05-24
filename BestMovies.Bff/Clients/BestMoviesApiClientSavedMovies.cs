@@ -53,9 +53,16 @@ public partial class BestMoviesApiClient
         }
     }
     
-    public  async Task<IEnumerable<SavedMovieDto>> GetSavedMoviesForUser(string userId, bool onlyUnwatched)
+    public  async Task<IEnumerable<SavedMovieDto>> GetSavedMoviesForUser(string userId, bool? isWatched)
     {
-        var responseMessage = await _client.GetAsync($"users/{userId}/savedMovies?onlyUnwatched={onlyUnwatched}");
+        var url = $"users/{userId}/savedMovies";
+
+        if (isWatched is not null)
+        {
+            url += $"?isWatched={isWatched}";
+        }
+        
+        var responseMessage = await _client.GetAsync(url);
         if (!responseMessage.IsSuccessStatusCode)
         {
             await responseMessage.ThrowBasedOnStatusCode();

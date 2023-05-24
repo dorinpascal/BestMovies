@@ -48,11 +48,11 @@ public class SavedMoviesRepository : ISavedMoviesRepository
         await _dbContext.SaveChangesAsync();
     }
 
-    public async Task<IEnumerable<SavedMovie>> GetSavedMoviesForUser(string userId, bool onlyUnwatched)
+    public async Task<IEnumerable<SavedMovie>> GetSavedMoviesForUser(string userId, bool? isWatched)
     {
         var movieList = await _dbContext.SavedMovies.Where(sm => sm.UserId == userId).ToListAsync();
-        
-        return onlyUnwatched ? movieList.Where(m=> m.IsWatched == false).ToList() : movieList;
+
+        return isWatched != null ? movieList.Where(m=> m.IsWatched == isWatched).ToList() : movieList;
     }
 
     public async Task<SavedMovie?> GetSavedMovieForUser(string userId, int movieId)
