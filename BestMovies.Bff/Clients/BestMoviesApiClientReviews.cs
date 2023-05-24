@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 using BestMovies.Bff.Extensions;
 using BestMovies.Shared.CustomExceptions;
 using BestMovies.Shared.Dtos.Review;
-using BestMovies.Shared.Dtos.User;
 
 namespace BestMovies.Bff.Clients;
 

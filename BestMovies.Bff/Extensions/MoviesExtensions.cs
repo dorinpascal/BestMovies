@@ -2,7 +2,6 @@
 using BestMovies.Shared.Dtos.Movies;
 using System.Collections.Generic;
 using System.Linq;
-using BestMovies.Shared.Dtos.Person.Director;
 using TMDbLib.Objects.General;
 using TMDbLib.Objects.Movies;
 using TMDbLib.Objects.Search;

@@ -2,7 +2,6 @@
 using BestMovies.Api.Persistence.Entity;
 using BestMovies.Api.Repositories;
 using BestMovies.Api.Test.Helpers;
-using Microsoft.Extensions.Primitives;
 using NSubstitute.ExceptionExtensions;
 
 namespace BestMovies.Api.Test.FunctionTests.SavedMoviesFunctionTest.GetSavedMovieEndpoint;

@@ -51,5 +51,6 @@ public class GetGenreNamesEndpointTest
 
         //Assert
         Assert.Equal(200, result.StatusCode);
+        Assert.Equal(genres, result.Value);
     }
 }

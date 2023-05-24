@@ -61,5 +61,6 @@ public class SearchMovieEndpointTests
 
         //Assert
         Assert.Equal(200, result.StatusCode);
+        Assert.Equal(movies, result.Value);
     }
 }
