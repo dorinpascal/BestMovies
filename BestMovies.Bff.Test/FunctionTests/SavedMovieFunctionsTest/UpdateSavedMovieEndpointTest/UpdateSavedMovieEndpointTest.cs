@@ -30,7 +30,7 @@ public class UpdateSavedMovieEndpointTest
     }
 
     [Fact]
-    public async Task UpdateSavedMovieEndpoint_BestMoviesApi_NotAvailable()
+    public async Task UpdateSavedMovieEndpoint_BestMoviesApiNotAvailable_ReturnsSC500()
     {
         //Arrange
         _savedMovieService.UpdateMovie(Arg.Any<SavedMovieDto>(), Arg.Any<string>()).Throws(new Exception());
