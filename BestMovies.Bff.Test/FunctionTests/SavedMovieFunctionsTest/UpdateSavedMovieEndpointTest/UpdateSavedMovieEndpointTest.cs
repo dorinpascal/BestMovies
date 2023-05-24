@@ -95,4 +95,18 @@ public class UpdateSavedMovieEndpointTest
         //Assert
         Assert.Equal(400, result.StatusCode);
     }
+    
+    [Fact]
+    public async Task UpdateSavedMovieEndpoint_ValidRequest_ReturnsSC200()
+    {
+        //Arrange
+        
+        //Act
+        var response = await _sut.UpdateSavedMovie(_request, _logger);
+        var result = (StatusCodeResult)response;
+
+        //Assert
+        Assert.Equal(200, result.StatusCode);
+    }
+    
 }

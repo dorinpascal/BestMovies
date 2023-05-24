@@ -70,4 +70,17 @@ public class SaveMovieEndpointTest
         Assert.Equal(401, result.StatusCode);
     }
     
+    [Fact]
+    public async Task SaveMovieEndpoint_ValidRequest_ReturnsSC200()
+    {
+        //Arrange
+        
+        //Act
+        var response = await _sut.SaveMovie(_request, _logger);
+        var result = (StatusCodeResult)response;
+
+        //Assert
+        Assert.Equal(200, result.StatusCode);
+    }
+    
 }
