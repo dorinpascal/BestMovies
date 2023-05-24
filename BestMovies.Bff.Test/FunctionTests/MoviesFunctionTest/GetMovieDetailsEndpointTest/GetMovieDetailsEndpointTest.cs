@@ -68,6 +68,7 @@ public class GetMovieDetailsEndpointTest
 
         //Assert
         Assert.Equal(200, result.StatusCode);
+        Assert.Equal(movieDetailsDto, result.Value);
 
     }
 }

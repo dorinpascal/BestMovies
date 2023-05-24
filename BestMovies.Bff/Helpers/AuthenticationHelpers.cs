@@ -2,7 +2,6 @@
 using BestMovies.Bff.Authorization;
 using BestMovies.Shared.Dtos.User;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
 
 namespace BestMovies.Bff.Helpers;
 

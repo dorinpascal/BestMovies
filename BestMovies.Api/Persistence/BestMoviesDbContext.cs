@@ -1,4 +1,3 @@
-using System;
 using System.Threading.Tasks;
 using BestMovies.Api.Persistence.Entity;
 using Microsoft.Data.SqlClient;

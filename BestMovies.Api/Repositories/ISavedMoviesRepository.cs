@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using BestMovies.Api.Persistence.Entity;
-using BestMovies.Shared.Dtos.Movies;
 
 namespace BestMovies.Api.Repositories;
 

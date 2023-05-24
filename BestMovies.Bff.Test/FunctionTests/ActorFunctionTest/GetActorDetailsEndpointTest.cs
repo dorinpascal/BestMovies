@@ -65,6 +65,7 @@ public class GetActorDetailsEndpointTest
 
         //Assert
         Assert.Equal(200, result.StatusCode);
+        Assert.Equal(actorDetailsDto, result.Value);
 
     }
     

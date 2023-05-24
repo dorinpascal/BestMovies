@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using BestMovies.Bff.Clients;
 using BestMovies.Shared.Dtos.User;
 using FluentValidation;
-using BestMovies.Shared.CustomExceptions;
 using BestMovies.Shared.Dtos.Movies;
 
 namespace BestMovies.Bff.Services.BestMoviesApi.Impl;
