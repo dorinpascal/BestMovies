@@ -43,7 +43,7 @@ public class ParameterTest
     }
     
     [Fact]
-    public async Task SaveMovieEndpoint_HeaderParameter_IsInvalid()
+    public async Task SaveMovieEndpoint_HeaderParameterIsInvalid_UnauthorizedResult()
     {
         //Arrange
         var function = new SavedMovieFunctions(_savedMovieService);
