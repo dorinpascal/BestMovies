@@ -10,7 +10,7 @@ public interface ISavedMoviesRepository
 
     Task UpdateSavedMovie(string userId, int movieId, bool isWatched);
 
-    Task<IEnumerable<SavedMovie>> GetSavedMoviesForUser(string userId, bool onlyUnwatched);
+    Task<IEnumerable<SavedMovie>> GetSavedMoviesForUser(string userId, bool? isWatched = null);
     
     Task<SavedMovie?> GetSavedMovieForUser(string userId, int movieId);
 

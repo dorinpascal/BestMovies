@@ -32,7 +32,7 @@ public class GetSavedMoviesEndpointTests
     public async Task GetSavedMoviesForUser_SavedMovieRepositoryThrowsError_ReturnsSC500()
     {
         //Arrange
-        _savedMoviesRepository.GetSavedMoviesForUser(Arg.Any<string>(), Arg.Any<bool>()).Throws(new Exception());
+        _savedMoviesRepository.GetSavedMoviesForUser(Arg.Any<string>()).Throws(new Exception());
 
         //Act
         var response = await _sut.GetSavedMovies(_request, "userId", _logger);
@@ -46,7 +46,7 @@ public class GetSavedMoviesEndpointTests
     public async Task GetSavedMoviesForUser_SavedMovieRepositoryThrowsArgumentException_ReturnsSC400()
     {
         //Arrange
-        _savedMoviesRepository.GetSavedMoviesForUser(Arg.Any<string>(), Arg.Any<bool>()).Throws(new ArgumentException());
+        _savedMoviesRepository.GetSavedMoviesForUser(Arg.Any<string>()).Throws(new ArgumentException());
 
         //Act
         var response = await _sut.GetSavedMovies(_request, "userId", _logger);
