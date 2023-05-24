@@ -28,7 +28,7 @@ public class GetSavedMoviesEndpointTest
     public async Task GetSavedMoviesEndpoint_BestMoviesApiNotAvailable_ReturnsSC500()
     {
         //Arrange
-        _savedMovieService.GetSavedMoviesForUser(Arg.Any<string>(), Arg.Any<bool>()).Throws(new Exception());
+        _savedMovieService.GetSavedMoviesForUser(Arg.Any<string>()).Throws(new Exception());
         
         //Act
         var response = await _sut.GetSavedMovies(_request, _logger);
@@ -56,7 +56,7 @@ public class GetSavedMoviesEndpointTest
     public async Task GetSavedMoviesEndpoint_ArgumentException_ReturnsSC400()
     {
         //Arrange
-        _savedMovieService.GetSavedMoviesForUser(Arg.Any<string>(), Arg.Any<bool>()).Throws(new ArgumentException("Bad request"));
+        _savedMovieService.GetSavedMoviesForUser(Arg.Any<string>()).Throws(new ArgumentException("Bad request"));
         
         //Act
         var response = await _sut.GetSavedMovies(_request, _logger);
@@ -78,7 +78,7 @@ public class GetSavedMoviesEndpointTest
                 "genre"
             }),
         };
-        _savedMovieService.GetSavedMoviesForUser(Arg.Any<string>(), Arg.Any<bool>()).Returns(movies);
+        _savedMovieService.GetSavedMoviesForUser(Arg.Any<string>()).Returns(movies);
         
         //Act
         var response = await _sut.GetSavedMovies(_request, _logger);
