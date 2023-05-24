@@ -55,14 +55,13 @@ public partial class BestMoviesApiClient
     
     public  async Task<IEnumerable<SavedMovieDto>> GetSavedMoviesForUser(string userId, bool? isWatched)
     {
-        var url = $"users/{userId}/savedMovies";
-
+        var url = new StringBuilder($"users/{userId}/savedMovies");
         if (isWatched is not null)
         {
-            url += $"?isWatched={isWatched}";
+            url.Append($"?isWatched={isWatched}");
         }
         
-        var responseMessage = await _client.GetAsync(url);
+        var responseMessage = await _client.GetAsync(url.ToString());
         if (!responseMessage.IsSuccessStatusCode)
         {
             await responseMessage.ThrowBasedOnStatusCode();
