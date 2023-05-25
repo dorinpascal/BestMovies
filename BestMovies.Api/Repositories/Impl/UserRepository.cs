@@ -29,9 +29,9 @@ public class UserRepository : IUserRepository
         await _dbContext.SaveChangesAsync();
     }
 
-    public async Task<User> GetUser(string userId)
+    public async Task<User> GetUser(string identifier)
     {
-        return await _dbContext.Users.FirstOrDefaultAsync(u => u.Id == userId) 
-               ?? throw new NotFoundException($"Cannot find user with id {userId}");
+        return await _dbContext.Users.FirstOrDefaultAsync(u => u.Id == identifier || u.Email == identifier) 
+               ?? throw new NotFoundException($"Cannot find user with identifier {identifier}");
     }
 }

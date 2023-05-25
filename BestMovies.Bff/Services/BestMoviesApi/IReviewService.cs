@@ -7,7 +7,7 @@ namespace BestMovies.Bff.Services.BestMoviesApi;
 
 public interface IReviewService
 {
-    Task AddReview(CreateUserDto user, CreateReviewDto review);
+    Task AddReview(UserDto user, CreateReviewDto review);
     Task<IEnumerable<ReviewDto>> GetReviewsForMovie(int movieId, bool onlyReviewsWithComments = false);
     Task<ReviewDto> GetUserReviewForMovie(int movieId, string userId);
 }

@@ -1,3 +1,3 @@
 namespace BestMovies.Shared.Dtos.User;
 
-public record UserDto(string Email);
+public record UserDto(string Id, string Email);

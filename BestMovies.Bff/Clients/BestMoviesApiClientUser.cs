@@ -1,4 +1,5 @@
-﻿using System.Net.Http;
+﻿using System;
+using System.Net.Http;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -9,7 +10,7 @@ namespace BestMovies.Bff.Clients;
 
 public partial class BestMoviesApiClient
 {
-    public async Task SaveUser(CreateUserDto user)
+    public async Task SaveUser(UserDto user)
     {
         var userJson = JsonSerializer.Serialize(user);
         var userStringContent = new StringContent(
@@ -24,15 +25,15 @@ public partial class BestMoviesApiClient
         }
     }
 
-    public async Task<UserDto> GetUser(string userId)
+    public async Task<UserDto> GetUser(string identifier)
     {
-        var responseMessage = await _client.GetAsync($"users/{userId}");
+        var responseMessage = await _client.GetAsync($"users/{identifier}");
         if (!responseMessage.IsSuccessStatusCode)
         {
             await responseMessage.ThrowBasedOnStatusCode();
         }
         
         var content = await responseMessage.ReadContentSafe();
-        return JsonSerializer.Deserialize<UserDto>(content)!;
+        return JsonSerializer.Deserialize<UserDto>(content, _jsonSerializerOptions)!;
     }
 }

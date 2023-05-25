@@ -27,10 +27,28 @@ public class SavedMoviesRepository : ISavedMoviesRepository
             throw new ApiException(await HttpClientHelper.ReadContentSafe(response), (int)response.StatusCode);
         }
     }
-
-    public async Task<IEnumerable<SearchMovieDto>> GetSavedMovies()
+    
+    public async Task<IEnumerable<SearchMovieDto>> GetSavedMoviesForUser(string emailAddress, bool? isWatched = null)
     {
-        using var response = await _client.GetAsync($"{BaseUri}?isWatched=false");
+        var baseUrl = $"api/users/{emailAddress}/savedMovies";
+        return await FetchSavedMovies(baseUrl, isWatched);
+    }
+
+    public async Task<IEnumerable<SearchMovieDto>> GetSavedMovies(bool? isWatched = null)
+    {
+        return await FetchSavedMovies(BaseUri, isWatched);
+    }
+
+    private async Task<IEnumerable<SearchMovieDto>> FetchSavedMovies(string baseUrl, bool? isWatched)
+    {
+        var url = new StringBuilder(baseUrl);
+
+        if (isWatched is not null)
+        {
+            url.Append($"?isWatched={isWatched.Value}");
+        }
+        
+        using var response = await _client.GetAsync(url.ToString());
         
         if (!response.IsSuccessStatusCode)
         {

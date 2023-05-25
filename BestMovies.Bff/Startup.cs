@@ -43,7 +43,7 @@ public class Startup : FunctionsStartup
         builder.Services.AddTransient<ITMDbWrapperService, TMDbWrapperService>();
         
         // Validators
-        builder.Services.AddScoped<IValidator<CreateUserDto>, CreateUserDtoValidator>();
+        builder.Services.AddScoped<IValidator<UserDto>, CreateUserDtoValidator>();
         builder.Services.AddScoped<IValidator<CreateReviewDto>, CreateReviewDtoValidator>();
         builder.Services.AddScoped<IValidator<SavedMovieDto>, SavedMovieDtoValidator>();
         

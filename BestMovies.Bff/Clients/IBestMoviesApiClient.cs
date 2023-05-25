@@ -10,8 +10,8 @@ public interface IBestMoviesApiClient
 {
     Task AddReview(string userId, CreateReviewDto review);
     Task<IEnumerable<ReviewDto>> GetReviewsForMovie(int movieId);
-    Task SaveUser(CreateUserDto user);
-    Task<UserDto> GetUser(string userId);
+    Task SaveUser(UserDto user);
+    Task<UserDto> GetUser(string identifier);
     Task SaveMovie(string userId, SavedMovieDto savedMovie);
     Task UpdateMovie(string userDtoId, SavedMovieDto savedMovieDto);
     Task DeleteMovie(string userDtoId, int savedMovieDto);

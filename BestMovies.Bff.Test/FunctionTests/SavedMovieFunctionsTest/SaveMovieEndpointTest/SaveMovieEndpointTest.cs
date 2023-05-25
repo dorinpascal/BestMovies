@@ -25,14 +25,15 @@ public class SaveMovieEndpointTest
         _request.Headers.Add("x-ms-client-principal","ewogICJpZGVudGl0eVByb3ZpZGVyIjogImdvb2dsZSIsCiAgInVzZXJJZCI6ICIxIiwKICAidXNlckRldGFpbHMiOiAiPGVtYWlsPkBnbWFpbCIsCiAgInVzZXJSb2xlcyI6IFsiYW5vbnltb3VzIiwgImF1dGhlbnRpY2F0ZWQiXQp9");
         _savedMovieService = Substitute.For<ISavedMovieService>();
         _logger = Substitute.For<MockLogger<SavedMovieFunctions>>();
-        _sut = new SavedMovieFunctions(_savedMovieService);
+        var userService = Substitute.For<IUserService>();
+        _sut = new SavedMovieFunctions(userService, _savedMovieService);
     }
     
     [Fact]
     public async Task SaveMovieEndpoint_BestMoviesApiNotAvailable_ReturnsSC500()
     {
         //Arrange
-        _savedMovieService.SaveMovie(Arg.Any<SavedMovieDto>(), Arg.Any<CreateUserDto>()).Throws(new Exception());
+        _savedMovieService.SaveMovie(Arg.Any<SavedMovieDto>(), Arg.Any<UserDto>()).Throws(new Exception());
         
         //Act
         var response = await _sut.SaveMovie(_request, _logger);
@@ -46,7 +47,7 @@ public class SaveMovieEndpointTest
     public async Task SaveMovieEndpoint_MovieAlreadyExists_DuplicateException()
     {
         //Arrange
-        _savedMovieService.SaveMovie(Arg.Any<SavedMovieDto>(), Arg.Any<CreateUserDto>()).Throws(new DuplicateException("Movie already exists"));
+        _savedMovieService.SaveMovie(Arg.Any<SavedMovieDto>(), Arg.Any<UserDto>()).Throws(new DuplicateException("Movie already exists"));
         
         //Act
         var response = await _sut.SaveMovie(_request, _logger);
