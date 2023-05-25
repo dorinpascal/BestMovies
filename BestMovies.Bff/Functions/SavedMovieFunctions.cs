@@ -189,16 +189,12 @@ public class SavedMovieFunctions
         {
             var isWatched = bool.TryParse(req.Query["isWatched"], out var result) ? result : default(bool?);
 
-            Console.WriteLine(userEmail);
-            
             var user = await _userService.GetUserOrDefault(userEmail);
             if (user is null)
             {
                 return ActionResultHelpers.NotFoundResult($"Cannot find user with email '{userEmail}'");
             }
 
-            Console.WriteLine(user);
-            
             var savedMovies = await _savedMovieService.GetSavedMoviesForUser(user.Id, isWatched);
             
             return new OkObjectResult(savedMovies);
