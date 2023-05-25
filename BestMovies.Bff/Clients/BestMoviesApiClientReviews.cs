@@ -51,4 +51,9 @@ public partial class BestMoviesApiClient
         var content = await responseMessage.ReadContentSafe();
         return JsonSerializer.Deserialize<ReviewDto>(content, _jsonSerializerOptions) ?? throw new NotFoundException("User review not found.");
     }
+    
+    public Task DeleteReview(int movieId, string userId)
+    {
+        return _client.DeleteAsync($"movies/{movieId}/reviews?userId={userId}");
+    }
 }

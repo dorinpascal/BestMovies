@@ -10,4 +10,5 @@ public interface IReviewService
     Task AddReview(UserDto user, CreateReviewDto review);
     Task<IEnumerable<ReviewDto>> GetReviewsForMovie(int movieId, bool onlyReviewsWithComments = false);
     Task<ReviewDto> GetUserReviewForMovie(int movieId, string userId);
+    Task DeleteReview(int movieId, string userId);
 }

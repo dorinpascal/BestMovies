@@ -47,4 +47,14 @@ public class ReviewRepository : IReviewRepository
             .FirstOrDefaultAsync();
         return review ?? throw new NotFoundException("User review not found.");
     }
+
+    public async Task DeleteReview(int movieId, string userId)
+    {
+        var review = _dbContext.Reviews.FirstOrDefault(r => r.MovieId == movieId && r.UserId == userId);
+        if (review is not null)
+        {
+            _dbContext.Reviews.Remove(review);
+            await _dbContext.SaveChangesAsync();
+        }
+    }
 }

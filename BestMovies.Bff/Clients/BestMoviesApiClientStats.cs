@@ -18,4 +18,5 @@ public partial class BestMoviesApiClient
         
         return JsonSerializer.Deserialize<MovieStatsDto>(content, _jsonSerializerOptions)!;
     }
+    
 }
