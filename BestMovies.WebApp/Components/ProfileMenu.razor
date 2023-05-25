@@ -14,7 +14,7 @@
             <MudText Typo="Typo.caption" Align="Align.Center">@_userInformation.ClientPrincipal.UserDetails</MudText>
         </div>
         
-        <MudMenuItem Href="@($"/{_userInformation.ClientPrincipal.UserDetails}/movies")">Watch List</MudMenuItem>
+        <MudMenuItem OnClick="NavigateToWatchList" OnTouch="NavigateToWatchList">Watch List</MudMenuItem>
         
         <MudMenuItem OnClick="Logout" OnTouch="Logout">Logout</MudMenuItem>
     }
@@ -34,6 +34,13 @@
     protected override async Task OnInitializedAsync()
     {
         _userInformation = await AuthService.RetrieveUserInformation();
+    }
+    
+    private void NavigateToWatchList()
+    {
+        if (_userInformation?.ClientPrincipal is null) return;
+        
+        Navigation.NavigateTo($"/{_userInformation.ClientPrincipal.UserDetails}/watch-list");
     }
 
     private void Login()

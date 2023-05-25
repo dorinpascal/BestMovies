@@ -30,7 +30,7 @@ public class SavedMoviesRepository : ISavedMoviesRepository
     
     public async Task<IEnumerable<SearchMovieDto>> GetSavedMoviesForUser(string emailAddress, bool? isWatched = null)
     {
-        var baseUrl = $"users/{emailAddress}/savedMovies";
+        var baseUrl = $"api/users/{emailAddress}/savedMovies";
         return await FetchSavedMovies(baseUrl, isWatched);
     }
 

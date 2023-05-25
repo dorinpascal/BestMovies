@@ -7,7 +7,7 @@ namespace BestMovies.Bff.Helpers;
 
 public static class AuthenticationHelpers
 {
-    public static bool AuthenticateUser(HttpRequest req, out CreateUserDto? user)
+    public static bool AuthenticateUser(HttpRequest req, out UserDto? user)
     {
         var claims = req.RetrieveClaimsPrincipal();
         var userId = claims.FindFirst(ClaimTypes.NameIdentifier)?.Value;
@@ -20,7 +20,7 @@ public static class AuthenticationHelpers
             }
         }
 
-        user = new CreateUserDto(
+        user = new UserDto(
             Id: userId,
             Email: claims.Identity!.Name!
         );

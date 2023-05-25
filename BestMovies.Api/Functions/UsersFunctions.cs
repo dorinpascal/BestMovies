@@ -31,14 +31,14 @@ public class UsersFunctions
 
     [FunctionName(nameof(SaveUser))]
     [OpenApiOperation(operationId: nameof(SaveUser), tags: new[] { Tag })]
-    [OpenApiRequestBody("application/json", typeof(CreateUserDto))]
+    [OpenApiRequestBody("application/json", typeof(UserDto))]
     [OpenApiResponseWithoutBody(statusCode: HttpStatusCode.OK, Description = "Successfully saved the user")]
     public async Task<IActionResult> SaveUser(
         [HttpTrigger(AuthorizationLevel.Admin, "post", Route = "users")] HttpRequest req, ILogger log)
     {
         try
         {
-            var userDto = JsonConvert.DeserializeObject<CreateUserDto>(await new StreamReader(req.Body).ReadToEndAsync());
+            var userDto = JsonConvert.DeserializeObject<UserDto>(await new StreamReader(req.Body).ReadToEndAsync());
             if (userDto is null)
             {
                 return ActionResultHelpers.BadRequestResult("Invalid parameters.");
@@ -64,7 +64,7 @@ public class UsersFunctions
     
     [FunctionName(nameof(GetUser))]
     [OpenApiOperation(operationId: nameof(GetUser), tags: new[] { Tag })]
-    [OpenApiParameter(name: "userId", In = ParameterLocation.Path, Required = true, Type = typeof(string), Description = "The user id or email.")]
+    [OpenApiParameter(name: "identifier", In = ParameterLocation.Path, Required = true, Type = typeof(string), Description = "The user id or email.")]
     [OpenApiResponseWithBody(statusCode: HttpStatusCode.OK, contentType: "application/json", bodyType: typeof(UserDto), Description = "Retrieve user based on the id")]
     public async Task<IActionResult> GetUser(
         [HttpTrigger(AuthorizationLevel.Admin, "get", Route = "users/{identifier}")] HttpRequest req, string identifier, ILogger log)

@@ -1,4 +1,4 @@
-@page "/{userEmail}/movies"
+@page "/{userEmail}/watch-list"
 
 @using BestMovies.WebApp.Repositories
 @using BestMovies.WebApp.Services
@@ -9,6 +9,17 @@
 @using EventHandler = BestMovies.WebApp.Services.EventHandler
 
 <PageTitle>Watch list</PageTitle>
+
+<MudContainer Class="d-flex flex-column gap-4 justify-center pa-4" MaxWidth="MaxWidth.Large">
+    <MudText Typo="Typo.h6" Align="Align.Start">User <strong>@UserEmail</strong>'s watch list</MudText>
+</MudContainer>
+
+@if (_isFetching)
+{
+    <MudContainer Class="d-flex flex-column gap-4 justify-center pa-4" MaxWidth="MaxWidth.ExtraExtraLarge">
+        <MudProgressLinear Indeterminate="true"/>
+    </MudContainer>
+}
 
 <MudContainer Class="d-flex flex-column gap-4 justify-center pa-4" MaxWidth="MaxWidth.ExtraExtraLarge">
     <MovieCardList Title="Want To Watch" Movies="_wantToWatchMovies" SkeletonCardsCount="5"/>
@@ -29,6 +40,12 @@
     [Inject]
     protected IAuthService AuthService { get; set; } = default!;
 
+    [Inject]
+    protected ISnackbar Snackbar { get; set; } = default!;
+    
+    [Inject]
+    protected NavigationManager Navigation { get; set; } = default!;
+
     [Parameter]
     public string UserEmail { get; set; } = default!;
 
@@ -38,11 +55,23 @@
     private UserInformation? _userInformation;
     private readonly EmailValidator _emailValidator = new();
 
+    private bool _isFetching;
+
     protected override async Task OnInitializedAsync()
     {
         EventHandler.OnChange += OnChange;
 
         if (!await ValidateUserEmail()) return;
+
+        await FetchData();
+    }
+
+    protected override async Task OnParametersSetAsync() => await FetchData();
+
+    private async Task FetchData()
+    {
+        _isFetching = true;
+        await InvokeAsync(StateHasChanged);
         
         var tasks = new[]
         {
@@ -52,7 +81,9 @@
         };
 
         await Task.WhenAll(tasks);
-        StateHasChanged();
+        
+        _isFetching = false;
+        await InvokeAsync(StateHasChanged);
     }
     
     private async Task FetchUserInfo() => _userInformation = await AuthService.RetrieveUserInformation();
@@ -64,7 +95,8 @@
         var result = await _emailValidator.ValidateAsync(UserEmail);
         if (!result.IsValid)
         {
-            Console.WriteLine("Invalid email");
+            Snackbar.Add("Invalid email address. Redirecting to home page.", Severity.Error);
+            Navigation.NavigateTo("/");
         }
 
         return result.IsValid;

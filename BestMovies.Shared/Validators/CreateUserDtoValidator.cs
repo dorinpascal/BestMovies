@@ -3,7 +3,7 @@ using FluentValidation;
 
 namespace BestMovies.Shared.Validators;
 
-public class CreateUserDtoValidator : AbstractValidator<CreateUserDto>
+public class CreateUserDtoValidator : AbstractValidator<UserDto>
 {
     public CreateUserDtoValidator()
     {

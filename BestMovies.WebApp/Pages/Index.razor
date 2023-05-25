@@ -86,7 +86,7 @@ else
         };
 
         await Task.WhenAll(tasks);
-        StateHasChanged();
+        await InvokeAsync(StateHasChanged);
     }
     
     private async Task FetchUserInfo() => _userInformation = await AuthService.RetrieveUserInformation();

@@ -20,7 +20,7 @@ public class AddReviewEndpointTests
         _sut = new ReviewFunctions(_reviewRepository);
         _request = new DefaultHttpRequest(new DefaultHttpContext())
         {
-            Body = new MemoryStream(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(new ReviewDto(1, new UserDto("email"), 1, "comment"))))
+            Body = new MemoryStream(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(new ReviewDto(1, new SimpleUserDto("email"), 1, "comment"))))
         };
     }
 

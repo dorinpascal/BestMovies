@@ -7,7 +7,7 @@ namespace BestMovies.Bff.Services.BestMoviesApi;
 
 public interface ISavedMovieService
 {
-    Task SaveMovie(SavedMovieDto savedMovieDto, CreateUserDto userDto);
+    Task SaveMovie(SavedMovieDto savedMovieDto, UserDto userDto);
     Task UpdateMovie(SavedMovieDto savedMovieDto, string userId);
     Task DeleteMovie(int movieId, string userId);
     Task<IEnumerable<SearchMovieDto>> GetSavedMoviesForUser(string userId, bool? isWatched = null);

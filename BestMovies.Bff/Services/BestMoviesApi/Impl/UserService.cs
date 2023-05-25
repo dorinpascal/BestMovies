@@ -11,15 +11,15 @@ namespace BestMovies.Bff.Services.BestMoviesApi.Impl;
 public class UserService : IUserService
 {
     private readonly IBestMoviesApiClient _client;
-    private readonly IValidator<CreateUserDto> _validator;
+    private readonly IValidator<UserDto> _validator;
 
-    public UserService(IBestMoviesApiClient client, IValidator<CreateUserDto> validator)
+    public UserService(IBestMoviesApiClient client, IValidator<UserDto> validator)
     {
         _client = client;
         _validator = validator;
     }
 
-    public async Task SaveUser(CreateUserDto user)
+    public async Task SaveUser(UserDto user)
     {
         var validationResult = await _validator.ValidateAsync(user);
         if (!validationResult.IsValid)
@@ -43,7 +43,7 @@ public class UserService : IUserService
         }
     }
 
-    public async Task<UserDto> GetUserOrCreate(CreateUserDto user)
+    public async Task<UserDto> GetUserOrCreate(UserDto user)
     {
         var existingUser = await GetUserOrDefault(user.Id);
         if (existingUser is not null)

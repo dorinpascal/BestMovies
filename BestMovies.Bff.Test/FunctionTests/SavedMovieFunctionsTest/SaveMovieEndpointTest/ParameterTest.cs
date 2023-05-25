@@ -68,7 +68,7 @@ public class ParameterTest
     {
         //Arrange
         var function = new SavedMovieFunctions(_userService, _savedMovieService);
-        _savedMovieService.SaveMovie(Arg.Any<SavedMovieDto>(), Arg.Any<CreateUserDto>()).Throws(new ArgumentException("SavedMovieDto is invalid"));
+        _savedMovieService.SaveMovie(Arg.Any<SavedMovieDto>(), Arg.Any<UserDto>()).Throws(new ArgumentException("SavedMovieDto is invalid"));
         
         var request = new DefaultHttpRequest(new DefaultHttpContext())
         {

@@ -5,7 +5,7 @@ namespace BestMovies.Bff.Services.BestMoviesApi;
 
 public interface IUserService
 {
-    Task SaveUser(CreateUserDto user);
+    Task SaveUser(UserDto user);
     Task<UserDto?> GetUserOrDefault(string identifier);
-    Task<UserDto> GetUserOrCreate(CreateUserDto user);
+    Task<UserDto> GetUserOrCreate(UserDto user);
 }

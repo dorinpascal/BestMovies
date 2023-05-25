@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
+using System.Text.Json;
 using System.Threading.Tasks;
 using BestMovies.Bff.Helpers;
 using BestMovies.Bff.Services.BestMoviesApi;
@@ -14,7 +15,6 @@ using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Azure.WebJobs.Extensions.OpenApi.Core.Attributes;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
-using Newtonsoft.Json;
 
 namespace BestMovies.Bff.Functions;
 
@@ -22,10 +22,12 @@ public class SavedMovieFunctions
 {
     private const string Tag = "Saved Movies";
 
+    private readonly IUserService _userService;
     private readonly ISavedMovieService _savedMovieService;
 
-    public SavedMovieFunctions(ISavedMovieService savedMovieService)
+    public SavedMovieFunctions(IUserService userService, ISavedMovieService savedMovieService)
     {
+        _userService = userService;
         _savedMovieService = savedMovieService;
     }
 
@@ -44,7 +46,7 @@ public class SavedMovieFunctions
                 return ActionResultHelpers.UnauthorizedResult();
             }
 
-            var savedMovie = JsonConvert.DeserializeObject<SavedMovieDto>(await new StreamReader(req.Body).ReadToEndAsync());
+            var savedMovie = JsonSerializer.Deserialize<SavedMovieDto>(await new StreamReader(req.Body).ReadToEndAsync());
             
             if (savedMovie is null)
             {
@@ -85,7 +87,7 @@ public class SavedMovieFunctions
                 return ActionResultHelpers.UnauthorizedResult();
             }
 
-            var savedMovie = JsonConvert.DeserializeObject<SavedMovieDto>(await new StreamReader(req.Body).ReadToEndAsync());
+            var savedMovie = JsonSerializer.Deserialize<SavedMovieDto>(await new StreamReader(req.Body).ReadToEndAsync());
             
             if (savedMovie is null)
             {
@@ -158,6 +160,46 @@ public class SavedMovieFunctions
             var isWatched = bool.TryParse(req.Query["isWatched"], out var result) ? result : default(bool?);
 
             var savedMovies = await _savedMovieService.GetSavedMoviesForUser(user!.Id, isWatched);
+            
+            return new OkObjectResult(savedMovies);
+        }
+       
+        catch (ArgumentException ex)
+        {
+            return ActionResultHelpers.BadRequestResult(ex.Message);
+        }
+        
+        catch (Exception ex)
+        {
+            log.LogError(ex, "Error occured while retrieving movies for user");
+            return ActionResultHelpers.ServerErrorResult();
+        }
+    }
+    
+    [FunctionName(nameof(GetSavedMoviesForUser))]
+    [OpenApiOperation(operationId: nameof(GetSavedMoviesForUser), tags: new[] {Tag})]
+    [OpenApiParameter(name: "isWatched", In = ParameterLocation.Query, Required = false, Type = typeof(bool), Description = "Return only watched/unwatched movies.")]
+    [OpenApiParameter(name: "userEmail", In = ParameterLocation.Path, Required = true, Type = typeof(string), Description = "The user's email")]
+    [OpenApiResponseWithBody(statusCode: HttpStatusCode.OK, contentType: "application/json", bodyType: typeof(IEnumerable<SearchMovieDto>), Description = "Returns the saved movies as searchMovie dto.")]
+    public async Task<IActionResult> GetSavedMoviesForUser(
+        [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "users/{userEmail}/savedMovies")]
+        HttpRequest req, string userEmail, ILogger log)
+    {
+        try
+        {
+            var isWatched = bool.TryParse(req.Query["isWatched"], out var result) ? result : default(bool?);
+
+            Console.WriteLine(userEmail);
+            
+            var user = await _userService.GetUserOrDefault(userEmail);
+            if (user is null)
+            {
+                return ActionResultHelpers.NotFoundResult($"Cannot find user with email '{userEmail}'");
+            }
+
+            Console.WriteLine(user);
+            
+            var savedMovies = await _savedMovieService.GetSavedMoviesForUser(user.Id, isWatched);
             
             return new OkObjectResult(savedMovies);
         }

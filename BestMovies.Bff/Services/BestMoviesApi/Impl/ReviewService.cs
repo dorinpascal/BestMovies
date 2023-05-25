@@ -25,7 +25,7 @@ public class ReviewService : IReviewService
         _validator = validator;
     }
     
-    public async Task AddReview(CreateUserDto user, CreateReviewDto review)
+    public async Task AddReview(UserDto user, CreateReviewDto review)
     {
         var validationResult = await _validator.ValidateAsync(review);
         if (!validationResult.IsValid)

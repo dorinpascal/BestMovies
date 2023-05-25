@@ -7,6 +7,7 @@ using BestMovies.WebApp.Repositories;
 using BestMovies.WebApp.Repositories.Impl;
 using BestMovies.WebApp.Services;
 using FluentValidation;
+using MudBlazor;
 using MudBlazor.Services;
 using EventHandler = BestMovies.WebApp.Services.EventHandler;
 
@@ -31,7 +32,18 @@ builder.Services.AddTransient<IStatisticsRepository, StatisticsRepository>();
 builder.Services.AddScoped<EventHandler>();
 
 // Mud Blazor
-builder.Services.AddMudServices();
+builder.Services.AddMudServices(config =>
+{
+    config.SnackbarConfiguration.PositionClass = Defaults.Classes.Position.BottomLeft;
+
+    config.SnackbarConfiguration.PreventDuplicates = false;
+    config.SnackbarConfiguration.NewestOnTop = false;
+    config.SnackbarConfiguration.ShowCloseIcon = true;
+    config.SnackbarConfiguration.VisibleStateDuration = 10000;
+    config.SnackbarConfiguration.HideTransitionDuration = 500;
+    config.SnackbarConfiguration.ShowTransitionDuration = 500;
+    config.SnackbarConfiguration.SnackbarVariant = Variant.Filled;
+});
 
 // Validators
 builder.Services.AddScoped<IValidator<CreateReviewDto>, CreateReviewDtoValidator>();

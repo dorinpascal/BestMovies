@@ -21,15 +21,17 @@
                 {
                     foreach (var review in _reviews)
                     {
-                        <div class="d-flex flex-row justify-start align-start gap-1 pa-3">
-                            <MudIcon Icon="@Icons.Material.Rounded.Person" Size="Size.Large"/>
+                        <div class="highlight-on-hover rounded pa-2" @onclick="() => NavigateToUserWatchList(review.SimpleUser.Email)">
+                            <div class="d-flex flex-row justify-start align-start gap-1 pa-3">
+                                <MudIcon Icon="@Icons.Material.Rounded.Person" Size="Size.Large"/>
                                 
-                            <div class="d-flex flex-column justify-start align-start gap-2">
-                                <MudText Typo="Typo.body1">@review.User.Email</MudText>
+                                <div class="d-flex flex-column justify-start align-start gap-2">
+                                    <MudText Typo="Typo.body1">@review.SimpleUser.Email</MudText>
                                 
-                                <MudRating ReadOnly="true" SelectedValue="@review.Rating"/>
+                                    <MudRating ReadOnly="true" SelectedValue="@review.Rating"/>
                                 
-                                <MudText Typo="Typo.body2">@review.Comment</MudText>
+                                    <MudText Typo="Typo.body2">@review.Comment</MudText>
+                                </div>
                             </div>
                         </div>
                     }
@@ -43,6 +45,9 @@
 
     [Inject]
     protected IReviewRepository ReviewRepository { get; set; } = default!;
+    
+    [Inject]
+    protected NavigationManager Navigation { get; set; } = default!;
 
     [CascadingParameter]
     public MudDialogInstance MudDialog { get; set; } = null!;
@@ -56,4 +61,6 @@
     {
         _reviews = await ReviewRepository.GetReviewsForMovie(MovieId, onlyReviewsWithComments: true);
     }
+
+    private void NavigateToUserWatchList(string userIdentifier) => Navigation.NavigateTo($"{userIdentifier}/watch-list");
 }

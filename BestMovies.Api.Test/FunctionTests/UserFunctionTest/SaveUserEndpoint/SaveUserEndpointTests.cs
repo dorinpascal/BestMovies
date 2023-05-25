@@ -21,7 +21,7 @@ public class SaveUserEndpointTests
         _sut = new UsersFunctions(_userRepository);
         _request = new DefaultHttpRequest(new DefaultHttpContext())
         {
-            Body = new MemoryStream(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(new CreateUserDto("id", "email"))))
+            Body = new MemoryStream(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(new UserDto("id", "email"))))
         };
     }
 

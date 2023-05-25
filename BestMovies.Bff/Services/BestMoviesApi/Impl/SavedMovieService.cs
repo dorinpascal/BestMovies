@@ -27,7 +27,7 @@ public class SavedMovieService : ISavedMovieService
         _userService = userService;
     }
 
-    public async Task SaveMovie(SavedMovieDto savedMovieDto, CreateUserDto userDto)
+    public async Task SaveMovie(SavedMovieDto savedMovieDto, UserDto userDto)
     {
         await ValidateSavedMovie(savedMovieDto);
         

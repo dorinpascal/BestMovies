@@ -33,7 +33,7 @@ public class SaveMovieEndpointTest
     public async Task SaveMovieEndpoint_BestMoviesApiNotAvailable_ReturnsSC500()
     {
         //Arrange
-        _savedMovieService.SaveMovie(Arg.Any<SavedMovieDto>(), Arg.Any<CreateUserDto>()).Throws(new Exception());
+        _savedMovieService.SaveMovie(Arg.Any<SavedMovieDto>(), Arg.Any<UserDto>()).Throws(new Exception());
         
         //Act
         var response = await _sut.SaveMovie(_request, _logger);
@@ -47,7 +47,7 @@ public class SaveMovieEndpointTest
     public async Task SaveMovieEndpoint_MovieAlreadyExists_DuplicateException()
     {
         //Arrange
-        _savedMovieService.SaveMovie(Arg.Any<SavedMovieDto>(), Arg.Any<CreateUserDto>()).Throws(new DuplicateException("Movie already exists"));
+        _savedMovieService.SaveMovie(Arg.Any<SavedMovieDto>(), Arg.Any<UserDto>()).Throws(new DuplicateException("Movie already exists"));
         
         //Act
         var response = await _sut.SaveMovie(_request, _logger);
