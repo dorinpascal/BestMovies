@@ -19,4 +19,5 @@ public interface IBestMoviesApiClient
     Task<SavedMovieDto> GetSavedMovie(string userId, int movieId);
     Task<ReviewDto> GetUserReviewForMovie(int movieId, string userId);
     Task<MovieStatsDto> GetMovieStats(int movieId);
+    Task DeleteReview(int movieId, string userId);
 }

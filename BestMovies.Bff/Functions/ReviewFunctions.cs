@@ -153,4 +153,46 @@ public class ReviewFunctions
             return ActionResultHelpers.ServerErrorResult();
         }
     }
+
+    [FunctionName(nameof(DeleteReview))]
+    [OpenApiOperation(operationId: nameof(DeleteReview), tags: new[] {Tag})]
+    [OpenApiParameter(name: "x-ms-client-principal", In = ParameterLocation.Header, Required = true, Type = typeof(string), Description = "base64 of ClientPrincipal")]
+    [OpenApiParameter(name: "movieId", In = ParameterLocation.Path, Required = true, Type = typeof(int), Description = "The movie id.")]
+    [OpenApiParameter(name: "userId", In = ParameterLocation.Query, Required = true, Type = typeof(string), Description = "The user id.")]
+    [OpenApiResponseWithoutBody(statusCode: HttpStatusCode.OK, Description = "Successfully deleted the review")]
+    public async Task<IActionResult> DeleteReview(
+        [HttpTrigger(AuthorizationLevel.Admin, "delete", Route = "movies/{movieId}/reviews")]
+        HttpRequest req, int movieId, ILogger log)
+    {
+        try
+        {
+            var claims = req.RetrieveClaimsPrincipal();
+            var userId = claims.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            if (claims.Identity is null || !claims.Identity.IsAuthenticated || string.IsNullOrEmpty(userId))
+            {
+                return ActionResultHelpers.UnauthorizedResult();
+            }
+
+            if (movieId <= 0)
+            {
+                return ActionResultHelpers.BadRequestResult(
+                    "Invalid value for the id. The value must be greater than 0");
+            }
+            
+            await _reviewService.DeleteReview(movieId, userId);
+
+            return new OkResult();
+        }
+        catch (ArgumentException ex)
+        {
+            return ActionResultHelpers.BadRequestResult(ex.Message);
+        }
+        catch (Exception ex)
+        {
+            log.LogError(ex, "Error occured while deleting the review for the movie with id {MovieId}", movieId);
+            return ActionResultHelpers.ServerErrorResult();
+        }
+    }
+    
 }

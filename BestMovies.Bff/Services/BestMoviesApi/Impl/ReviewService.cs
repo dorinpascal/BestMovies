@@ -67,4 +67,9 @@ public class ReviewService : IReviewService
         return await _client.GetUserReviewForMovie(movieId, userId);
        
     }
+
+    public Task DeleteReview(int movieId, string userId)
+    {
+        return _client.DeleteReview(movieId, userId);
+    }
 }
