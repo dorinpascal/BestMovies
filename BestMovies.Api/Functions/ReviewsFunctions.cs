@@ -151,7 +151,7 @@ public class ReviewFunctions
         }
         catch (Exception ex)
         {
-            log.LogError(ex, "Error occured while deleting the review for the movie with id {movieId}", movieId);
+            log.LogError(ex, "Error occured while deleting the review for the movie with id {MovieId}", movieId);
             return ActionResultHelpers.ServerErrorResult();
         }
     }
