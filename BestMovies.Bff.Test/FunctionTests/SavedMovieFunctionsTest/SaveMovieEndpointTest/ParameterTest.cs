@@ -10,6 +10,7 @@ namespace BestMovies.Bff.Test.FunctionTests.SavedMovieFunctionsTest.SaveMovieEnd
 public class ParameterTest
 {
     private readonly ISavedMovieService _savedMovieService;
+    private readonly IUserService _userService;
     private readonly MockLogger<SavedMovieFunctions> _logger;
 
     private const string InvalidHeader = "ewogICJpZGVudGl0eVByb3ZpZGVyIjogImdvb2dsZSIsCiAgInVzZXJJZCI6ICIiLAogICJ1c2VyRGV0YWlscyI6ICJlbWFpbCIsCiAgInVzZXJSb2xlcyI6IFsiYW5vbnltb3VzIiwgImF1dGhlbnRpY2F0ZWQiXQp9";
@@ -20,13 +21,14 @@ public class ParameterTest
     {
         _savedMovieService = Substitute.For<ISavedMovieService>();
         _logger = Substitute.For<MockLogger<SavedMovieFunctions>>();
+        _userService = Substitute.For<IUserService>();
     }
     
     [Fact]
     public async Task SaveMovieEndpoint_BodyParameter_IsNotProvided()
     {
         //Arrange
-        var function = new SavedMovieFunctions(_savedMovieService);
+        var function = new SavedMovieFunctions(_userService, _savedMovieService);
         var request = new DefaultHttpRequest(new DefaultHttpContext())
         {
             Body = new MemoryStream(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject("")))
@@ -46,7 +48,7 @@ public class ParameterTest
     public async Task SaveMovieEndpoint_HeaderParameterIsInvalid_UnauthorizedResult()
     {
         //Arrange
-        var function = new SavedMovieFunctions(_savedMovieService);
+        var function = new SavedMovieFunctions(_userService, _savedMovieService);
         var request = new DefaultHttpRequest(new DefaultHttpContext())
         {
             Body = new MemoryStream(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(new SavedMovieDto(1, false))))
@@ -65,7 +67,7 @@ public class ParameterTest
     public async Task SaveMoveEndpoint_SavedMovieDtoIsInvalid_ArgumentException()
     {
         //Arrange
-        var function = new SavedMovieFunctions(_savedMovieService);
+        var function = new SavedMovieFunctions(_userService, _savedMovieService);
         _savedMovieService.SaveMovie(Arg.Any<SavedMovieDto>(), Arg.Any<CreateUserDto>()).Throws(new ArgumentException("SavedMovieDto is invalid"));
         
         var request = new DefaultHttpRequest(new DefaultHttpContext())

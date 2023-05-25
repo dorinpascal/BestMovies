@@ -21,7 +21,8 @@ public class GetSavedMoviesEndpointTest
         _request.Headers.Add("x-ms-client-principal", ValidHeader);
         _savedMovieService = Substitute.For<ISavedMovieService>();
         _logger = Substitute.For<MockLogger<SavedMovieFunctions>>();
-        _sut = new SavedMovieFunctions(_savedMovieService);
+        var userService = Substitute.For<IUserService>();
+        _sut = new SavedMovieFunctions(userService, _savedMovieService);
     }
     
     [Fact]

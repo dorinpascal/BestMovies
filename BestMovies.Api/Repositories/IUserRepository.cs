@@ -6,5 +6,5 @@ namespace BestMovies.Api.Repositories;
 public interface IUserRepository
 {
     Task SaveUser(string userId, string email);
-    Task<User> GetUser(string userId);
+    Task<User> GetUser(string identifier);
 }

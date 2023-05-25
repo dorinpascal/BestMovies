@@ -31,11 +31,11 @@ public class UserService : IUserService
         await _client.SaveUser(user);
     }
 
-    public async Task<UserDto?> GetUserOrDefault(string userId)
+    public async Task<UserDto?> GetUserOrDefault(string identifier)
     {
         try
         {
-            return await _client.GetUser(userId);
+            return await _client.GetUser(identifier);
         }
         catch (NotFoundException)
         {

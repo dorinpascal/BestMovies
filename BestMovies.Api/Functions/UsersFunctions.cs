@@ -64,19 +64,19 @@ public class UsersFunctions
     
     [FunctionName(nameof(GetUser))]
     [OpenApiOperation(operationId: nameof(GetUser), tags: new[] { Tag })]
-    [OpenApiParameter(name: "userId", In = ParameterLocation.Path, Required = true, Type = typeof(string), Description = "The user id.")]
+    [OpenApiParameter(name: "userId", In = ParameterLocation.Path, Required = true, Type = typeof(string), Description = "The user id or email.")]
     [OpenApiResponseWithBody(statusCode: HttpStatusCode.OK, contentType: "application/json", bodyType: typeof(UserDto), Description = "Retrieve user based on the id")]
     public async Task<IActionResult> GetUser(
-        [HttpTrigger(AuthorizationLevel.Admin, "get", Route = "users/{userId}")] HttpRequest req, string userId, ILogger log)
+        [HttpTrigger(AuthorizationLevel.Admin, "get", Route = "users/{identifier}")] HttpRequest req, string identifier, ILogger log)
     { 
-        if (string.IsNullOrWhiteSpace(userId))
+        if (string.IsNullOrWhiteSpace(identifier))
         {
-            return ActionResultHelpers.BadRequestResult("Invalid value for the userId.");
+            return ActionResultHelpers.BadRequestResult("Invalid value for the user identifier.");
         }
         
         try
         {
-            var user = await _userRepository.GetUser(userId);
+            var user = await _userRepository.GetUser(identifier);
 
             return new OkObjectResult(user.ToDto());
         }

@@ -25,7 +25,8 @@ public class SaveMovieEndpointTest
         _request.Headers.Add("x-ms-client-principal","ewogICJpZGVudGl0eVByb3ZpZGVyIjogImdvb2dsZSIsCiAgInVzZXJJZCI6ICIxIiwKICAidXNlckRldGFpbHMiOiAiPGVtYWlsPkBnbWFpbCIsCiAgInVzZXJSb2xlcyI6IFsiYW5vbnltb3VzIiwgImF1dGhlbnRpY2F0ZWQiXQp9");
         _savedMovieService = Substitute.For<ISavedMovieService>();
         _logger = Substitute.For<MockLogger<SavedMovieFunctions>>();
-        _sut = new SavedMovieFunctions(_savedMovieService);
+        var userService = Substitute.For<IUserService>();
+        _sut = new SavedMovieFunctions(userService, _savedMovieService);
     }
     
     [Fact]

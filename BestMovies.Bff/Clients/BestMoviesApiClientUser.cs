@@ -24,9 +24,9 @@ public partial class BestMoviesApiClient
         }
     }
 
-    public async Task<UserDto> GetUser(string userId)
+    public async Task<UserDto> GetUser(string identifier)
     {
-        var responseMessage = await _client.GetAsync($"users/{userId}");
+        var responseMessage = await _client.GetAsync($"users/{identifier}");
         if (!responseMessage.IsSuccessStatusCode)
         {
             await responseMessage.ThrowBasedOnStatusCode();
