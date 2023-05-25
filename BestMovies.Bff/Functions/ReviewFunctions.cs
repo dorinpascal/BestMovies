@@ -123,10 +123,7 @@ public class ReviewFunctions
     {
         try
         {
-            var claims = req.RetrieveClaimsPrincipal();
-            var userId = claims.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-
-            if (claims.Identity is null || !claims.Identity.IsAuthenticated || string.IsNullOrEmpty(userId))
+            if (!AuthenticationHelpers.AuthenticateUser(req, out var user)) 
             {
                 return ActionResultHelpers.UnauthorizedResult();
             }
@@ -136,7 +133,7 @@ public class ReviewFunctions
                 return ActionResultHelpers.BadRequestResult("Invalid value for the id. The value must be greater than 0");
             }
 
-            var review = await _reviewService.GetUserReviewForMovie(movieId,userId);
+            var review = await _reviewService.GetUserReviewForMovie(movieId, user!.Id);
             return new OkObjectResult(review);
         }
         catch(NotFoundException ex)
@@ -158,7 +155,6 @@ public class ReviewFunctions
     [OpenApiOperation(operationId: nameof(DeleteReview), tags: new[] {Tag})]
     [OpenApiParameter(name: "x-ms-client-principal", In = ParameterLocation.Header, Required = true, Type = typeof(string), Description = "base64 of ClientPrincipal")]
     [OpenApiParameter(name: "movieId", In = ParameterLocation.Path, Required = true, Type = typeof(int), Description = "The movie id.")]
-    [OpenApiParameter(name: "userId", In = ParameterLocation.Query, Required = true, Type = typeof(string), Description = "The user id.")]
     [OpenApiResponseWithoutBody(statusCode: HttpStatusCode.OK, Description = "Successfully deleted the review")]
     public async Task<IActionResult> DeleteReview(
         [HttpTrigger(AuthorizationLevel.Admin, "delete", Route = "movies/{movieId}/reviews")]
@@ -166,10 +162,8 @@ public class ReviewFunctions
     {
         try
         {
-            var claims = req.RetrieveClaimsPrincipal();
-            var userId = claims.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
-            if (claims.Identity is null || !claims.Identity.IsAuthenticated || string.IsNullOrEmpty(userId))
+            if (!AuthenticationHelpers.AuthenticateUser(req, out var user)) 
             {
                 return ActionResultHelpers.UnauthorizedResult();
             }
@@ -180,7 +174,7 @@ public class ReviewFunctions
                     "Invalid value for the id. The value must be greater than 0");
             }
             
-            await _reviewService.DeleteReview(movieId, userId);
+            await _reviewService.DeleteReview(movieId, user!.Id);
 
             return new OkResult();
         }
