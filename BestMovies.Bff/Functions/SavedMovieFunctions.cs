@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
-using System.Text.Json;
 using System.Threading.Tasks;
 using BestMovies.Bff.Helpers;
 using BestMovies.Bff.Services.BestMoviesApi;
@@ -15,6 +14,7 @@ using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Azure.WebJobs.Extensions.OpenApi.Core.Attributes;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
+using Newtonsoft.Json;
 
 namespace BestMovies.Bff.Functions;
 
@@ -46,7 +46,7 @@ public class SavedMovieFunctions
                 return ActionResultHelpers.UnauthorizedResult();
             }
 
-            var savedMovie = JsonSerializer.Deserialize<SavedMovieDto>(await new StreamReader(req.Body).ReadToEndAsync());
+            var savedMovie = JsonConvert.DeserializeObject<SavedMovieDto>(await new StreamReader(req.Body).ReadToEndAsync());
             
             if (savedMovie is null)
             {
@@ -87,7 +87,7 @@ public class SavedMovieFunctions
                 return ActionResultHelpers.UnauthorizedResult();
             }
 
-            var savedMovie = JsonSerializer.Deserialize<SavedMovieDto>(await new StreamReader(req.Body).ReadToEndAsync());
+            var savedMovie = JsonConvert.DeserializeObject<SavedMovieDto>(await new StreamReader(req.Body).ReadToEndAsync());
             
             if (savedMovie is null)
             {
