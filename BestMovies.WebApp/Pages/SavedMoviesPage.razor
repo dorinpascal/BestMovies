@@ -1,0 +1,58 @@
+@page "/{userId}/movies"
+
+@using BestMovies.WebApp.Repositories
+@using BestMovies.WebApp.Services
+@using BestMovies.Shared.Dtos.Movies
+@using BestMovies.WebApp.Authorization
+@using BestMovies.WebApp.Components
+@using EventHandler = BestMovies.WebApp.Services.EventHandler
+
+<PageTitle>Watch list</PageTitle>
+
+<MudContainer Class="d-flex flex-column gap-4 justify-center pa-4" MaxWidth="MaxWidth.ExtraExtraLarge">
+    <MovieCardList Title="Want To Watch" Movies="_wantToWatchMovies" SkeletonCardsCount="5"/>
+</MudContainer>
+
+<MudContainer Class="d-flex flex-column gap-4 justify-center pa-4" MaxWidth="MaxWidth.ExtraExtraLarge">
+    <MovieCardList Title="Watched" Movies="_watchedMovies" SkeletonCardsCount="5"/>
+</MudContainer>
+
+
+@code {
+    [Inject]
+    protected EventHandler EventHandler { get; set; } = default!;
+
+    [Inject]
+    protected ISavedMoviesRepository SavedMoviesRepository { get; set; } = default!;
+
+    [Inject]
+    protected IAuthService AuthService { get; set; } = default!;
+    
+    [Parameter]
+    public string UserId { get; set; } = default!;
+
+    private IEnumerable<SearchMovieDto>? _watchedMovies;
+    private IEnumerable<SearchMovieDto>? _wantToWatchMovies;
+
+    private UserInformation? _userInformation;
+
+    protected override async Task OnInitializedAsync()
+    {
+        //EventHandler.OnChange += OnChange;
+
+        var tasks = new[]
+        {
+            FetchWatchedMovies(),
+            FetchWantToWatchMovies(),
+            FetchUserInfo()
+        };
+
+        await Task.WhenAll(tasks);
+        StateHasChanged();
+    }
+    
+    private async Task FetchUserInfo() => _userInformation = await AuthService.RetrieveUserInformation();
+    private async Task FetchWatchedMovies() => _watchedMovies = await SavedMoviesRepository.GetSavedMovies();
+    private async Task FetchWantToWatchMovies() => _wantToWatchMovies = await SavedMoviesRepository.GetSavedMovies();
+
+}
