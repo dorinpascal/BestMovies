@@ -13,7 +13,10 @@
         <div class="px-4">
             <MudText Typo="Typo.caption" Align="Align.Center">@_userInformation.ClientPrincipal.UserDetails</MudText>
         </div>
-        <MudMenuItem OnClick="Logout" OnTouch="Logout" >Logout</MudMenuItem>
+        
+        <MudMenuItem Href="@($"/{_userInformation.ClientPrincipal.UserDetails}/movies")">Watch List</MudMenuItem>
+        
+        <MudMenuItem OnClick="Logout" OnTouch="Logout">Logout</MudMenuItem>
     }
     
 </MudMenu>

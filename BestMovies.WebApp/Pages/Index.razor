@@ -20,7 +20,7 @@
 @if (_userInformation?.ClientPrincipal is not null)
 {
     <MudContainer Class="d-flex flex-column gap-4 justify-center pa-4" MaxWidth="MaxWidth.ExtraExtraLarge">
-        <MovieCardList Title="Plan to watch" Movies="_savedMovies" ShowMessageIfEmpty="true" SkeletonCardsCount="4"/>
+        <MovieCardList Title="Plan to watch" Movies="_savedMovies" ShowMessageIfEmpty="true" MessageIfEmpty="You did not add any movie to your list yet." SkeletonCardsCount="4"/>
     </MudContainer>
     
 }
@@ -94,7 +94,7 @@ else
 
     private async Task FetchSavedMovies()
     {
-        _savedMovies = await SavedMoviesRepository.GetSavedMovies();
+        _savedMovies = await SavedMoviesRepository.GetSavedMovies(isWatched: false);
         await InvokeAsync(StateHasChanged);
     }
 

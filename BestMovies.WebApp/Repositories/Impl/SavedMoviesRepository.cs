@@ -28,9 +28,16 @@ public class SavedMoviesRepository : ISavedMoviesRepository
         }
     }
 
-    public async Task<IEnumerable<SearchMovieDto>> GetSavedMovies()
+    public async Task<IEnumerable<SearchMovieDto>> GetSavedMovies(bool? isWatched = null)
     {
-        using var response = await _client.GetAsync($"{BaseUri}?isWatched=false");
+        var url = new StringBuilder(BaseUri);
+
+        if (isWatched is not null)
+        {
+            url.Append($"?isWatched={isWatched.Value}");
+        }
+        
+        using var response = await _client.GetAsync(url.ToString());
         
         if (!response.IsSuccessStatusCode)
         {

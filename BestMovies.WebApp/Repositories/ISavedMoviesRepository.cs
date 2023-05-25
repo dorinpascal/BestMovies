@@ -6,6 +6,6 @@ public interface ISavedMoviesRepository
 {
     Task SaveMovie(SavedMovieDto movieDto);
     Task<SavedMovieDto?> GetSavedMovie(int movieId);
-    Task<IEnumerable<SearchMovieDto>> GetSavedMovies();
+    Task<IEnumerable<SearchMovieDto>> GetSavedMovies(bool? isWatched = null);
     Task RemoveMovie(int movieId);
 }

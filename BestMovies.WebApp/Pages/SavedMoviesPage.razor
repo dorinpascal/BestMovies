@@ -52,7 +52,7 @@
     }
     
     private async Task FetchUserInfo() => _userInformation = await AuthService.RetrieveUserInformation();
-    private async Task FetchWatchedMovies() => _watchedMovies = await SavedMoviesRepository.GetSavedMovies();
-    private async Task FetchWantToWatchMovies() => _wantToWatchMovies = await SavedMoviesRepository.GetSavedMovies();
+    private async Task FetchWatchedMovies() => _watchedMovies = await SavedMoviesRepository.GetSavedMovies(isWatched: true);
+    private async Task FetchWantToWatchMovies() => _wantToWatchMovies = await SavedMoviesRepository.GetSavedMovies(isWatched: false);
 
 }
