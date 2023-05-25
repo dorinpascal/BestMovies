@@ -36,10 +36,10 @@ public class SavedMoviesRepository : ISavedMoviesRepository
 
     public async Task<IEnumerable<SearchMovieDto>> GetSavedMovies(bool? isWatched = null)
     {
-        return await FetchSavedMovies(BaseUri);
+        return await FetchSavedMovies(BaseUri, isWatched);
     }
 
-    private async Task<IEnumerable<SearchMovieDto>> FetchSavedMovies(string baseUrl, bool? isWatched = null)
+    private async Task<IEnumerable<SearchMovieDto>> FetchSavedMovies(string baseUrl, bool? isWatched)
     {
         var url = new StringBuilder(baseUrl);
 
