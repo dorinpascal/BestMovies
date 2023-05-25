@@ -14,36 +14,27 @@
 
 <MudContainer Class="d-flex flex-column gap-4 justify-center pa-4" MaxWidth="MaxWidth.ExtraExtraLarge">
     <MovieCardList Title="Popular now" Movies="_popularMovies" SkeletonCardsCount="5"/>
-</MudContainer>
-
-
-@if (_userInformation?.ClientPrincipal is not null)
-{
-    <MudContainer Class="d-flex flex-column gap-4 justify-center pa-4" MaxWidth="MaxWidth.ExtraExtraLarge">
+    
+    @if (_userInformation?.ClientPrincipal is not null)
+    {
         <MovieCardList Title="Want to watch" Movies="_savedMovies" ShowMessageIfEmpty="true" MessageIfEmpty="You did not add any movie to your list yet." SkeletonCardsCount="4"/>
-    </MudContainer>
+    }
     
-}
-    
-
-@if (_moviesPerGenre is null)
-{
-    foreach (var genre in _skeletonGenres)
+    @if (_moviesPerGenre is null)
     {
-        <MudContainer Class="d-flex flex-column gap-4 justify-center pa-4" MaxWidth="MaxWidth.ExtraExtraLarge">
+        foreach (var genre in _skeletonGenres)
+        {
             <MovieCardList Title= "@genre" SkeletonCardsCount="5"/>
-        </MudContainer>
+        }
     }
-}
-else
-{
-    foreach (var moviePerGenre in _moviesPerGenre)
+    else
     {
-        <MudContainer Class="d-flex flex-column gap-4 justify-center pa-4" MaxWidth="MaxWidth.ExtraExtraLarge">
+        foreach (var moviePerGenre in _moviesPerGenre)
+        {
             <MovieCardList Title= "@moviePerGenre.genre" Movies="@moviePerGenre.movies" SkeletonCardsCount="5"/>
-        </MudContainer>
+        }
     }
-}
+</MudContainer>
 
 
 @code {
