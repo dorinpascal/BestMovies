@@ -12,8 +12,8 @@
 
 <PageTitle>Watch list</PageTitle>
 
-<MudContainer Class="d-flex flex-column gap-4 justify-center pa-4" MaxWidth="MaxWidth.Large">
-    <MudText Typo="Typo.h6" Align="Align.Start">User <strong>@UserEmail</strong>'s watch list</MudText>
+<MudContainer Class="d-flex flex-column gap-4 justify-center pa-4 mb-4" MaxWidth="MaxWidth.Large">
+    <MudText Typo="Typo.h5" Align="Align.Start">User <strong>@UserEmail</strong>'s watch list</MudText>
 </MudContainer>
 
 <MudContainer Class="d-flex flex-column gap-4 justify-center pa-4" MaxWidth="MaxWidth.ExtraExtraLarge">
@@ -26,7 +26,7 @@
     
     <MovieCardList Title="Watched" Movies="_watchedMovies" ShowMessageIfEmpty="true" SkeletonCardsCount="5">
         <MovieCardTemplate>
-            <WatchedMovieCard LoadLazy="@context.LoadLazy" Movie="@context.Movie" Width="@context.Width" Height="@context.Height"/>
+            <WatchedMovieCard @key="@context.Movie?.Id" UserEmail="@UserEmail" LoadLazy="@context.LoadLazy" Movie="@context.Movie" Width="@context.Width" Height="@context.Height"/>
         </MovieCardTemplate>
     </MovieCardList>
 </MudContainer>

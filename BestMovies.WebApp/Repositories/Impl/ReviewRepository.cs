@@ -52,4 +52,16 @@ public class ReviewRepository : IReviewRepository
 
         return null;
     }
+    
+    public async Task<ReviewDto?> GetUserMovieReview(int movieId, string userEmail)
+    {
+        using var response = await _client.GetAsync($"api/users/{userEmail}/movies/{movieId}/review");
+
+        if (response.IsSuccessStatusCode)
+        {
+            return await HttpClientHelper.ReadFromJsonSafe<ReviewDto>(response);
+        }
+
+        return null;
+    }
 }

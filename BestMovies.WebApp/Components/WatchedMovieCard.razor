@@ -1,6 +1,9 @@
 @using BestMovies.Shared.Dtos.Movies
 @using BestMovies.Shared.Dtos.Review
 @using BestMovies.Shared.Dtos.User
+@using BestMovies.WebApp.Authorization
+@using BestMovies.WebApp.Repositories
+@using BestMovies.WebApp.Services
 @using EventHandler = BestMovies.WebApp.Services.EventHandler
 
 <MudCard Outlined="true" Class="bump-up-on-hover" @onclick="OpenMovieDetails">
@@ -39,9 +42,13 @@
         else
         {
             <div class="d-flex flex-row flex-wrap gap-2 justify-center align-center" style="@($"max-width: {Width}px;")">
-                @if (_review is null)
+                @if (_isFetching)
                 {
                     <MudSkeleton SkeletonType="SkeletonType.Rectangle" Class="rounded" Animation="Animation.Wave" Height="35px" Width="@($"{Width}px")"/>
+                }
+                else if (_review is null)
+                {
+                    //
                 }
                 else
                 {
@@ -62,6 +69,12 @@
     [Inject]
     protected IDialogService DialogService { get; set; } = default!;
 
+    [Inject]
+    protected IReviewRepository ReviewRepository { get; set; } = default!;
+    
+    [Inject]
+    protected IAuthService AuthService { get; set; } = default!;
+
     [Parameter]
     public bool LoadLazy { get; set; }
         
@@ -74,13 +87,24 @@
     [Parameter]
     public SearchMovieDto? Movie { get; set; }
 
-    private ReviewDto? _review;
-    private bool _isFetching;
-    private bool _showReview;
+    [Parameter]
+    public string UserEmail { get; set; } = default!;
 
+    private UserInformation? _userInformation;
+    private ReviewDto? _review;
+    private bool _showReview;
+    private bool _isFetching;
+    
     protected override async Task OnInitializedAsync()
     {
-       
+        _userInformation = await AuthService.RetrieveUserInformation();
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (!_showReview) return;
+        
+        await FetchReview();
     }
 
     private async Task OpenMovieDetails()
@@ -100,12 +124,12 @@
     private async Task FetchReview()
     {
         _showReview = true;
+        _isFetching = true;
         await InvokeAsync(StateHasChanged);
+
+        _review = await ReviewRepository.GetUserMovieReview(Movie!.Id, UserEmail);
         
-        await Task.Delay(2500);
-        _review = new ReviewDto(011, new SimpleUserDto("email@google.com"), 5, "Daaamn good movi ");
-        
-        //_showReview = false;
+        _isFetching = false;
         await InvokeAsync(StateHasChanged);
     }
 }
