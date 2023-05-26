@@ -50,7 +50,7 @@ try
             Id: f.Random.Uuid().ToString(),
             Email: f.Person.Email)
         );
-    
+
     var faker = new Faker();
 
     var popularMovies = await movieService.GetPopularMovies();
@@ -72,7 +72,7 @@ try
             Log.Error("User with id {UserId} already present. Spiking to the next user", user.Id);
             continue;
         }
-        
+
         foreach (var movie in popularMovies ?? Enumerable.Empty<SearchMovieDto>())
         {
             if (Math.Abs(faker.Random.GaussianDecimal(0, 1)) > 2)
@@ -81,7 +81,7 @@ try
                 Log.Warning("Skipping movie {MovieTitle}", movie.Title);
                 continue;
             }
-            
+
             if (Math.Abs(faker.Random.GaussianDecimal(0, 1)) > 1)
             {
                 // if outside of 1∂ -> set movie as want to watch
@@ -92,15 +92,15 @@ try
 
             var movieDetails = await movieService.GetMovieDetails(movie.Id);
             var avgVote = Math.Round(movieDetails.VoteAverage / 2, 0, MidpointRounding.AwayFromZero);
-            
-            var rating = faker.Random.GaussianInt((int)avgVote, 1);
+
+            var rating = faker.Random.GaussianInt((int) avgVote, 1);
 
             var review = new CreateReviewDto(
-                    MovieId: movie.Id,
-                    Rating: rating,
-                    Comment: ReviewCommentGenerator.Generate(faker, rating)
-                );                
-            
+                MovieId: movie.Id,
+                Rating: rating,
+                Comment: ReviewCommentGenerator.Generate(faker, rating)
+            );
+
             Log.Verbose("Add review {Review} for movie {MovieTitle}", review, movie.Title);
             await bestMoviesApiClient.SaveMovie(user.Id, new SavedMovieDto(movie.Id, true));
             await bestMoviesApiClient.AddReview(user.Id, review);
@@ -112,5 +112,9 @@ try
 catch (Exception e)
 {
     Log.Information(e, "Error during generation");
+}
+finally
+{
+    Log.CloseAndFlush();
 }
 
