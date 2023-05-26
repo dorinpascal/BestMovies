@@ -12,10 +12,20 @@ public static class ReviewCommentGenerator
             // if outside of 1.7∂ -> set comment as null
             return null;
         }
-
-        var isPositive = rating >= 3;
-        var reviewDescription = faker.PickRandom(isPositive ? PositiveDescriptions : NegativeDescriptions);
-        var phrase = faker.PickRandom(isPositive ? PositivePhrases : NegativePhrases);
+        
+        var reviewDescription = rating switch
+        {
+            < 3 => faker.PickRandom(NegativeDescriptions),
+            3 => faker.PickRandom(NeutralDescriptions),
+            > 3 => faker.PickRandom(PositiveDescriptions)
+        };
+        
+        var phrase = rating switch
+        {
+            < 3 => faker.PickRandom(NegativePhrases),
+            3 => faker.PickRandom(NeutralPhrases),
+            > 3 => faker.PickRandom(PositivePhrases)
+        };
            
         return string.Format(phrase, reviewDescription);
       
@@ -34,6 +44,15 @@ public static class ReviewCommentGenerator
         "The visuals were {0} and created a stunning atmosphere.",
         "The soundtrack was {0} and added depth to the movie.",
         "The dialogue was {0} and filled with memorable lines."
+    };
+    
+    private static readonly string[] NeutralPhrases = {
+        "It was an {0} movie.",
+        "The movie had its ups and downs.",
+        "The overall experience was {0}.",
+        "It didn't leave a strong impression on me. It was {0}",
+        "It was {0}.",
+        "It had some enjoyable moments."
     };
     
     private static readonly string[] NegativePhrases = {
@@ -64,6 +83,17 @@ public static class ReviewCommentGenerator
         "riveting",
         "masterfully crafted",
         "heartwarming"
+    };
+    
+    private static readonly string[] NeutralDescriptions = {
+        "decent",
+        "average",
+        "balanced",
+        "adequate",
+        "moderate",
+        "passable",
+        "unremarkable",
+        "indifferent"
     };
         
     private static readonly string[] NegativeDescriptions = {
