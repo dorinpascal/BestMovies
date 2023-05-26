@@ -11,7 +11,7 @@
         <CardHeaderContent>
             @if (Movie is null)
             {
-                <MudSkeleton SkeletonType="SkeletonType.Rectangle" Animation="Animation.Wave" Height="30px" Width="@($"{Width}px")" />
+                <MudSkeleton SkeletonType="SkeletonType.Rectangle" Animation="Animation.Wave" Height="30px" Width="80%" />
             }
             else
             {
@@ -44,7 +44,7 @@
             <div class="d-flex flex-row flex-wrap gap-2 justify-center align-center" style="@($"max-width: {Width}px;")">
                 @if (_isFetching)
                 {
-                    <MudSkeleton SkeletonType="SkeletonType.Rectangle" Class="rounded" Animation="Animation.Wave" Height="35px" Width="@($"{Width}px")"/>
+                    <MudSkeleton SkeletonType="SkeletonType.Rectangle" Class="rounded" Animation="Animation.Wave" Height="35px" Width="60%"/>
                 }
                 else if (_review is null)
                 {
