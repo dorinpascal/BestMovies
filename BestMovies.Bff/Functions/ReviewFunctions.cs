@@ -25,10 +25,12 @@ public class ReviewFunctions
     private const string Tag = "Review";
 
     private readonly IReviewService _reviewService;
+    private readonly IUserService _userService;
 
-    public ReviewFunctions(IReviewService reviewService)
+    public ReviewFunctions(IReviewService reviewService, IUserService userService)
     {
         _reviewService = reviewService;
+        _userService = userService;
     }
 
     [FunctionName(nameof(AddReview))]
@@ -91,7 +93,7 @@ public class ReviewFunctions
             {
                 return ActionResultHelpers.BadRequestResult("Invalid value for the id. The value must be greater than 0");
             }
-            
+
             if (!bool.TryParse(req.Query["onlyReviewsWithComments"], out var onlyReviewsWithComments))
             {
                 onlyReviewsWithComments = false;
@@ -115,11 +117,50 @@ public class ReviewFunctions
 
     [FunctionName(nameof(GetUserReviewForMovie))]
     [OpenApiOperation(operationId: nameof(GetUserReviewForMovie), tags: new[] { Tag })]
+    [OpenApiParameter(name: "movieId", In = ParameterLocation.Path, Required = true, Type = typeof(int), Description = "The movie id.")]
+    [OpenApiParameter(name: "userEmail", In = ParameterLocation.Path, Required = true, Type = typeof(string), Description = "The user's email address.")]
+    [OpenApiResponseWithBody(statusCode: HttpStatusCode.OK, contentType: "application/json", bodyType: typeof(ReviewDto), Description = "Returns the user review for a movie. ")]
+    public async Task<IActionResult> GetUserReviewForMovie(
+       [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "users/{userEmail}/movies/{movieId}/review")] HttpRequest req, string userEmail, int movieId, ILogger log)
+    {
+        try
+        {
+            if (movieId <= 0)
+            {
+                return ActionResultHelpers.BadRequestResult("Invalid value for the id. The value must be greater than 0");
+            }
+            
+            var user = await _userService.GetUserOrDefault(userEmail);
+            if (user is null)
+            {
+                return ActionResultHelpers.NotFoundResult($"Cannot find user with email '{userEmail}'");
+            }
+
+            var review = await _reviewService.GetUserReviewForMovie(movieId, user!.Id);
+            return new OkObjectResult(review);
+        }
+        catch(NotFoundException ex)
+        {
+            return ActionResultHelpers.NotFoundResult(ex.Message);
+        }
+        catch (ArgumentException ex)
+        {
+            return ActionResultHelpers.BadRequestResult(ex.Message);
+        }
+        catch (Exception ex)
+        {
+            log.LogError(ex, "Error occured while retrieving the review for the movie with id {MovieId}", movieId);
+            return ActionResultHelpers.ServerErrorResult();
+        }
+    }
+    
+    [FunctionName(nameof(GetReviewForMovie))]
+    [OpenApiOperation(operationId: nameof(GetReviewForMovie), tags: new[] { Tag })]
     [OpenApiParameter(name: "x-ms-client-principal", In = ParameterLocation.Header, Required = true, Type = typeof(string), Description = "base64 of ClientPrincipal")]
     [OpenApiParameter(name: "movieId", In = ParameterLocation.Path, Required = true, Type = typeof(int), Description = "The movie id.")]
     [OpenApiResponseWithBody(statusCode: HttpStatusCode.OK, contentType: "application/json", bodyType: typeof(ReviewDto), Description = "Returns the user review for a movie. ")]
-    public async Task<IActionResult> GetUserReviewForMovie(
-       [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "movies/{movieId}/review")] HttpRequest req, int movieId, ILogger log)
+    public async Task<IActionResult> GetReviewForMovie(
+        [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "movies/{movieId}/review")] HttpRequest req, int movieId, ILogger log)
     {
         try
         {
@@ -170,8 +211,7 @@ public class ReviewFunctions
 
             if (movieId <= 0)
             {
-                return ActionResultHelpers.BadRequestResult(
-                    "Invalid value for the id. The value must be greater than 0");
+                return ActionResultHelpers.BadRequestResult("Invalid value for the id. The value must be greater than 0");
             }
             
             await _reviewService.DeleteReview(movieId, user!.Id);

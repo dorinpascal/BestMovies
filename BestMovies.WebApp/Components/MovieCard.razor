@@ -1,36 +1,46 @@
 @using BestMovies.Shared.Dtos.Movies
-@using BestMovies.WebApp.Repositories
-@using System.Runtime.InteropServices
 @using EventHandler = BestMovies.WebApp.Services.EventHandler
 
-<MudCard Outlined="true">
-    <div style="position: relative" class="d-flex justify-center rounded">
+<MudCard Outlined="true" Class="bump-up-on-hover" @onclick="OpenMovieDetails">
+    <MudCardHeader>
+        <CardHeaderContent>
+            @if (Movie is null)
+            {
+                <MudSkeleton SkeletonType="SkeletonType.Rectangle" Animation="Animation.Wave" Height="35px" Width="@($"{Width}px")" />
+            }
+            else
+            {
+                <MudText Typo="Typo.subtitle1" Align="Align.Start"><strong>@Movie.Title</strong></MudText>
+            }
+        </CardHeaderContent>
+    </MudCardHeader>
+    <MudCardContent Class="cursor-pointer d-flex">
         @if (Movie is null)
         {
-            <MudSkeleton SkeletonType="SkeletonType.Rectangle" Animation="Animation.Wave" Height="@($"{Height}px")" Width="@($"{Width}px")" />
+            <MudSkeleton SkeletonType="SkeletonType.Rectangle" Animation="Animation.Wave" Height="@($"{Height}px")" Width="@($"{Width}px")"/>
         }
         else
         {
-            <MudImage loading="@(LoadLazy ? "lazy" : "eager")" Class="rounded" ObjectFit="@ObjectFit.Cover" Height="@Height" Width="@Width" Src="@($"api/movies/{Movie.Id}/image?size={ImageSize}")" Alt="@Movie.Title" />
-
-            <MudPaper Class="card-overlay-footer cursor-pointer z-10" @onclick="OpenMovieDetails">
-                <div class="d-flex flex-column justify-space-between">
-                    <div class="d-flex flex-row align-start justify-space-between pa-2">
-                        <MudText Typo="Typo.subtitle1" Align="Align.Start"><strong>@Movie.Title</strong></MudText>
-                        <MudIcon Icon="@Icons.Material.Filled.KeyboardArrowUp"/>
-                    </div>
-
-                    <div class="d-flex flex-row flex-wrap gap-2 justify-center px-4 pb-2" style="overflow-x: hidden;">
-                        @foreach (var genre in Movie.Genres.Take(3))
-                        {
-                            <MudText Typo="Typo.caption">@genre</MudText>
-                        }
-                    </div>
-                </div>
-            </MudPaper>
-        } 
-    </div>
+            <MudImage loading="@(LoadLazy ? "lazy" : "eager")" Class="rounded" ObjectFit="@ObjectFit.Cover" Height="@Height" Width="@Width" Src="@($"api/movies/{Movie.Id}/image?size={ImageSize}")" Alt="@Movie.Title"/>
+        }
+    </MudCardContent>
+    <MudCardActions Class="justify-center align-center">
+        @if (Movie is null)
+        {
+            <MudSkeleton SkeletonType="SkeletonType.Rectangle" Animation="Animation.Wave" Height="20px" Width="@($"{Width}px")" />
+        }
+        else
+        {
+            <div class="d-flex flex-row flex-wrap gap-2 justify-center px-4 pb-2" style="@($"max-width: {Width}px; overflow-x: hidden;")">
+                @foreach (var genre in Movie.Genres.Take(3))
+                {
+                    <MudText Typo="Typo.caption">@genre</MudText>
+                }
+            </div>
+        }
+    </MudCardActions>
 </MudCard>
+
 
 
 @code {

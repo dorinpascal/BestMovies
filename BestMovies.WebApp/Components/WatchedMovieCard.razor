@@ -1,0 +1,135 @@
+@using BestMovies.Shared.Dtos.Movies
+@using BestMovies.Shared.Dtos.Review
+@using BestMovies.Shared.Dtos.User
+@using BestMovies.WebApp.Authorization
+@using BestMovies.WebApp.Repositories
+@using BestMovies.WebApp.Services
+@using EventHandler = BestMovies.WebApp.Services.EventHandler
+
+<MudCard Outlined="true" Class="bump-up-on-hover" @onclick="OpenMovieDetails">
+    <MudCardHeader>
+        <CardHeaderContent>
+            @if (Movie is null)
+            {
+                <MudSkeleton SkeletonType="SkeletonType.Rectangle" Animation="Animation.Wave" Height="30px" Width="@($"{Width}px")" />
+            }
+            else
+            {
+                <MudText Typo="Typo.subtitle1" Align="Align.Start"><strong>@Movie.Title</strong></MudText>
+            }
+        </CardHeaderContent>
+        <CardHeaderActions>
+            <MudIconButton Icon="@Icons.Material.Filled.MoreVert" Color="Color.Default" />
+        </CardHeaderActions>
+    </MudCardHeader>
+    <MudCardContent Class="cursor-pointer d-flex">
+        @if (Movie is null)
+        {
+            <MudSkeleton SkeletonType="SkeletonType.Rectangle" Animation="Animation.Wave" Height="@($"{Height}px")" Width="@($"{Width}px")"/>
+        }
+        else
+        {
+            <MudImage loading="@(LoadLazy ? "lazy" : "eager")" Class="rounded" ObjectFit="@ObjectFit.Cover" Height="@Height" Width="@Width" Src="@($"api/movies/{Movie.Id}/image?size={ImageSize}")" Alt="@Movie.Title"/>
+        }
+    </MudCardContent>
+    <MudCardActions Class="justify-center align-center">
+        @if (!_showReview)
+        {
+            <div class="d-flex flex-row flex-grow-1 justify-start">
+                <MudButton Variant="Variant.Text" Color="Color.Primary" OnClick="FetchReview">Show review</MudButton>
+            </div>
+        }
+        else
+        {
+            <div class="d-flex flex-row flex-wrap gap-2 justify-center align-center" style="@($"max-width: {Width}px;")">
+                @if (_isFetching)
+                {
+                    <MudSkeleton SkeletonType="SkeletonType.Rectangle" Class="rounded" Animation="Animation.Wave" Height="35px" Width="@($"{Width}px")"/>
+                }
+                else if (_review is null)
+                {
+                    //
+                }
+                else
+                {
+                    <MudChip Icon="@Icons.Material.Filled.Star" IconColor="Color.Warning">@_review.Rating/5</MudChip>
+                    <MudText Typo="Typo.body2" Align="Align.Start"><strong>@_review.Comment</strong></MudText>
+                }
+            </div>
+        }
+    </MudCardActions>
+</MudCard>
+
+@code {
+        private const string ImageSize = "w780";
+
+    [Inject]
+    protected EventHandler EventHandler { get; set; } = default!;
+
+    [Inject]
+    protected IDialogService DialogService { get; set; } = default!;
+
+    [Inject]
+    protected IReviewRepository ReviewRepository { get; set; } = default!;
+    
+    [Inject]
+    protected IAuthService AuthService { get; set; } = default!;
+
+    [Parameter]
+    public bool LoadLazy { get; set; }
+        
+    [Parameter]
+    public int Height { get; set; } = 220;
+    
+    [Parameter]
+    public int Width { get; set; } = 320;
+    
+    [Parameter]
+    public SearchMovieDto? Movie { get; set; }
+
+    [Parameter]
+    public string UserEmail { get; set; } = default!;
+
+    private UserInformation? _userInformation;
+    private ReviewDto? _review;
+    private bool _showReview;
+    private bool _isFetching;
+    
+    protected override async Task OnInitializedAsync()
+    {
+        _userInformation = await AuthService.RetrieveUserInformation();
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (!_showReview) return;
+        
+        await FetchReview();
+    }
+
+    private async Task OpenMovieDetails()
+    {
+        var parameters = new DialogParameters
+        {
+            {"MovieId", Movie!.Id}
+        };
+        var options = new DialogOptions { CloseOnEscapeKey = true, CloseButton = true, FullWidth = true, MaxWidth = MaxWidth.Medium};
+        
+        var dialog = await DialogService.ShowAsync<MovieDetailsModal>(string.Empty, parameters, options);
+
+        await dialog.Result; 
+        EventHandler.NotifyStateChanged();
+    }
+
+    private async Task FetchReview()
+    {
+        _showReview = true;
+        _isFetching = true;
+        await InvokeAsync(StateHasChanged);
+
+        _review = await ReviewRepository.GetUserMovieReview(Movie!.Id, UserEmail);
+        
+        _isFetching = false;
+        await InvokeAsync(StateHasChanged);
+    }
+}

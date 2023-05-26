@@ -97,18 +97,6 @@ a, .btn-link {
     .loading-progress-text:after {
         content: var(--blazor-load-percentage-text, "Loading");
     }
-    
-.card-overlay-footer {
-    position: absolute;
-    bottom: 7px;
-    left: 7px;
-    right: 7px;
-    transition: transform 0.3s ease;
-    transform: translateY(0);
-}
-.card-overlay-footer:hover {
-    transform: translateY(-10px);
-}
 
 .highlight-on-hover {
     transition: all 0.3s;
@@ -128,4 +116,12 @@ a, .btn-link {
 }
 .hide-scrollbar::-webkit-scrollbar {
     display: none;  /* Safari and Chrome */
+}
+
+.bump-up-on-hover {
+    transition: transform 0.3s ease;
+    transform: translateY(0);
+}
+.bump-up-on-hover:hover {
+    transform: translateY(-10px);
 }

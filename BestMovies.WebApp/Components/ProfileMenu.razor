@@ -10,13 +10,14 @@
     }
     else
     {
-        <div class="px-4">
+        <div class="d-flex justify-center align-center pa-4">
             <MudText Typo="Typo.caption" Align="Align.Center">@_userInformation.ClientPrincipal.UserDetails</MudText>
         </div>
+        <MudDivider/>
         
-        <MudMenuItem OnClick="NavigateToWatchList" OnTouch="NavigateToWatchList">Watch List</MudMenuItem>
+        <MudMenuItem Icon="@Icons.Material.Filled.List" OnClick="NavigateToWatchList" OnTouch="NavigateToWatchList">Watch List</MudMenuItem>
         
-        <MudMenuItem OnClick="Logout" OnTouch="Logout">Logout</MudMenuItem>
+        <MudMenuItem Icon="@Icons.Material.Filled.Logout" OnClick="Logout" OnTouch="Logout">Logout</MudMenuItem>
     }
     
 </MudMenu>
