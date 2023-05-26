@@ -23,4 +23,9 @@
       </None>
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\BestMovies.Bff\BestMovies.Bff.csproj" />
+      <ProjectReference Include="..\BestMovies.Shared\BestMovies.Shared.csproj" />
+    </ItemGroup>
+
 </Project>
