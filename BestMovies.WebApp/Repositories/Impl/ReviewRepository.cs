@@ -64,4 +64,14 @@ public class ReviewRepository : IReviewRepository
 
         return null;
     }
+
+    public async Task DeleteMovieReview(int movieId)
+    {
+        using var response = await _client.DeleteAsync($"{BaseUri}/{movieId}/review");
+        
+        if (!response.IsSuccessStatusCode)
+        {
+            throw new ApiException(await HttpClientHelper.ReadContentSafe(response), (int)response.StatusCode);
+        }
+    }
 }

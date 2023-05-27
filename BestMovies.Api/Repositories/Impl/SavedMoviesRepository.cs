@@ -69,9 +69,6 @@ public class SavedMoviesRepository : ISavedMoviesRepository
         
         if (movieToDelete is not null)
         {
-            // Only delete the movies that are not watched yet
-            if (movieToDelete.IsWatched) return;
-            
             _dbContext.SavedMovies.Remove(movieToDelete);
             await _dbContext.SaveChangesAsync();
         }

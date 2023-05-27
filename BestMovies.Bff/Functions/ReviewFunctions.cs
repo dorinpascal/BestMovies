@@ -198,7 +198,7 @@ public class ReviewFunctions
     [OpenApiParameter(name: "movieId", In = ParameterLocation.Path, Required = true, Type = typeof(int), Description = "The movie id.")]
     [OpenApiResponseWithoutBody(statusCode: HttpStatusCode.OK, Description = "Successfully deleted the review")]
     public async Task<IActionResult> DeleteReview(
-        [HttpTrigger(AuthorizationLevel.Anonymous, "delete", Route = "movies/{movieId}/reviews")]
+        [HttpTrigger(AuthorizationLevel.Anonymous, "delete", Route = "movies/{movieId}/review")]
         HttpRequest req, int movieId, ILogger log)
     {
         try
@@ -213,7 +213,7 @@ public class ReviewFunctions
             {
                 return ActionResultHelpers.BadRequestResult("Invalid value for the id. The value must be greater than 0");
             }
-            
+
             await _reviewService.DeleteReview(movieId, user!.Id);
 
             return new OkResult();

@@ -45,6 +45,17 @@ public class SavedMovieService : ISavedMovieService
 
     public async Task DeleteMovie(int movieId, string userId)
     {
+        var movieToDelete = await GetSavedMovieOrDefault(movieId, userId);
+        if (movieToDelete is null)
+        {
+            return;
+        }
+
+        if (movieToDelete.IsWatched)
+        {
+            throw new ArgumentException("Cannot delete a watched movie");
+        }
+
         await _client.DeleteMovie(userId, movieId);
     }
 

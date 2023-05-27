@@ -8,4 +8,5 @@ public interface IReviewRepository
     Task<IEnumerable<ReviewDto>> GetReviewsForMovie(int movieId, bool onlyReviewsWithComments = false);
     Task<ReviewDto?> GetMovieReview(int movieId);
     Task<ReviewDto?> GetUserMovieReview(int movieId, string userEmail);
+    Task DeleteMovieReview(int movieId);
 }
