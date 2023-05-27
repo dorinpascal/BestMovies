@@ -5,6 +5,7 @@
 @using BestMovies.WebApp.Repositories
 @using BestMovies.WebApp.Services
 @using EventHandler = BestMovies.WebApp.Services.EventHandler
+@using BestMovies.Shared.CustomExceptions
 
 <MudCard Outlined="true" Class="bump-up-on-hover" @onclick="OpenMovieDetails">
     <MudCardHeader>
@@ -19,7 +20,12 @@
             }
         </CardHeaderContent>
         <CardHeaderActions>
-            <MudIconButton Icon="@Icons.Material.Filled.MoreVert" Color="Color.Default" />
+            @if (ShowMenu)
+            {
+                <MudMenu Icon="@Icons.Material.Filled.MoreVert">
+                    <MudMenuItem OnClick="Remove" OnTouch="Remove" Icon="@Icons.Material.Filled.Delete" IconColor="Color.Error">Remove</MudMenuItem>
+                </MudMenu>
+            }
         </CardHeaderActions>
     </MudCardHeader>
     <MudCardContent Class="cursor-pointer d-flex">
@@ -48,7 +54,7 @@
                 }
                 else if (_review is null)
                 {
-                    //
+                    <MudText Typo="Typo.body2" Align="Align.Start"><em>No review found.</em></MudText>
                 }
                 else
                 {
@@ -71,9 +77,6 @@
 
     [Inject]
     protected IReviewRepository ReviewRepository { get; set; } = default!;
-    
-    [Inject]
-    protected IAuthService AuthService { get; set; } = default!;
 
     [Parameter]
     public bool LoadLazy { get; set; }
@@ -89,16 +92,13 @@
 
     [Parameter]
     public string UserEmail { get; set; } = default!;
-
-    private UserInformation? _userInformation;
+    
+    [Parameter]
+    public bool ShowMenu { get; set; }
+    
     private ReviewDto? _review;
     private bool _showReview;
     private bool _isFetching;
-    
-    protected override async Task OnInitializedAsync()
-    {
-        _userInformation = await AuthService.RetrieveUserInformation();
-    }
 
     protected override async Task OnParametersSetAsync()
     {
@@ -131,5 +131,16 @@
         
         _isFetching = false;
         await InvokeAsync(StateHasChanged);
+    }
+
+    private async Task Remove()
+    {
+        try
+        {
+            await ReviewRepository.DeleteMovieReview(Movie!.Id);
+            
+            EventHandler.NotifyStateChanged();
+        }
+        catch(ApiException) { }
     }
 }

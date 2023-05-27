@@ -26,7 +26,7 @@
     
     <MovieCardList Title="Watched" Movies="_watchedMovies" ShowMessageIfEmpty="true" SkeletonCardsCount="5">
         <MovieCardTemplate>
-            <WatchedMovieCard @key="@context.Movie?.Id" UserEmail="@UserEmail" LoadLazy="@context.LoadLazy" Movie="@context.Movie" Width="@context.Width" Height="@context.Height"/>
+            <WatchedMovieCard @key="@context.Movie?.Id" ShowMenu="UserEmail == _userInformation?.ClientPrincipal?.UserDetails" UserEmail="@UserEmail" LoadLazy="@context.LoadLazy" Movie="@context.Movie" Width="@context.Width" Height="@context.Height"/>
         </MovieCardTemplate>
     </MovieCardList>
 </MudContainer>

@@ -68,8 +68,10 @@ public class ReviewService : IReviewService
        
     }
 
-    public Task DeleteReview(int movieId, string userId)
+    public async Task DeleteReview(int movieId, string userId)
     {
-        return _client.DeleteReview(movieId, userId);
+        //No movies watched without a review, so if you delete it, the movie is also deleted
+        await _client.DeleteReview(movieId, userId);
+        await _client.DeleteMovie(userId, movieId);
     }
 }
