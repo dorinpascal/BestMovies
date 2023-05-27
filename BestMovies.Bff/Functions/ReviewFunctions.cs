@@ -214,8 +214,6 @@ public class ReviewFunctions
                 return ActionResultHelpers.BadRequestResult("Invalid value for the id. The value must be greater than 0");
             }
 
-            Console.WriteLine(movieId);
-            
             await _reviewService.DeleteReview(movieId, user!.Id);
 
             return new OkResult();
