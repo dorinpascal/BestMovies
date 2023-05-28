@@ -117,7 +117,7 @@ public class ReviewFunctions
     [OpenApiOperation(operationId: nameof(GetUserReviewForMovie), tags: new[] { Tag })]
     [OpenApiParameter(name: "movieId", In = ParameterLocation.Path, Required = true, Type = typeof(int), Description = "The movie id.")]
     [OpenApiParameter(name: "userEmail", In = ParameterLocation.Path, Required = true, Type = typeof(string), Description = "The user's email address.")]
-    [OpenApiResponseWithBody(statusCode: HttpStatusCode.OK, contentType: "application/json", bodyType: typeof(ReviewDto), Description = "Returns the user review for a movie. ")]
+    [OpenApiResponseWithBody(statusCode: HttpStatusCode.OK, contentType: "application/json", bodyType: typeof(ReviewDto), Description = "Returns the user review for a movie based on the email. ")]
     public async Task<IActionResult> GetUserReviewForMovie(
        [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "users/{userEmail}/movies/{movieId}/review")] HttpRequest req, string userEmail, int movieId, ILogger log)
     {
@@ -156,7 +156,7 @@ public class ReviewFunctions
     [OpenApiOperation(operationId: nameof(GetReviewForMovie), tags: new[] { Tag })]
     [OpenApiParameter(name: "x-ms-client-principal", In = ParameterLocation.Header, Required = true, Type = typeof(string), Description = "base64 of ClientPrincipal")]
     [OpenApiParameter(name: "movieId", In = ParameterLocation.Path, Required = true, Type = typeof(int), Description = "The movie id.")]
-    [OpenApiResponseWithBody(statusCode: HttpStatusCode.OK, contentType: "application/json", bodyType: typeof(ReviewDto), Description = "Returns the user review for a movie. ")]
+    [OpenApiResponseWithBody(statusCode: HttpStatusCode.OK, contentType: "application/json", bodyType: typeof(ReviewDto), Description = "Returns the logged in user's review for a movie. ")]
     public async Task<IActionResult> GetReviewForMovie(
         [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "movies/{movieId}/review")] HttpRequest req, int movieId, ILogger log)
     {

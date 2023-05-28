@@ -71,7 +71,6 @@ public class GetSavedMoviesEndpointTest
     public async Task GetSavedMoviesEndpoint_ValidRequest_ReturnsSC200()
     {
         //Arrange
-        //Arrange
         var movies = new List<SearchMovieDto>()
         {
             new(1,"title", new List<string>()
