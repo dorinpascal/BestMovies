@@ -93,8 +93,9 @@ try
             var movieDetails = await movieService.GetMovieDetails(movie.Id);
             var avgVote = Math.Round(movieDetails.VoteAverage / 2, 0, MidpointRounding.AwayFromZero);
 
-            var rating = faker.Random.GaussianInt((int) avgVote, 1);
-
+            // Get a rating that follows a normal distribution with the mean as the average Tmdb ratings
+            var rating = faker.Random.GaussianInt((int) avgVote, 1).LimitToRange(1, 5);
+ 
             var review = new CreateReviewDto(
                 MovieId: movie.Id,
                 Rating: rating,
