@@ -54,7 +54,7 @@ public class StatisticsFunctions
     [FunctionName(nameof(GetAverageRatingOfMovies))]
     [OpenApiOperation(operationId: nameof(GetAverageRatingOfMovies), tags: new[] {Tag})]
     [OpenApiParameter(name: "movieIds", In = ParameterLocation.Query, Required = true, Type = typeof(IEnumerable<int>), Description = "The movie ids.")]
-    [OpenApiResponseWithBody(statusCode: HttpStatusCode.OK, contentType: "application/json", bodyType: typeof(MovieStatsDto), Description = "Returns stats for the given movie.")]
+    [OpenApiResponseWithBody(statusCode: HttpStatusCode.OK, contentType: "application/json", bodyType: typeof(decimal), Description = "Returns the average rating for the given movies.")]
     public async Task<IActionResult> GetAverageRatingOfMovies(
         [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "movies/stats")] HttpRequest req, ILogger log)
     {
