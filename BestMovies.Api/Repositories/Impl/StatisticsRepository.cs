@@ -1,6 +1,10 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using BestMovies.Api.Persistence;
 using BestMovies.Shared.Dtos.Movies;
+using Microsoft.EntityFrameworkCore;
 
 namespace BestMovies.Api.Repositories.Impl;
 
@@ -11,6 +15,21 @@ public class StatisticsRepository : IStatisticsRepository
     public StatisticsRepository(BestMoviesDbContext dbContext)
     {
         _dbContext = dbContext;
+    }
+    
+    public async Task<decimal> GetAverageRatingOfMovies(IEnumerable<int> movieIds)
+    {
+        var movies = await _dbContext.Reviews
+            .Where(m => movieIds.Any(id => id == m.MovieId))
+            .ToListAsync();
+        
+        if (!movies.Any())
+        {
+            return decimal.Zero;
+        }
+
+        var average = movies.Average(m => m.Rating);
+        return (decimal) Math.Round(average, 2, MidpointRounding.AwayFromZero);
     }
     
     public async Task<MovieStatsDto> GetMovieStats(int movieId)

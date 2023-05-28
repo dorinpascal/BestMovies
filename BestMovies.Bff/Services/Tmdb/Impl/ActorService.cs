@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
+using BestMovies.Bff.Clients;
 using BestMovies.Bff.Extensions;
 using BestMovies.Shared.CustomExceptions;
 using BestMovies.Shared.Dtos.Person;
@@ -10,10 +11,12 @@ namespace BestMovies.Bff.Services.Tmdb.Impl;
 public class ActorService : IActorService
 {
     private readonly ITMDbWrapperService _tmDbClient;
+    private readonly IBestMoviesApiClient _bestMoviesApiClient;
 
-    public ActorService(ITMDbWrapperService tmDbClient)
+    public ActorService(ITMDbWrapperService tmDbClient, IBestMoviesApiClient bestMoviesApiClient)
     {
         _tmDbClient = tmDbClient;
+        _bestMoviesApiClient = bestMoviesApiClient;
     }
 
     public async Task<PersonDetailsDto> GetActorDetails(int id)
@@ -23,9 +26,22 @@ public class ActorService : IActorService
         {
             throw new NotFoundException($"Cannot find any actor with id '{id}'");
         }
-
+        
         var movieCredits = await _tmDbClient.GetPersonMovieCreditsAsync(id);
-        return person.ToDto(movieCredits);
+
+        var starredMovieIds = movieCredits.Cast.Select(m => m.Id);
+
+        var avgStarredMovieRating = decimal.Zero;
+        try
+        {
+            avgStarredMovieRating = await _bestMoviesApiClient.GetAverageRatingOfMovies(starredMovieIds);
+        }
+        catch (Exception)
+        {
+            // ignored
+        }
+
+        return person.ToDto(movieCredits, avgStarredMovieRating);
     }
 
     public async Task<byte[]> GetImageBytes(string size, int id)

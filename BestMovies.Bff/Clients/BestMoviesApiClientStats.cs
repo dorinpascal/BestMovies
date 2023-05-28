@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 using BestMovies.Bff.Extensions;
@@ -19,4 +21,18 @@ public partial class BestMoviesApiClient
         return JsonSerializer.Deserialize<MovieStatsDto>(content, _jsonSerializerOptions)!;
     }
     
+    public async Task<decimal> GetAverageRatingOfMovies(IEnumerable<int> movieIds)
+    {
+        var url = $"movies/stats?movieIds={string.Join(",", movieIds)}";
+        
+        var responseMessage = await _client.GetAsync(url);
+        if (!responseMessage.IsSuccessStatusCode)
+        {
+            await responseMessage.ThrowBasedOnStatusCode();
+        }
+        
+        var content = await responseMessage.ReadContentSafe();
+        
+        return JsonSerializer.Deserialize<decimal>(content, _jsonSerializerOptions)!;
+    }
 }
