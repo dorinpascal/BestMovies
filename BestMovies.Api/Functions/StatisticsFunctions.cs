@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using BestMovies.Api.Helpers;
@@ -45,6 +47,32 @@ public class StatisticsFunctions
         catch (Exception ex)
         {
             log.LogError(ex, "Error occured while retrieving stats for the movie with id {MovieId}", id);
+            return ActionResultHelpers.ServerErrorResult();
+        }
+    }
+    
+    [FunctionName(nameof(GetAverageRatingOfMovies))]
+    [OpenApiOperation(operationId: nameof(GetAverageRatingOfMovies), tags: new[] {Tag})]
+    [OpenApiParameter(name: "movieIds", In = ParameterLocation.Query, Required = true, Type = typeof(IEnumerable<int>), Description = "The movie ids.")]
+    [OpenApiResponseWithBody(statusCode: HttpStatusCode.OK, contentType: "application/json", bodyType: typeof(MovieStatsDto), Description = "Returns stats for the given movie.")]
+    public async Task<IActionResult> GetAverageRatingOfMovies(
+        [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "movies/stats")] HttpRequest req, ILogger log)
+    {
+        try
+        {
+            string movieIdsString = req.Query["movieIds"];
+            var movieIds = movieIdsString.Split(',').Select(int.Parse);
+
+            var averageRating = await _statisticsRepository.GetAverageRatingOfMovies(movieIds);
+            return new OkObjectResult(averageRating);
+        }
+        catch (FormatException ex)
+        {
+            return ActionResultHelpers.BadRequestResult(ex.Message);
+        }
+        catch (Exception ex)
+        {
+            log.LogError(ex, "Error occured while retrieving stats for the movie with id {MovieId}", 1);
             return ActionResultHelpers.ServerErrorResult();
         }
     }

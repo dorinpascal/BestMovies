@@ -11,11 +11,12 @@ namespace BestMovies.Bff.Extensions;
 
 public static class PersonExtensions
 {
-    public static PersonDetailsDto ToDto(this Person person, MovieCredits? credits) =>
+    public static PersonDetailsDto ToDto(this Person person, MovieCredits? credits, decimal averageStarredMovieRanting) =>
         new(
             Id: person.Id,
             Name: person.Name,
             Biography: person.Biography,
+            AverageStarredMovieRanting: averageStarredMovieRanting,
             Birthday: person.Birthday is null ? null : DateOnly.FromDateTime(person.Birthday.Value),
             StarredInMovies: credits?.Cast.Select(m => m.Title)
         );

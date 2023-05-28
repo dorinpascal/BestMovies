@@ -56,7 +56,7 @@ public class GetActorDetailsEndpointTest
     public async Task GetActorDetails_ActorDetails_ReturnsOkObjectResult()
     {
         //Arrange
-        var actorDetailsDto = new PersonDetailsDto(0, "Name", "Biography", DateOnly.MinValue, new []{""});
+        var actorDetailsDto = new PersonDetailsDto(0, "Name", "Biography", 0, DateOnly.MinValue, new []{""});
         _actorService.GetActorDetails(Arg.Any<int>()).Returns(actorDetailsDto);
 
         //Act
