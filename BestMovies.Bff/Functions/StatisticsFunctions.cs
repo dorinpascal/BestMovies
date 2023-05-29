@@ -1,8 +1,10 @@
 using System;
+using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using BestMovies.Bff.Helpers;
 using BestMovies.Bff.Services.BestMoviesApi;
+using BestMovies.Bff.Services.Tmdb;
 using BestMovies.Shared.Dtos.Movies;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -19,10 +21,12 @@ public class StatisticsFunctions
     private const string Tag = "Statistics";
 
     private readonly IStatisticsService _statisticsService;
+    private readonly IMovieService _movieService;
 
-    public StatisticsFunctions(IStatisticsService statisticsService)
+    public StatisticsFunctions(IStatisticsService statisticsService, IMovieService movieService)
     {
         _statisticsService = statisticsService;
+        _movieService = movieService;
     }
 
     [FunctionName(nameof(GetMovieStats))]
@@ -45,6 +49,24 @@ public class StatisticsFunctions
         catch (Exception ex)
         {
             log.LogError(ex, "Error occured while retrieving stats for the movie with id {MovieId}", id);
+            return ActionResultHelpers.ServerErrorResult();
+        }
+    }
+
+    [FunctionName(nameof(GetTopRatedMovies))]
+    [OpenApiOperation(operationId: nameof(GetTopRatedMovies), tags: new[] {Tag})]
+    [OpenApiResponseWithBody(statusCode: HttpStatusCode.OK, contentType: "application/json", bodyType: typeof(MovieStatsDto), Description = "Returns the most popular movies sorted based on the user rating.")]
+    public async Task<IActionResult> GetTopRatedMovies([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "movies/topRated")] HttpRequest req, ILogger log)
+    {
+        try
+        {
+            var popularMovies = await _movieService.GetPopularMovies();
+            var topRatedMovies = await _statisticsService.GetTopRatedMovies(popularMovies.ToList());
+            return new OkObjectResult(topRatedMovies);
+        }
+        catch (Exception ex)
+        {
+            log.LogError(ex, "Error occured while retrieving top rated movies");
             return ActionResultHelpers.ServerErrorResult();
         }
     }

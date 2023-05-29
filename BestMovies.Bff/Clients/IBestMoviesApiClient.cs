@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections;
+using System.Threading.Tasks;
 using BestMovies.Shared.Dtos.Movies;
 using System.Collections.Generic;
 using BestMovies.Shared.Dtos.Review;
@@ -21,4 +22,5 @@ public interface IBestMoviesApiClient
     Task<MovieStatsDto> GetMovieStats(int movieId);
     Task<decimal> GetAverageRatingOfMovies(IEnumerable<int> movieIds);
     Task DeleteReview(int movieId, string userId);
+    Task<IEnumerable<int>> GetTopRatedMovies(List<int> movieIds);
 }

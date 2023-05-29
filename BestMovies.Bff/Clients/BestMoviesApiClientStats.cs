@@ -1,4 +1,6 @@
+using System.Collections;
 using System.Collections.Generic;
+using System.Net.Http;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -34,5 +36,27 @@ public partial class BestMoviesApiClient
         var content = await responseMessage.ReadContentSafe();
         
         return JsonSerializer.Deserialize<decimal>(content, _jsonSerializerOptions)!;
+    }
+
+    public async Task<IEnumerable<int>> GetTopRatedMovies(List<int> movieIds)
+    {
+        
+        var movieIdsJson = JsonSerializer.Serialize(movieIds);
+        var movieIdsStringContent = new StringContent(
+            movieIdsJson,
+            Encoding.UTF8,
+            "application/json"
+        );
+        
+        var responseMessage = await _client.PostAsync($"movies/topRated", movieIdsStringContent);
+        
+        if (!responseMessage.IsSuccessStatusCode)
+        {
+            await responseMessage.ThrowBasedOnStatusCode();
+        }
+        
+        var content = await responseMessage.ReadContentSafe();
+        
+        return JsonSerializer.Deserialize<IEnumerable<int>>(content, _jsonSerializerOptions)!;
     }
 }

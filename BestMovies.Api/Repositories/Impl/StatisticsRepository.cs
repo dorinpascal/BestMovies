@@ -31,7 +31,27 @@ public class StatisticsRepository : IStatisticsRepository
         var average = movies.Average(m => m.Rating);
         return (decimal) Math.Round(average, 2, MidpointRounding.AwayFromZero);
     }
-    
+
+    public async Task<IEnumerable<int>> GetTopRatedMovies(IEnumerable<int> movieIds)
+    {
+        var movies = await _dbContext.Reviews
+            .Where(m => movieIds.Any(id => id == m.MovieId))
+            .ToListAsync();
+
+        if (!movies.Any())
+        {
+            return Enumerable.Empty<int>();
+        }
+
+        var idsOfTopMovies = movies
+            .GroupBy(m => m.MovieId)
+            .OrderByDescending(movie => movie.Average(m => m.Rating))
+            .Select(m => m.Key)
+            .ToList();
+
+        return idsOfTopMovies;
+    }
+
     public async Task<MovieStatsDto> GetMovieStats(int movieId)
     {
         await using var connection = await _dbContext.OpenDbConnection();

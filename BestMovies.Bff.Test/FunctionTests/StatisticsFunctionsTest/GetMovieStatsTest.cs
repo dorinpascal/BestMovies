@@ -1,5 +1,6 @@
 ﻿using BestMovies.Bff.Functions;
 using BestMovies.Bff.Services.BestMoviesApi;
+using BestMovies.Bff.Services.Tmdb;
 using BestMovies.Bff.Test.Helpers;
 using BestMovies.Shared.Dtos.Movies;
 using NSubstitute.ExceptionExtensions;
@@ -10,6 +11,7 @@ public class GetMovieStatsTest
 {
     private readonly DefaultHttpRequest _request;
     private readonly IStatisticsService _statisticsService;
+    private readonly IMovieService _movieService;
     private readonly MockLogger<StatisticsFunctions> _logger;
     private readonly StatisticsFunctions _sut;
     
@@ -17,8 +19,9 @@ public class GetMovieStatsTest
     {
         _request = new DefaultHttpRequest(new DefaultHttpContext());
         _statisticsService = Substitute.For<IStatisticsService>();
+        _movieService = Substitute.For<IMovieService>();
         _logger = Substitute.For<MockLogger<StatisticsFunctions>>();
-        _sut = new StatisticsFunctions(_statisticsService);
+        _sut = new StatisticsFunctions(_statisticsService, _movieService );
     }
     
     [Fact]
