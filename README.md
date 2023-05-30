@@ -1,4 +1,8 @@
-# BestMovies Inc.
+# [BestMovies Inc.](https://gentle-moss-05832e703.3.azurestaticapps.net)
+
+
+
+![Demo gif of BestMovies Inc Platform](Demo.gif)
 
 ---
 ### BestMovies.WebApp & BestMovies.Bff
