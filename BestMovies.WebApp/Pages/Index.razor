@@ -53,9 +53,6 @@
     protected IMoviesRepository MoviesRepository { get; set; } = default!;
     
     [Inject]
-    protected IStatisticsRepository StatisticsRepository { get; set; } = default!;
-    
-    [Inject]
     protected IGenresRepository GenresRepository { get; set; } = default!;
     
     [Inject]
@@ -94,7 +91,7 @@
     
     private async Task FetchUserInfo() => _userInformation = await AuthService.RetrieveUserInformation();
     private async Task FetchPopularMovies() => _popularMovies = await MoviesRepository.GetPopularMovies();
-    private async Task FetchTopRatedMovies() => _topRatedMovies = await StatisticsRepository.GetTopRatedMovies()!;
+    private async Task FetchTopRatedMovies() => _topRatedMovies = await MoviesRepository.GetTopRatedMovies();
 
     private async Task FetchSavedMovies()
     {

@@ -24,17 +24,4 @@ public class StatisticsRepository : IStatisticsRepository
 
         return null;
     }
-
-    public async Task<IEnumerable<SearchMovieDto>> GetTopRatedMovies()
-    {
-        using var response = await _client.GetAsync($"{BaseUri}/topRated");
-
-        if (!response.IsSuccessStatusCode)
-        {
-            return Enumerable.Empty<SearchMovieDto>();
-        }
-
-        var topRatedMovies = await HttpClientHelper.ReadFromJsonSafe<IEnumerable<SearchMovieDto>>(response);
-        return topRatedMovies ?? Enumerable.Empty<SearchMovieDto>();
-    }
 }
