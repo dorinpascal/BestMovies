@@ -60,7 +60,7 @@ public class StatisticsFunctions
     {
         try
         {
-            var topRatedMovieIds = await _statisticsRepository.GetTopRatedMovies();
+            var topRatedMovieIds = await _statisticsRepository.GetTopRatedMovieIds();
             return new OkObjectResult(topRatedMovieIds);
         }
         catch (Exception ex)

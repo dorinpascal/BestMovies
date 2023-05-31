@@ -33,18 +33,22 @@ public class StatisticsRepository : IStatisticsRepository
         return (decimal) Math.Round(average, 2, MidpointRounding.AwayFromZero);
     }
     
-    public async Task<IEnumerable<int>> GetTopRatedMovies()
+    public async Task<IEnumerable<int>> GetTopRatedMovieIds(int count)
     {
+        const int minimumReviewCount = 0;
         await using var connection = await _dbContext.OpenDbConnection();
         await using var command = connection.CreateCommand();
 
         command.CommandText = @"
-            SELECT TOP 5 [MovieId]
+            SELECT TOP (@NumberOfMovies) [MovieId]
             FROM [Reviews]
             GROUP BY [MovieId]
-            HAVING COUNT(*) >= 50
+            HAVING COUNT(*) >= @MinimumReviewCount
             ORDER BY AVG(CAST(Rating AS FLOAT)) DESC;
         ";
+        
+        command.Parameters.AddWithValue("@NumberOfMovies", count);
+        command.Parameters.AddWithValue("@@MinimumReviewCount", minimumReviewCount);
         
         await using var reader = await command.ExecuteReaderAsync();
         
