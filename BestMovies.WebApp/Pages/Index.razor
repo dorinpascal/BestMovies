@@ -15,15 +15,16 @@
 
 <MudContainer Class="d-flex flex-column gap-4 justify-center pa-4" MaxWidth="MaxWidth.ExtraExtraLarge">
     
-    @if (_topRatedMovies is not null && _topRatedMovies.Any())
-    {
-        <MovieCardList Title="Top Rated By Our Users" Movies="_topRatedMovies" SkeletonCardsCount="5"/>
-    }
     <MovieCardList Title="Popular now" Movies="_popularMovies" SkeletonCardsCount="5"/>
     
     @if (_userInformation?.ClientPrincipal is not null)
     {
         <MovieCardList Title="Want to watch" Movies="_savedMovies" ShowMessageIfEmpty="true" MessageIfEmpty="You did not add any movie to your list yet." SkeletonCardsCount="4"/>
+    }
+    
+    @if (_topRatedMovies is not null && _topRatedMovies.Any())
+    {
+        <MovieCardList Title="Top Rated By Our Users" Movies="_topRatedMovies" SkeletonCardsCount="5"/>
     }
     
     @if (_moviesPerGenre is null)
