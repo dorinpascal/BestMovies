@@ -8,5 +8,5 @@ namespace BestMovies.Bff.Services.BestMoviesApi;
 public interface IStatisticsService
 {
     Task<MovieStatsDto> GetMovieStats(int movieId);
-    Task<IEnumerable<SearchMovieDto>> GetTopRatedMovies(List<SearchMovieDto> popularMovies);
+    Task<IEnumerable<SearchMovieDto>> GetTopRatedMovies();
 }

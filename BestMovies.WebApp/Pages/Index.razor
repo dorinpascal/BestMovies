@@ -8,11 +8,17 @@
 @using BestMovies.Shared.Dtos.Movies
 @using EventHandler = BestMovies.WebApp.Services.EventHandler
 @using BestMovies.WebApp.Authorization
+@using BestMovies.WebApp.Repositories.Impl
 @using BestMovies.WebApp.Services
 
 <PageTitle>Movies</PageTitle>
 
 <MudContainer Class="d-flex flex-column gap-4 justify-center pa-4" MaxWidth="MaxWidth.ExtraExtraLarge">
+    
+    @if (_topRatedMovies is not null && _topRatedMovies.Any())
+    {
+        <MovieCardList Title="Top Rated By Our Users" Movies="_topRatedMovies" SkeletonCardsCount="5"/>
+    }
     <MovieCardList Title="Popular now" Movies="_popularMovies" SkeletonCardsCount="5"/>
     
     @if (_userInformation?.ClientPrincipal is not null)
@@ -46,6 +52,9 @@
     protected IMoviesRepository MoviesRepository { get; set; } = default!;
     
     [Inject]
+    protected IStatisticsRepository StatisticsRepository { get; set; } = default!;
+    
+    [Inject]
     protected IGenresRepository GenresRepository { get; set; } = default!;
     
     [Inject]
@@ -59,6 +68,7 @@
 
     private IEnumerable<SearchMovieDto>? _popularMovies;
     private IEnumerable<SearchMovieDto>? _savedMovies;
+    private IEnumerable<SearchMovieDto>? _topRatedMovies;
     private (string genre, IEnumerable<SearchMovieDto> movies)[]? _moviesPerGenre;
 
     private UserInformation? _userInformation;
@@ -69,6 +79,7 @@
 
         await FetchUserInfo();
         await FetchPopularMovies();
+        await FetchTopRatedMovies();
         
         var tasks = new[]
         {
@@ -82,6 +93,7 @@
     
     private async Task FetchUserInfo() => _userInformation = await AuthService.RetrieveUserInformation();
     private async Task FetchPopularMovies() => _popularMovies = await MoviesRepository.GetPopularMovies();
+    private async Task FetchTopRatedMovies() => _topRatedMovies = await StatisticsRepository.GetTopRatedMovies()!;
 
     private async Task FetchSavedMovies()
     {

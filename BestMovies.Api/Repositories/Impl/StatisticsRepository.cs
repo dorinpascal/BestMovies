@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -31,25 +32,30 @@ public class StatisticsRepository : IStatisticsRepository
         var average = movies.Average(m => m.Rating);
         return (decimal) Math.Round(average, 2, MidpointRounding.AwayFromZero);
     }
-
-    public async Task<IEnumerable<int>> GetTopRatedMovies(IEnumerable<int> movieIds)
+    
+    public async Task<IEnumerable<int>> GetTopRatedMovies()
     {
-        var movies = await _dbContext.Reviews
-            .Where(m => movieIds.Any(id => id == m.MovieId))
-            .ToListAsync();
+        await using var connection = await _dbContext.OpenDbConnection();
+        await using var command = connection.CreateCommand();
 
-        if (!movies.Any())
+        command.CommandText = @"
+            SELECT TOP 5 [MovieId]
+            FROM [Reviews]
+            GROUP BY [MovieId]
+            HAVING COUNT(*) >= 50
+            ORDER BY AVG(CAST(Rating AS FLOAT)) DESC;
+        ";
+        
+        await using var reader = await command.ExecuteReaderAsync();
+        
+        var movieIdsList = new List<int>();
+        
+        while (await reader.ReadAsync())
         {
-            return Enumerable.Empty<int>();
+            movieIdsList.Add(reader.GetInt32(0));
         }
 
-        var idsOfTopMovies = movies
-            .GroupBy(m => m.MovieId)
-            .OrderByDescending(movie => movie.Average(m => m.Rating))
-            .Select(m => m.Key)
-            .ToList();
-
-        return idsOfTopMovies;
+        return movieIdsList;
     }
 
     public async Task<MovieStatsDto> GetMovieStats(int movieId)

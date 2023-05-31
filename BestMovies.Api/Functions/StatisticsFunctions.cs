@@ -55,14 +55,12 @@ public class StatisticsFunctions
 
     [FunctionName(nameof(GetTopRatedMovieIds))]
     [OpenApiOperation(operationId: nameof(GetTopRatedMovieIds), tags: new[] {Tag})]
-    [OpenApiRequestBody("application/json", typeof(IEnumerable<int>))]
     public async Task<IActionResult> GetTopRatedMovieIds(
-        [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "movies/topRated")] HttpRequest req, ILogger log)
+        [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "movies/topRated")] HttpRequest req, ILogger log)
     {
         try
         {
-            var movieIds = JsonConvert.DeserializeObject<IEnumerable<int>>(await new StreamReader(req.Body).ReadToEndAsync());
-            var topRatedMovieIds = await _statisticsRepository.GetTopRatedMovies(movieIds);
+            var topRatedMovieIds = await _statisticsRepository.GetTopRatedMovies();
             return new OkObjectResult(topRatedMovieIds);
         }
         catch (Exception ex)

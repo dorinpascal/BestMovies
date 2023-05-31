@@ -38,17 +38,9 @@ public partial class BestMoviesApiClient
         return JsonSerializer.Deserialize<decimal>(content, _jsonSerializerOptions)!;
     }
 
-    public async Task<IEnumerable<int>> GetTopRatedMovies(List<int> movieIds)
+    public async Task<IEnumerable<int>> GetTopRatedMovies()
     {
-        
-        var movieIdsJson = JsonSerializer.Serialize(movieIds);
-        var movieIdsStringContent = new StringContent(
-            movieIdsJson,
-            Encoding.UTF8,
-            "application/json"
-        );
-        
-        var responseMessage = await _client.PostAsync($"movies/topRated", movieIdsStringContent);
+        var responseMessage = await _client.GetAsync($"movies/topRated");
         
         if (!responseMessage.IsSuccessStatusCode)
         {

@@ -20,7 +20,7 @@ public interface IBestMoviesApiClient
     Task<SavedMovieDto> GetSavedMovie(string userId, int movieId);
     Task<ReviewDto> GetUserReviewForMovie(int movieId, string userId);
     Task<MovieStatsDto> GetMovieStats(int movieId);
+    Task<IEnumerable<int>> GetTopRatedMovies();
     Task<decimal> GetAverageRatingOfMovies(IEnumerable<int> movieIds);
     Task DeleteReview(int movieId, string userId);
-    Task<IEnumerable<int>> GetTopRatedMovies(List<int> movieIds);
 }
