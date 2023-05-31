@@ -1,4 +1,7 @@
 using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using BestMovies.Bff.Helpers;
@@ -45,6 +48,22 @@ public class StatisticsFunctions
         catch (Exception ex)
         {
             log.LogError(ex, "Error occured while retrieving stats for the movie with id {MovieId}", id);
+            return ActionResultHelpers.ServerErrorResult();
+        }
+    }
+
+    [FunctionName(nameof(GetTopRatedMovies))]
+    [OpenApiOperation(operationId: nameof(GetTopRatedMovies), tags: new[] {Tag})]
+    public async Task<IActionResult> GetTopRatedMovies([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "movies/topRated")] HttpRequest req, ILogger log)
+    {
+        try
+        {
+            var topRatedMovies = await _statisticsService.GetTopRatedMovies();
+            return new OkObjectResult(topRatedMovies);
+        }
+        catch (Exception ex)
+        {
+            log.LogError(ex, "Error occured while retrieving top rated movies");
             return ActionResultHelpers.ServerErrorResult();
         }
     }

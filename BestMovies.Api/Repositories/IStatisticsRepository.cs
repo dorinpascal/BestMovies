@@ -8,4 +8,5 @@ public interface IStatisticsRepository
 {
     Task<MovieStatsDto> GetMovieStats(int movieId);
     Task<decimal> GetAverageRatingOfMovies(IEnumerable<int> movieIds);
+    public Task<IEnumerable<int>> GetTopRatedMovieIds(int count = 5);
 }

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
@@ -13,6 +14,7 @@ using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Azure.WebJobs.Extensions.OpenApi.Core.Attributes;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
+using Newtonsoft.Json;
 
 namespace BestMovies.Api.Functions;
 
@@ -47,6 +49,23 @@ public class StatisticsFunctions
         catch (Exception ex)
         {
             log.LogError(ex, "Error occured while retrieving stats for the movie with id {MovieId}", id);
+            return ActionResultHelpers.ServerErrorResult();
+        }
+    }
+
+    [FunctionName(nameof(GetTopRatedMovieIds))]
+    [OpenApiOperation(operationId: nameof(GetTopRatedMovieIds), tags: new[] {Tag})]
+    public async Task<IActionResult> GetTopRatedMovieIds(
+        [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "movies/topRated")] HttpRequest req, ILogger log)
+    {
+        try
+        {
+            var topRatedMovieIds = await _statisticsRepository.GetTopRatedMovieIds();
+            return new OkObjectResult(topRatedMovieIds);
+        }
+        catch (Exception ex)
+        {
+            log.LogError(ex, "Error occured while retrieving top rated movie ids");
             return ActionResultHelpers.ServerErrorResult();
         }
     }

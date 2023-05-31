@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -11,6 +12,7 @@ namespace BestMovies.Api.Repositories.Impl;
 public class StatisticsRepository : IStatisticsRepository
 {
     private readonly BestMoviesDbContext _dbContext;
+    private const int MinimumReviewCount = 50;
 
     public StatisticsRepository(BestMoviesDbContext dbContext)
     {
@@ -32,6 +34,35 @@ public class StatisticsRepository : IStatisticsRepository
         return (decimal) Math.Round(average, 2, MidpointRounding.AwayFromZero);
     }
     
+    public async Task<IEnumerable<int>> GetTopRatedMovieIds(int count)
+    {
+        
+        await using var connection = await _dbContext.OpenDbConnection();
+        await using var command = connection.CreateCommand();
+
+        command.CommandText = @"
+            SELECT TOP (@NumberOfMovies) [MovieId]
+            FROM [Reviews]
+            GROUP BY [MovieId]
+            HAVING COUNT(*) >= @MinimumReviewCount
+            ORDER BY AVG(CAST(Rating AS FLOAT)) DESC;
+        ";
+        
+        command.Parameters.AddWithValue("@NumberOfMovies", count);
+        command.Parameters.AddWithValue("@MinimumReviewCount", MinimumReviewCount);
+        
+        await using var reader = await command.ExecuteReaderAsync();
+        
+        var movieIdsList = new List<int>();
+        
+        while (await reader.ReadAsync())
+        {
+            movieIdsList.Add(reader.GetInt32(0));
+        }
+
+        return movieIdsList;
+    }
+
     public async Task<MovieStatsDto> GetMovieStats(int movieId)
     {
         await using var connection = await _dbContext.OpenDbConnection();

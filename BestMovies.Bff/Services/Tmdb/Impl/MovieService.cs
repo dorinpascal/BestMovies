@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -63,7 +64,7 @@ public class MovieService : IMovieService
 
         return searchContainer.Results.Select(m => m.ToDto(genres));
     }
-
+    
     public async Task<IEnumerable<SearchMovieDto>> SearchMovie(string movieTitle)
     {
         var searchedMovies = await _tmDbClient.SearchMovieAsync(movieTitle);
