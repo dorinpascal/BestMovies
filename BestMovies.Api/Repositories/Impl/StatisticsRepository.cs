@@ -35,7 +35,7 @@ public class StatisticsRepository : IStatisticsRepository
     
     public async Task<IEnumerable<int>> GetTopRatedMovieIds(int count)
     {
-        const int minimumReviewCount = 0;
+        const int minimumReviewCount = 50;
         await using var connection = await _dbContext.OpenDbConnection();
         await using var command = connection.CreateCommand();
 
@@ -48,7 +48,7 @@ public class StatisticsRepository : IStatisticsRepository
         ";
         
         command.Parameters.AddWithValue("@NumberOfMovies", count);
-        command.Parameters.AddWithValue("@@MinimumReviewCount", minimumReviewCount);
+        command.Parameters.AddWithValue("@MinimumReviewCount", minimumReviewCount);
         
         await using var reader = await command.ExecuteReaderAsync();
         
